@@ -11,7 +11,6 @@
  * file that was distributed with this source code.
  */
 
-
 process($argv);
 
 /**
@@ -30,8 +29,8 @@ function process($argv)
 
     $ok = checkPlatform();
 
-    if ($check && !$ok) {
-        exit(1);
+    if ($check) {
+        exit($ok ? 0 : 1);
     }
 
     if ($ok || $force) {
@@ -114,7 +113,7 @@ function checkPlatform()
         return false;
     }
 
-    out("All settings correct for using Composer".PHP_EOL,'success');
+    out("All settings correct for using Composer".PHP_EOL, 'success');
     return true;
 }
 
