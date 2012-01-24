@@ -65,8 +65,20 @@ td { vertical-align: top; }
 
 #main {
   margin: auto;
-  width: 400px;
+  width: 600px;
+}
+
+h1 {
+  font-weight: normal;
   font-size: 30px;
+}
+
+code {
+  display: block;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin: 5px 0;
+  padding: 5px;
 }
 
 /* ==|== non-semantic helper classes ======================================== */
