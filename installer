@@ -74,8 +74,15 @@ function checkPlatform()
         $errors['require_hash'] = 'On';
     }
 
-    if ($suhosin = ini_get('suhosin.executor.include.whitelist') && (isset($suhosin) && false === stripos($suhosin, 'phar'))) {
-        $errors['suhosin'] = $suhosin;
+    $suhosin = ini_get('suhosin.executor.include.whitelist');
+    if ($suhosin !== false) {
+        if ($suhosin == "") {
+            // Suhosin enabled, but whitelist not set
+            $errors['suhosin'] = $suhosin;
+        } elseif (false === stripos($suhosin, 'phar')) {
+            // Suhosin enabled, but phar not in whitelist
+            $errors['suhosin'] = $suhosin;
+        }
     }
 
     if (PHP_VERSION < '5.3.2') {
