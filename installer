@@ -74,7 +74,8 @@ function checkPlatform()
         $errors['require_hash'] = 'On';
     }
 
-    if ($suhosin = ini_get('suhosin.executor.include.whitelist') && (isset($suhosin) && false === stripos($suhosin, 'phar'))) {
+    $suhosin = ini_get('suhosin.executor.include.whitelist');
+    if (false !== $suhosin && false === stripos($suhosin, 'phar')) {
         $errors['suhosin'] = $suhosin;
     }
 
