@@ -66,14 +66,6 @@ function checkPlatform()
         $errors['unicode'] = 'On';
     }
 
-    if (ini_get('phar.readonly')) {
-        $errors['readonly'] = 'On';
-    }
-
-    if (ini_get('phar.require_hash')) {
-        $errors['require_hash'] = 'On';
-    }
-
     $suhosin = ini_get('suhosin.executor.include.whitelist');
     if (false !== $suhosin && false === stripos($suhosin, 'phar')) {
         $errors['suhosin'] = $suhosin;
@@ -93,17 +85,10 @@ function checkPlatform()
                     $text = "    detect_unicode = Off (actual: {$actual})".PHP_EOL;
                     break;
 
-                case 'readonly':
-                    $text = "    phar.readonly = Off (actual: {$actual})".PHP_EOL;
-                    break;
-
-                case 'require_hash':
-                    $text = "    phar.require_hash = Off (actual: {$actual})".PHP_EOL;
-                    break;
-
                 case 'suhosin':
                     $text = "    suhosin.executor.include.whitelist = phar (actual: {$actual})".PHP_EOL;
                     break;
+
                 case 'php':
                     $text = "    PHP_VERSION (actual: {$actual})".PHP_EOL;
                     break;
