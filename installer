@@ -71,7 +71,7 @@ function checkPlatform()
         $errors['suhosin'] = $suhosin;
     }
 
-    if (PHP_VERSION < '5.3.2') {
+    if (version_compare(PHP_VERSION, '5.3.2', '<')) {
         $errors['php'] = PHP_VERSION;
     }
 
@@ -109,13 +109,13 @@ function checkPlatform()
 function installComposer()
 {
     $installDir = getcwd();
-    $file = $installDir . DIRECTORY_SEPARATOR . 'composer.phar';
+    $file = $installDir.DIRECTORY_SEPARATOR.'composer.phar';
 
     if (is_readable($file)) {
         @unlink($file);
     }
 
-    $download = copy('http://getcomposer.org/composer.phar', $installDir.DIRECTORY_SEPARATOR.'composer.phar');
+    $download = copy('http://getcomposer.org/composer.phar', $file);
 
     out(PHP_EOL."Composer successfully installed to: " . $file, 'success');
     out(PHP_EOL."Use it: php composer.phar".PHP_EOL, 'info');
