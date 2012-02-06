@@ -62,7 +62,7 @@ EOF;
 function checkPlatform()
 {
     $errors = array();
-    if (false !== ini_get('detect_unicode')) {
+    if (ini_get('detect_unicode')) {
         $errors['unicode'] = 'On';
     }
 
