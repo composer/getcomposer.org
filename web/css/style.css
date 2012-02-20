@@ -93,11 +93,17 @@ h1 {
 }
 
 code {
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 1px 2px;
+}
+
+pre code {
   display: block;
   border: 1px solid #ccc;
   border-radius: 3px;
   margin: 5px 0;
-  padding: 5px;
+  padding: 10px;
 }
 
 /* ==|== non-semantic helper classes ======================================== */

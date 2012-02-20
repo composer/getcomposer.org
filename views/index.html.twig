@@ -2,7 +2,7 @@
 
 {% block header %}
     <div>
-        <img src="/img/logo-composer-transparent.png">
+        <img src="{{ app.request.basePath }}/img/logo-composer-transparent.png">
     </div>
 
     <div class="slogan">
@@ -12,7 +12,7 @@
 
 {% block content %}
     <p>
-        <a href="/composer.phar">Download Composer</a>
+        <a href="{{ app.request.basePath }}/composer.phar">Download Composer</a>
         <a href="http://packagist.org/">Check out Packages</a>
     </p>
 
