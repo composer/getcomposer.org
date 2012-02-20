@@ -1,0 +1,21 @@
+{% extends "layout.html.twig" %}
+
+{% block header %}
+    <div>
+        <img src="/img/logo-composer-transparent.png">
+    </div>
+
+    <div class="slogan">
+        Dependency Manager for PHP.
+    </div>
+{% endblock %}
+
+{% block content %}
+    <p>
+        <a href="/composer.phar">Download Composer</a>
+        <a href="http://packagist.org/">Check out Packages</a>
+    </p>
+
+    <p>Or run this in your terminal to download it and check your configuration:</p>
+    <code>curl -s http://getcomposer.org/installer | php</code>
+{% endblock %}

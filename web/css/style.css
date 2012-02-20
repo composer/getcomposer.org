@@ -66,6 +66,25 @@ td { vertical-align: top; }
 #main {
   margin: auto;
   width: 600px;
+  margin-bottom: 30px;
+}
+
+header {
+  text-align: center;
+  font-size: 23px;
+  margin-bottom: 40px;
+  margin-top: 20px;
+}
+
+header .slogan {
+  margin-top: 20px;
+}
+
+footer {
+  margin: auto;
+  width: 600px;
+  margin-bottom: 50px;
+  float: right;
 }
 
 h1 {
