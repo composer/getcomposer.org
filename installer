@@ -92,7 +92,7 @@ function checkPlatform()
                     break;
 
                 case 'php':
-                    $text = PHP_EOL."Your PHP ({$actual}) is too old, you must upgrade to PHP 5.3.2 or higher:".PHP_EOL;
+                    $text = PHP_EOL."Your PHP ({$actual}) is too old, you must upgrade to PHP 5.3.2 or higher.".PHP_EOL;
                     break;
             }
             out($text, 'info');
