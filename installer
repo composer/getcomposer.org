@@ -76,21 +76,23 @@ function checkPlatform()
     }
 
     if (!empty($errors)) {
-        out("Composer detected that you have enabled some settings in your `php.ini` file that can make Composer unable to work properly.".PHP_EOL, 'error');
+        out("Some settings on your machine make Composer unable to work properly.".PHP_EOL, 'error');
 
-        echo PHP_EOL.'Make sure that you have changed options listed below:'.PHP_EOL;
+        out('Make sure that you fix the issues listed below and run this script again:'.PHP_EOL, 'error');
         foreach ($errors as $error => $actual) {
             switch ($error) {
                 case 'unicode':
-                    $text = "    detect_unicode = Off (actual: {$actual})".PHP_EOL;
+                    $text = PHP_EOL."The following `php.ini` setting is incorrect, you must add or modify it:".PHP_EOL;
+                    $text .= "    detect_unicode = Off   (actual: {$actual})".PHP_EOL;
                     break;
 
                 case 'suhosin':
-                    $text = "    suhosin.executor.include.whitelist = phar (actual: {$actual})".PHP_EOL;
+                    $text = PHP_EOL."The following `php.ini` setting is incorrect, you must add or modify it:".PHP_EOL;
+                    $text .= "    suhosin.executor.include.whitelist = phar   (actual: {$actual})".PHP_EOL;
                     break;
 
                 case 'php':
-                    $text = "    PHP_VERSION (actual: {$actual})".PHP_EOL;
+                    $text = PHP_EOL."Your PHP ({$actual}) is too old, you must upgrade to PHP 5.3.2 or higher:".PHP_EOL;
                     break;
             }
             out($text, 'info');
