@@ -5,17 +5,18 @@
         <img src="{{ app.request.basePath }}/img/logo-composer-transparent.png">
     </div>
 
-    <div class="slogan">
-        Dependency Manager for PHP.
-    </div>
+    <h1 class="slogan">
+        Dependency Manager for PHP
+    </h1>
 {% endblock %}
 
 {% block content %}
-    <p>
-        <a href="{{ app.request.basePath }}/composer.phar">Download Composer</a>
-        <a href="http://packagist.org/">Check out Packages</a>
+    <p class="buttons">
+        <a href="{{ path('docs.view', {page: '00-intro'}) }}">Getting Started</a>
+        <a href="{{ path('download') }}">Download</a>
     </p>
-
-    <p>Or run this in your terminal to download it and check your configuration:</p>
-    <code>curl -s http://getcomposer.org/installer | php</code>
+    <p class="buttons">
+        <a href="{{ path('docs') }}">Documentation</a>
+        <a href="http://packagist.org/">Browse Packages</a>
+    </p>
 {% endblock %}
