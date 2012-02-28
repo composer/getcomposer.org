@@ -1,0 +1,9 @@
+{% extends "layout.html.twig" %}
+
+{% block content %}
+    <ul>
+    {% for filename, url in filenames %}
+        <li><a href="{{ url }}">{{ filename }}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}

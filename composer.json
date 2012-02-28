@@ -1,0 +1,15 @@
+{
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/igorw/Silex"
+        }
+    ],
+    "require": {
+        "silex/silex": "dev-composer",
+        "composer/composer": "dev-master",
+        "twig/twig": "dev-master",
+        "dflydev/markdown": "dev-master",
+        "symfony/finder": "dev-master"
+    }
+}
