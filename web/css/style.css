@@ -67,12 +67,31 @@ td { vertical-align: top; }
   margin: auto;
   width: 600px;
   margin-bottom: 30px;
+  font-size: 16px;
+}
+
+a, a:link, a:visited, a:hover {
+  text-decoration: none;
+  color: #44f;
 }
 
 header {
   text-align: center;
   font-size: 23px;
   margin-top: 20px;
+}
+
+header a {
+  margin: 0 8px 0 0;
+  padding: 0 8px 0 0;
+  display: inline-block;
+  border-right: 1px solid #ccc;
+}
+header a.last {
+  border: 0;
+}
+header a.active {
+  color: #000;
 }
 
 header .slogan {
@@ -116,6 +135,7 @@ code {
   border: 1px solid #ccc;
   border-radius: 3px;
   padding: 1px 2px;
+  white-space: pre;
 }
 
 pre code {

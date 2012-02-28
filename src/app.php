@@ -27,42 +27,66 @@ $app->get('/', function () use ($app) {
 ->bind('home');
 
 $app->get('/download', function () use ($app) {
-    return $app['twig']->render('download.html.twig');
+    return $app['twig']->render('download.html.twig', array('page' => 'download'));
 })
 ->bind('download');
 
 $app->get('/doc', function () use ($app) {
-    $finder = new Finder();
-    $finder->files()
-        ->in($app['composer.doc_dir'])
-        ->depth(0);
+    $scan = function ($dir, $prefix = '') use ($app) {
+        $finder = new Finder();
+        $finder->files()
+            ->in($dir)
+            ->sortByName()
+            ->depth(0);
 
-    $filenames = array();
+        $filenames = array();
 
-    foreach ($finder as $file) {
-        $filename = basename($file->getPathname(), '.md');
-        $url = $app['url_generator']->generate('docs.view', array('page' => $filename));
+        foreach ($finder as $file) {
+            $filename = basename($file->getPathname(), '.md');
+            $url = $app['url_generator']->generate('docs.view', array('page' => $prefix.$filename));
 
-        $displayName = ucwords(str_replace('-', ' ', $filename));
-        $filenames[$displayName] = $url;
-    }
+            $metadata = null;
+            if (preg_match('{^<!--(.*)-->}s', file_get_contents($file->getPathname()), $match)) {
+                preg_match_all('{^ *(?P<keyword>\w+): *(?P<value>.*)}m', $match[1], $matches, PREG_SET_ORDER);
+                foreach ($matches as $match) {
+                    $metadata[$match['keyword']] = $match['value'];
+                }
+            }
 
-    return $app['twig']->render('doc.list.html.twig', array('filenames' => $filenames));
+            $displayName = preg_replace('{^\d{2} }', '', ucwords(str_replace('-', ' ', $filename)));
+            $filenames[$displayName] = array('link' => $url, 'metadata' => $metadata);
+        }
+
+        return $filenames;
+    };
+
+    $book = $scan($app['composer.doc_dir']);
+    $articles = $scan($app['composer.doc_dir'].'/articles', 'articles/');
+
+    return $app['twig']->render('doc.list.html.twig', array(
+        'book' => $book,
+        'articles' => $articles,
+        'page' => 'docs'
+    ));
 })
 ->bind('docs');
 
 $app->get('/doc/{page}', function ($page) use ($app) {
-    $filename = $app['composer.doc_dir'].'/'.str_replace('.', '', $page).'.md';
+    $filename = $app['composer.doc_dir'].'/'.$page.'.md';
 
     if (!file_exists($filename)) {
         $app->abort(404, 'Requested page was not found.');
     }
 
     $contents = file_get_contents($filename);
-    $page = $app['markdown']->transformMarkdown($contents);
+    $content = $app['markdown']->transformMarkdown($contents);
 
-    return $app['twig']->render('doc.show.html.twig', array('doc' => $page));
+    return $app['twig']->render('doc.show.html.twig', array(
+        'doc' => $content,
+        'page' => $page == '00-intro' ? 'getting-started' : 'docs'
+    ));
 })
+->assert('page', '[a-z0-9/-]+')
 ->bind('docs.view');
 
 return $app;

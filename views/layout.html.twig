@@ -8,7 +8,7 @@
         <meta name="description" content="Dependency Management for PHP">
         <meta name="viewport" content="width=device-width,initial-scale=1">
 
-        <link rel="stylesheet" href="{{ app.request.basePath }}/css/style.css?v=2">
+        <link rel="stylesheet" href="{{ app.request.basePath }}/css/style.css?v=3">
 
         <script src="{{ app.request.basePath }}/js/libs/modernizr-2.0.6.min.js"></script>
     </head>
@@ -17,15 +17,19 @@
         <div id="container">
             <header>
                 {% block header %}
+                {% spaceless %}
                     <a href="{{ path('home') }}">Home</a>
+                    <a class="{{ page == 'getting-started' ? 'active':'' }}" href="{{ path('docs.view', {page: '00-intro'}) }}">Getting Started</a>
+                    <a class="{{ page == 'download' ? 'active':'' }}" href="{{ path('download') }}">Download</a>
+                    <a class="{{ page == 'docs' ? 'active':'' }}" href="{{ path('docs') }}">Documentation</a>
+                    <a class="last" href="http://packagist.org/">Browse Packages</a>
+                {% endspaceless %}
                 {% endblock %}
             </header>
             <div id="main" role="main">
                 {% block content %}
                 {% endblock %}
             </div>
-            <footer>
-            </footer>
         </div>
 
         {#
