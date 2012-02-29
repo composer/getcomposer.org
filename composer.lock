@@ -4,7 +4,7 @@
         {
             "package": "composer/composer",
             "version": "dev-master",
-            "source-reference": "0e6cf61b67875545d2cd88b90cfb869f9bed7544"
+            "source-reference": "202cfb4fb9a87c835a6b257437663d2227265426"
         },
         {
             "package": "dflydev/markdown",
