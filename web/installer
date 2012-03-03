@@ -75,6 +75,10 @@ function checkPlatform()
         $errors['php'] = PHP_VERSION;
     }
 
+    if (!ini_get('allow_url_fopen')) {
+        $errors['allow_url_fopen'] = true;
+    }
+
     if (!empty($errors)) {
         out("Some settings on your machine make Composer unable to work properly.".PHP_EOL, 'error');
 
@@ -95,6 +99,12 @@ function checkPlatform()
 
                 case 'php':
                     $text = PHP_EOL."Your PHP ({$current}) is too old, you must upgrade to PHP 5.3.2 or higher.".PHP_EOL;
+                    break;
+
+                case 'allow_url_fopen':
+                    $text = PHP_EOL."The allow_url_fopen setting is incorrect.".PHP_EOL;
+                    $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
+                    $text .= "    allow_url_fopen = On".PHP_EOL;
                     break;
             }
             out($text, 'info');
