@@ -3,6 +3,7 @@
 require __DIR__.'/../vendor/.composer/autoload.php';
 
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\Response;
 use dflydev\markdown\MarkdownExtraParser;
 
 $app = new Silex\Application();
@@ -26,10 +27,22 @@ $app->get('/', function () use ($app) {
 })
 ->bind('home');
 
-$app->get('/download', function () use ($app) {
-    return $app['twig']->render('download.html.twig', array('page' => 'download'));
+$app->get('/download/', function () use ($app) {
+    $versions = array();
+    foreach (glob(__DIR__.'/../web/download/*', GLOB_ONLYDIR) as $version) {
+        $versions[] = basename($version);
+    }
+    return $app['twig']->render('download.html.twig', array(
+        'page' => 'download',
+        'versions' => $versions
+    ));
 })
 ->bind('download');
+
+$app->get('/download/{version}/composer.phar', function () {
+    return new Response('Version Not Found', 404);
+})
+->bind('download_version');
 
 $app->get('/doc', function () use ($app) {
     $scan = function ($dir, $prefix = '') use ($app) {

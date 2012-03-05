@@ -7,5 +7,10 @@
     <p>This installer script will simply check some php.ini settings, warn you if they are set incorrectly, and then download the latest composer.phar in the current directory</p>
 
     <p>If you prefer to download a phar directly, here are the available composer.phar archives:</p>
-    <a href="{{ app.request.basePath }}/composer.phar">Latest Snapshot</a>
+    <p>
+        <a href="{{ app.request.basePath }}/composer.phar">Latest Snapshot</a><br />
+        {% for version in versions %}
+            <a href="{{ path('download_version', {version: version}) }}">{{ version }}</a><br />
+        {% endfor %}
+    </p>
 {% endblock %}
