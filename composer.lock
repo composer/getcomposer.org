@@ -4,16 +4,16 @@
         {
             "package": "composer/composer",
             "version": "dev-master",
-            "source-reference": "202cfb4fb9a87c835a6b257437663d2227265426"
+            "source-reference": "c27bdad72850f9be225eee3f37c47b3e853c538e"
         },
         {
             "package": "dflydev/markdown",
             "version": "dev-master",
-            "source-reference": "ebfa03b2166a5fea5799f73d3c97a3dd998e9ee4"
+            "source-reference": "91c6649f89472f6ab60a107a80acc72baacf585c"
         },
         {
             "package": "doctrine/common",
-            "version": "2.2.0"
+            "version": "2.2.1"
         },
         {
             "package": "pimple/pimple",
@@ -23,17 +23,17 @@
         {
             "package": "silex/silex",
             "version": "dev-master",
-            "source-reference": "00f635b976057362581a5d7cb7522ba367423744"
+            "source-reference": "eaa9500fcb1550346068948b8f4543531059507e"
         },
         {
             "package": "symfony/symfony",
             "version": "dev-master",
-            "source-reference": "3de31c62d6d695477803d797177fbfe2a2fa3ef5",
+            "source-reference": "35d63b66910ae2107fe17f0095495c7d37f491f5",
             "alias": "2.1.9999999.9999999-dev"
         },
         {
             "package": "twig/twig",
-            "version": "1.6.0"
+            "version": "1.6.1"
         }
     ],
     "aliases": []
