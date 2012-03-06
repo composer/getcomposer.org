@@ -16,9 +16,19 @@
             "version": "2.2.1"
         },
         {
+            "package": "justinrainbow/json-schema",
+            "version": "dev-master",
+            "source-reference": "bb6175a2790118241c8f6d014ddc04192267e5d1"
+        },
+        {
             "package": "pimple/pimple",
             "version": "dev-master",
             "source-reference": "321db91e49b6cf8cbeed58d8db662d40de96d2c3"
+        },
+        {
+            "package": "seld/jsonlint",
+            "version": "dev-master",
+            "source-reference": "12f0b1e5334a52b7035e1d15f36974db7c06b78d"
         },
         {
             "package": "silex/silex",
