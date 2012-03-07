@@ -99,7 +99,7 @@ $app->get('/doc/{page}', function ($page) use ($app) {
         'page' => $page == '00-intro' ? 'getting-started' : 'docs'
     ));
 })
-->assert('page', '[a-z0-9/-]+')
+->assert('page', '[a-z0-9/-]+\.md')
 ->bind('docs.view');
 
 return $app;
