@@ -56,7 +56,7 @@ $app->get('/doc', function () use ($app) {
 
         foreach ($finder as $file) {
             $filename = basename($file->getPathname(), '.md');
-            $url = $app['url_generator']->generate('docs.view', array('page' => $prefix.$filename));
+            $url = $app['url_generator']->generate('docs.view', array('page' => $prefix.$filename.'.md'));
 
             $metadata = null;
             if (preg_match('{^<!--(.*)-->}s', file_get_contents($file->getPathname()), $match)) {
@@ -85,7 +85,7 @@ $app->get('/doc', function () use ($app) {
 ->bind('docs');
 
 $app->get('/doc/{page}', function ($page) use ($app) {
-    $filename = $app['composer.doc_dir'].'/'.$page.'.md';
+    $filename = $app['composer.doc_dir'].'/'.$page;
 
     if (!file_exists($filename)) {
         $app->abort(404, 'Requested page was not found.');
