@@ -19,7 +19,7 @@
                 {% block header %}
                 {% spaceless %}
                     <a href="{{ path('home') }}">Home</a>
-                    <a class="{{ page == 'getting-started' ? 'active':'' }}" href="{{ path('docs.view', {page: '00-intro'}) }}">Getting Started</a>
+                    <a class="{{ page == 'getting-started' ? 'active':'' }}" href="{{ path('docs.view', {page: '00-intro.md'}) }}">Getting Started</a>
                     <a class="{{ page == 'download' ? 'active':'' }}" href="{{ path('download') }}">Download</a>
                     <a class="{{ page == 'docs' ? 'active':'' }}" href="{{ path('docs') }}">Documentation</a>
                     <a class="last" href="http://packagist.org/">Browse Packages</a>
