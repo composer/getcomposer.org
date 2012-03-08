@@ -6,6 +6,9 @@
     <code>curl -s http://getcomposer.org/installer | php</code>
     <p>This installer script will simply check some php.ini settings, warn you if they are set incorrectly, and then download the latest composer.phar in the current directory</p>
 
+    <p>You can install composer to a specific directory by using the `--install-dir` option and providing a target directory (it can be an absolute or relative path):</p>
+    <code>curl -s http://getcomposer.org/installer | php -- --install-dir=bin</code>
+
     <p>If you prefer to download a phar directly, here are the available composer.phar archives:</p>
     <p>
         <a href="{{ app.request.basePath }}/composer.phar">Latest Snapshot</a><br />
