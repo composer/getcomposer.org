@@ -18,9 +18,13 @@ process($argv);
  */
 function process($argv)
 {
-    $check = in_array('--check', $argv);
-    $help = in_array('--help', $argv);
-    $force = in_array('--force', $argv);
+    $options = array('help::', 'check::', 'force::', 'install-dir::');
+    $getopts = getopt(null, $options);
+
+    $check      = isset($getopts['check'])       ? $getopts['check']       : false;
+    $help       = isset($getopts['help'])        ? $getopts['help']        : false;
+    $force      = isset($getopts['force'])       ? $getopts['force']       : false;
+    $installDir = isset($getopts['install-dir']) ? $getopts['install-dir'] : false;
 
     if ($help) {
         displayHelp();
@@ -34,7 +38,7 @@ function process($argv)
     }
 
     if ($ok || $force) {
-        installComposer();
+        installComposer($installDir);
     }
 
     exit(0);
@@ -49,9 +53,10 @@ function displayHelp()
 Composer Installer
 ------------------
 Options
---help   this help
---check  for checking environment only
---force  forces the installation
+--help        this help
+--check       for checking environment only
+--force       forces the installation
+--install-dir accepts a target installation directory
 
 EOF;
 }
@@ -130,10 +135,10 @@ function checkPlatform()
 /**
  * installs composer to the current working directory
  */
-function installComposer()
+function installComposer($installDir)
 {
-    $installDir = getcwd();
-    $file = $installDir.DIRECTORY_SEPARATOR.'composer.phar';
+    $installDir = realpath($installDir) ?: getcwd();
+    $file       = $installDir.DIRECTORY_SEPARATOR.'composer.phar';
 
     if (is_readable($file)) {
         @unlink($file);
