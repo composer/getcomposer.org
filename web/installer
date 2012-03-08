@@ -21,9 +21,9 @@ function process($argv)
     $options = array('help::', 'check::', 'force::', 'install-dir::');
     $getopts = getopt(null, $options);
 
-    $check      = isset($getopts['check'])       ? $getopts['check']       : false;
-    $help       = isset($getopts['help'])        ? $getopts['help']        : false;
-    $force      = isset($getopts['force'])       ? $getopts['force']       : false;
+    $check      = isset($getopts['check']);
+    $help       = isset($getopts['help']);
+    $force      = isset($getopts['force']);
     $installDir = isset($getopts['install-dir']) ? $getopts['install-dir'] : false;
 
     if ($help) {
