@@ -96,7 +96,7 @@ $app->get('/doc/{page}', function ($page) use ($app) {
 
     return $app['twig']->render('doc.show.html.twig', array(
         'doc' => $content,
-        'page' => $page == '00-intro' ? 'getting-started' : 'docs'
+        'page' => $page == '00-intro.md' ? 'getting-started' : 'docs'
     ));
 })
 ->assert('page', '[a-z0-9/-]+\.md')
