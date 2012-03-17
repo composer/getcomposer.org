@@ -144,7 +144,8 @@ function installComposer($installDir)
         @unlink($file);
     }
 
-    $download = copy('http://getcomposer.org/composer.phar', $file);
+    copy('http://getcomposer.org/composer.phar', $file);
+    chmod($file, 0755);
 
     out(PHP_EOL."Composer successfully installed to: " . $file, 'success');
     out(PHP_EOL."Use it: php composer.phar".PHP_EOL, 'info');
