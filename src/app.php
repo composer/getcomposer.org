@@ -44,7 +44,7 @@ $app->get('/download/{version}/composer.phar', function () {
 })
 ->bind('download_version');
 
-$app->get('/doc', function () use ($app) {
+$app->get('/doc/', function () use ($app) {
     $scan = function ($dir, $prefix = '') use ($app) {
         $finder = new Finder();
         $finder->files()
