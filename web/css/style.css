@@ -142,6 +142,19 @@ h1 .anchor, h2 .anchor, h3 .anchor {
   background: #ffe;
 }
 
+blockquote {
+  background: #ddf;
+  border: 1px solid #ddf;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  margin: 0 20px;
+  padding: 10px;
+}
+blockquote p {
+  margin: 0;
+}
+
 .toc, .toc ul {
   padding-left: 0;
   margin: 0 0 10px 0;
