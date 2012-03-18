@@ -148,8 +148,8 @@ $app->get('/doc/{page}', function ($page) use ($app) {
     }
 
     // save new content with IDs
-    $content = $dom->saveHtml($xpath->query('//body')->item(0));
-    $content = preg_replace('{^ *<body>|</body> *$}i', '', $content);
+    $content = $dom->saveHtml();
+    $content = preg_replace('{.*<body>(.*)</body>.*}i', '$1', $content);
 
     return $app['twig']->render('doc.show.html.twig', array(
         'doc' => $content,
