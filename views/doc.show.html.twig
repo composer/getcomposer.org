@@ -1,5 +1,23 @@
 {% extends "layout.html.twig" %}
 
 {% block content %}
+    {% if toc|length %}
+        <ul class="toc">
+            {{ _self.tocTree(toc|length > 3 ? toc : toc.1) }}
+        </ul>
+    {% endif %}
     {{ doc|raw }}
 {% endblock %}
+
+{% macro tocTree(tree) %}
+    {% for key, node in tree if (key not in ['title', 'id']) %}
+        <li>
+            <a href="#{{ node.id }}">{{ node.title }}</a>
+            {% if node|length > 2 %}
+                <ul>
+                    {{ _self.tocTree(node) }}
+                </ul>
+            {% endif %}
+        </li>
+    {% endfor %}
+{% endmacro %}

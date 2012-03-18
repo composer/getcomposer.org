@@ -1,16 +1,16 @@
 {% extends "layout.html.twig" %}
 
 {% block header %}
-    <div>
-        <img src="{{ app.request.basePath }}/img/logo-composer-transparent.png">
-    </div>
-
-    <h1 class="slogan">
-        Dependency Manager for PHP
-    </h1>
 {% endblock %}
 
 {% block content %}
+    <div class="logo">
+        <img src="{{ app.request.basePath }}/img/logo-composer-transparent.png">
+        <h1 class="slogan">
+            Dependency Manager for PHP
+        </h1>
+    </div>
+
     <p class="buttons">
         <a href="{{ path('docs.view', {page: '00-intro.md'}) }}">Getting Started</a>
         <a href="{{ path('download') }}">Download</a>
@@ -26,5 +26,5 @@
 {% endblock %}
 
 {% block footer %}
-    Logo credits: <a href="http://wizardcat.com/">MAXakaWIZARD</a>
+    Logo credits: <a href="http://wizardcat.com/">WizardCat</a>
 {% endblock %}

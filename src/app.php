@@ -56,7 +56,10 @@ $app->get('/doc/', function () use ($app) {
 
         foreach ($finder as $file) {
             $filename = basename($file->getPathname(), '.md');
-            $url = $app['url_generator']->generate('docs.view', array('page' => $prefix.$filename.'.md'));
+            $url = $app['url_generator']->generate(
+                'docs.view',
+                array('page' => $prefix.$filename.'.md')
+            );
 
             $metadata = null;
             if (preg_match('{^<!--(.*)-->}s', file_get_contents($file->getPathname()), $match)) {
@@ -94,9 +97,64 @@ $app->get('/doc/{page}', function ($page) use ($app) {
     $contents = file_get_contents($filename);
     $content = $app['markdown']->transformMarkdown($contents);
 
+    $dom = new DOMDocument();
+    $dom->loadHtml($content);
+    $xpath = new DOMXPath($dom);
+
+    $toc = array();
+    $ids = array();
+
+    $genId = function ($node) use (&$ids) {
+        $count = 0;
+        do {
+            $id = preg_replace('{[^a-z0-9]}i', '-', strtolower($node->nodeValue));
+            $id = preg_replace('{-+}', '-', $id);
+            if ($count) {
+                $id .= '-'.($count+1);
+            }
+            $count++;
+        } while (isset($ids[$id]));
+        $ids[$id] = true;
+        return $id;
+    };
+
+    // build TOC & deep links
+    $h1 = $h2 = $h3 = 0;
+    $nodes = $xpath->query('//*[self::h1 or self::h2 or self::h3]');
+    foreach ($nodes as $node) {
+        // set id and add anchor link
+        $id = $genId($node);
+        $title = $node->nodeValue;
+        $node->setAttribute('id', $id);
+        $link = $dom->createElement('a', '#');
+        $link->setAttribute('href', '#'.$id);
+        $link->setAttribute('class', 'anchor');
+        $node->appendChild($link);
+
+        // parse into a tree
+        switch ($node->nodeName) {
+            case 'h1':
+                $toc[++$h1] = array('title' => $title, 'id' => $id);
+            break;
+
+            case 'h2':
+                $toc[$h1][++$h2] = array('title' => $title, 'id' => $id);
+            break;
+
+            case 'h3':
+                $toc[$h1][$h2][++$h3] = array('title' => $title, 'id' => $id);
+            break;
+        }
+    }
+
+    // save new content with IDs
+    $content = $dom->saveHtml($xpath->query('//body')->item(0));
+    $content = preg_replace('{^ *<body>|</body> *$}i', '', $content);
+
     return $app['twig']->render('doc.show.html.twig', array(
         'doc' => $content,
-        'page' => $page == '00-intro.md' ? 'getting-started' : 'docs'
+        'page' => $page == '00-intro.md' ? 'getting-started' : 'docs',
+        'toc' => $toc,
     ));
 })
 ->assert('page', '[a-z0-9/-]+\.md')

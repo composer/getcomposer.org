@@ -63,7 +63,7 @@ td { vertical-align: top; }
    Author:
    ========================================================================== */
 
-#main {
+#main, header {
   margin: auto;
   max-width: 800px;
   margin-bottom: 30px;
@@ -77,9 +77,9 @@ a, a:link, a:visited, a:hover {
 }
 
 header {
-  text-align: center;
   font-size: 23px;
   margin-top: 20px;
+  margin-bottom: 40px;
 }
 
 header a {
@@ -99,6 +99,10 @@ header .slogan {
   margin-top: 20px;
 }
 
+.logo {
+  text-align: center;
+}
+
 footer {
   margin: auto;
   width: 600px;
@@ -109,6 +113,12 @@ footer {
 h1 {
   font-weight: normal;
   font-size: 30px;
+}
+
+h1 .anchor, h2 .anchor, h3 .anchor {
+  display: inline-block;
+  margin-left: 5px;
+  color: #ccc;
 }
 
 .buttons {
@@ -130,6 +140,16 @@ h1 {
 }
 .buttons a:hover {
   background: #ffe;
+}
+
+.toc, .toc ul {
+  padding-left: 0;
+  margin: 0 0 10px 0;
+  list-style: decimal inside none;
+  color: #000;
+}
+.toc ul {
+  padding-left: 20px;
 }
 
 code {
