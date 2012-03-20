@@ -163,6 +163,8 @@ blockquote p {
 }
 .toc ul {
   padding-left: 20px;
+  list-style: circle inside none;
+  margin: 0;
 }
 
 code {
