@@ -159,7 +159,7 @@ $app->get('/doc/{page}', function ($page) use ($app) {
         'toc' => $toc,
     ));
 })
-->assert('page', '[a-z0-9/-]+\.md')
+->assert('page', '[a-z0-9/\'-]+\.md')
 ->bind('docs.view');
 
 return $app;
