@@ -13,6 +13,12 @@
         {{ _self.renderFile(filename, data) }}
     {% endfor %}
     </ul>
+    <h1>FAQs</h1>
+    <ul>
+    {% for filename, data in faqs %}
+        {{ _self.renderFile(filename, data) }}
+    {% endfor %}
+    </ul>
 {% endblock %}
 
 {% macro renderFile(filename, data) %}

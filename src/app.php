@@ -78,10 +78,12 @@ $app->get('/doc/', function () use ($app) {
 
     $book = $scan($app['composer.doc_dir']);
     $articles = $scan($app['composer.doc_dir'].'/articles', 'articles/');
+    $faqs = $scan($app['composer.doc_dir'].'/faqs', 'faqs/');
 
     return $app['twig']->render('doc.list.html.twig', array(
         'book' => $book,
         'articles' => $articles,
+        'faqs' => $faqs,
         'page' => 'docs'
     ));
 })
