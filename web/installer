@@ -67,6 +67,7 @@ EOF;
 function checkPlatform()
 {
     $errors = array();
+    $warnings = array();
     if (ini_get('detect_unicode')) {
         $errors['unicode'] = 'On';
     }
@@ -86,6 +87,10 @@ function checkPlatform()
 
     if (version_compare(PHP_VERSION, '5.3.2', '<')) {
         $errors['php'] = PHP_VERSION;
+    }
+
+    if (ini_get('apc.enable_cli')) {
+        $warnings['apc_cli'] = true;
     }
 
     if (!empty($errors)) {
@@ -126,6 +131,24 @@ function checkPlatform()
         }
         echo PHP_EOL;
         return false;
+    }
+
+    if (!empty($warnings)) {
+        out("Some settings on your machine may cause stability issues with Composer.".PHP_EOL, 'error');
+
+        out('If you encounter issues, try to change the following:'.PHP_EOL, 'error');
+        foreach ($warnings as $warning => $current) {
+            switch ($warning) {
+                case 'apc_cli':
+                    $text = PHP_EOL."The apc.enable_cli setting is incorrect.".PHP_EOL;
+                    $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
+                    $text .= "    apc.enable_cli = Off".PHP_EOL;
+                    break;
+            }
+            out($text, 'info');
+        }
+        echo PHP_EOL;
+        return true;
     }
 
     out("All settings correct for using Composer".PHP_EOL, 'success');
