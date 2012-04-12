@@ -113,6 +113,7 @@ footer {
 h1 {
   font-weight: normal;
   font-size: 30px;
+  line-height: 130%;
 }
 
 h1 .anchor, h2 .anchor, h3 .anchor {
