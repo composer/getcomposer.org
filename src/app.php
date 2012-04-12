@@ -154,7 +154,7 @@ $app->get('/doc/{page}', function ($page) use ($app) {
     $content = preg_replace('{.*<body>(.*)</body>.*}i', '$1', $content);
 
     // add class to footer nav
-    $content = str_replace('<p>&larr;', '<p class="prev-next">&larr;', $content);
+    $content = preg_replace('{<p>(&larr;.+?|.+?&rarr;)</p>}', '<p class="prev-next">$1</p>', $content);
 
     return $app['twig']->render('doc.show.html.twig', array(
         'doc' => $content,
