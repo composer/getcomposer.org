@@ -183,6 +183,21 @@ pre code {
   padding: 10px;
 }
 
+.prev-next {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.fork-and-edit {
+  background: url("../img/github.gif") no-repeat scroll 0 0 transparent;
+  font-style: italic;
+  height: 40px;
+  margin: 40px auto 0;
+  width: 640px;
+  padding-top: 5px;
+  text-align: center;
+}
+
 /* ==|== non-semantic helper classes ======================================== */
 .ir { display: block; border: 0; text-indent: -999em; overflow: hidden; background-color: transparent; background-repeat: no-repeat; text-align: left; direction: ltr; }
 .ir br { display: none; }

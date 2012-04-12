@@ -153,8 +153,12 @@ $app->get('/doc/{page}', function ($page) use ($app) {
     $content = $dom->saveHtml();
     $content = preg_replace('{.*<body>(.*)</body>.*}i', '$1', $content);
 
+    // add class to footer nav
+    $content = str_replace('<p>&larr;', '<p class="prev-next">&larr;', $content);
+
     return $app['twig']->render('doc.show.html.twig', array(
         'doc' => $content,
+        'file' => $page,
         'page' => $page == '00-intro.md' ? 'getting-started' : 'docs',
         'toc' => $toc,
     ));

@@ -7,6 +7,10 @@
         </ul>
     {% endif %}
     {{ doc|raw }}
+
+    <p class="fork-and-edit">
+        Found a typo? Something is wrong in this documentation? Just <a href="http://github.com/composer/composer/edit/master/doc/{{ file }}">fork and edit</a> it!
+    </p>
 {% endblock %}
 
 {% macro tocTree(tree) %}
