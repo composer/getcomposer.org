@@ -106,10 +106,19 @@ $app->get('/doc/{page}', function ($page) use ($app) {
     $toc = array();
     $ids = array();
 
-    $genId = function ($node) use (&$ids) {
+    $isSpan = function ($node) {
+        return XML_ELEMENT_NODE === $node->nodeType && 'span' === $node->tagName;
+    };
+
+    $genId = function ($node) use (&$ids, $isSpan) {
         $count = 0;
         do {
-            $id = preg_replace('{[^a-z0-9]}i', '-', strtolower($node->nodeValue));
+            if ($isSpan($node->lastChild)) {
+                $node = clone $node;
+                $node->removeChild($node->lastChild);
+            }
+
+            $id = preg_replace('{[^a-z0-9]}i', '-', strtolower(trim($node->nodeValue)));
             $id = preg_replace('{-+}', '-', $id);
             if ($count) {
                 $id .= '-'.($count+1);
@@ -120,13 +129,31 @@ $app->get('/doc/{page}', function ($page) use ($app) {
         return $id;
     };
 
+    $getDesc = function ($node) use ($isSpan) {
+        if ($isSpan($node->lastChild)) {
+            return $node->lastChild->nodeValue;
+        }
+
+        return null;
+    };
+
+    $getTitle = function ($node) use ($isSpan) {
+        if ($isSpan($node->lastChild)) {
+            $node = clone $node;
+            $node->removeChild($node->lastChild);
+        }
+
+        return $node->nodeValue;
+    };
+
     // build TOC & deep links
     $h1 = $h2 = $h3 = 0;
     $nodes = $xpath->query('//*[self::h1 or self::h2 or self::h3]');
     foreach ($nodes as $node) {
         // set id and add anchor link
         $id = $genId($node);
-        $title = $node->nodeValue;
+        $title = $getTitle($node);
+        $desc = $getDesc($node);
         $node->setAttribute('id', $id);
         $link = $dom->createElement('a', '#');
         $link->setAttribute('href', '#'.$id);
@@ -136,15 +163,15 @@ $app->get('/doc/{page}', function ($page) use ($app) {
         // parse into a tree
         switch ($node->nodeName) {
             case 'h1':
-                $toc[++$h1] = array('title' => $title, 'id' => $id);
+                $toc[++$h1] = array('title' => $title, 'id' => $id, 'desc' => $desc);
             break;
 
             case 'h2':
-                $toc[$h1][++$h2] = array('title' => $title, 'id' => $id);
+                $toc[$h1][++$h2] = array('title' => $title, 'id' => $id, 'desc' => $desc);
             break;
 
             case 'h3':
-                $toc[$h1][$h2][++$h3] = array('title' => $title, 'id' => $id);
+                $toc[$h1][$h2][++$h3] = array('title' => $title, 'id' => $id, 'desc' => $desc);
             break;
         }
     }
