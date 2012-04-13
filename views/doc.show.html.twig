@@ -14,10 +14,10 @@
 {% endblock %}
 
 {% macro tocTree(tree) %}
-    {% for key, node in tree if (key not in ['title', 'id']) %}
+    {% for key, node in tree if (key not in ['title', 'id', 'desc']) %}
         <li>
-            <a href="#{{ node.id }}">{{ node.title }}</a>
-            {% if node|length > 2 %}
+            <a href="#{{ node.id }}">{{ node.title }}</a> {{ node.desc }}
+            {% if node|length > 3 %}
                 <ul>
                     {{ _self.tocTree(node) }}
                 </ul>
