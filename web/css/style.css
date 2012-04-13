@@ -189,6 +189,11 @@ pre code {
   margin-top: 40px;
 }
 
+li .tagline {
+    display: block;
+    margin-bottom: 5px;
+}
+
 .fork-and-edit {
   background: url("../img/github.gif") no-repeat scroll 0 0 transparent;
   font-style: italic;
