@@ -178,7 +178,7 @@ $app->get('/doc/{page}', function ($page) use ($app) {
 
     // save new content with IDs
     $content = $dom->saveHtml();
-    $content = preg_replace('{.*<body>(.*)</body>.*}i', '$1', $content);
+    $content = preg_replace('{.*<body>(.*)</body>.*}is', '$1', $content);
 
     // add class to footer nav
     $content = preg_replace('{<p>(&larr;.+?|.+?&rarr;)</p>}', '<p class="prev-next">$1</p>', $content);
