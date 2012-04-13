@@ -4,6 +4,7 @@
         "composer/composer": "dev-master",
         "twig/twig": "1.*",
         "dflydev/markdown": "dev-master",
-        "symfony/finder": "2.1.*"
+        "symfony/finder": "2.1.*",
+        "symfony/twig-bridge": "2.1.*"
     }
 }
