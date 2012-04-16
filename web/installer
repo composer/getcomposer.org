@@ -167,7 +167,29 @@ function installComposer($installDir)
         @unlink($file);
     }
 
-    copy('http://getcomposer.org/composer.phar', $file);
+    $retries = 3;
+    while ($retries--) {
+        out("Downloading...".PHP_EOL, 'info');
+        copy('http://getcomposer.org/composer.phar', $file);
+        try {
+            // test the phar validity
+            $phar = new \Phar($file);
+            // free the variable to unlock the file
+            unset($phar);
+            break;
+        } catch (\Exception $e) {
+            if (!$e instanceof \UnexpectedValueException && !$e instanceof \PharException) {
+                throw $e;
+            }
+            unlink($file);
+            if ($retries) {
+                out('The download is corrupt, retrying...'.PHP_EOL, 'error');
+            } else {
+                out('The download is corrupt ('.$e->getMessage().'), aborting.'.PHP_EOL, 'error');
+                exit(1);
+            }
+        }
+    }
     chmod($file, 0755);
 
     out(PHP_EOL."Composer successfully installed to: " . $file, 'success');
