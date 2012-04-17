@@ -18,13 +18,15 @@ process($argv);
  */
 function process($argv)
 {
-    $options = array('help::', 'check::', 'force::', 'install-dir::');
-    $getopts = getopt(null, $options);
-
-    $check      = isset($getopts['check']);
-    $help       = isset($getopts['help']);
-    $force      = isset($getopts['force']);
-    $installDir = isset($getopts['install-dir']) ? $getopts['install-dir'] : false;
+    $check      = in_array('--check', $argv);
+    $help       = in_array('--help', $argv);
+    $force      = in_array('--force', $argv);
+    $installDir = false;
+    foreach ($argv as $val) {
+        if (0 === strpos($val, '--install-dir')) {
+            $installDir = trim(substr($val, 14));
+        }
+    }
 
     if ($help) {
         displayHelp();
@@ -53,10 +55,10 @@ function displayHelp()
 Composer Installer
 ------------------
 Options
---help        this help
---check       for checking environment only
---force       forces the installation
---install-dir accepts a target installation directory
+--help               this help
+--check              for checking environment only
+--force              forces the installation
+--install-dir="..."  accepts a target installation directory
 
 EOF;
 }
@@ -160,7 +162,7 @@ function checkPlatform()
  */
 function installComposer($installDir)
 {
-    $installDir = realpath($installDir) ?: getcwd();
+    $installDir = realpath($installDir) ? realpath($installDir) : getcwd();
     $file       = $installDir.DIRECTORY_SEPARATOR.'composer.phar';
 
     if (is_readable($file)) {
@@ -173,12 +175,12 @@ function installComposer($installDir)
         copy('http://getcomposer.org/composer.phar', $file);
         try {
             // test the phar validity
-            $phar = new \Phar($file);
+            $phar = new Phar($file);
             // free the variable to unlock the file
             unset($phar);
             break;
-        } catch (\Exception $e) {
-            if (!$e instanceof \UnexpectedValueException && !$e instanceof \PharException) {
+        } catch (Exception $e) {
+            if (!$e instanceof UnexpectedValueException && !$e instanceof PharException) {
                 throw $e;
             }
             unlink($file);
