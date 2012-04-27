@@ -36,7 +36,7 @@ function process($argv)
     $ok = checkPlatform();
 
     if ($installDir && !realpath($installDir)) {
-        out("the defined installDir ({$installDir}) does not exist.".PHP_EOL, 'info');
+        out("The defined install dir ({$installDir}) does not exist.".PHP_EOL, 'info');
         $ok = false;
     }
 
