@@ -214,5 +214,5 @@ function out($text, $color = null)
         'info' => "\033[33;33m%s\033[0m"
     );
 
-    echo sprintf(isset($styles[$color]) ? $styles[$color] : "%s", $text);
+    printf(isset($styles[$color]) ? $styles[$color] : "%s", $text);
 }
