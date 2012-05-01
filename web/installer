@@ -136,7 +136,8 @@ function checkPlatform()
             }
             out($text, 'info');
         }
-        echo PHP_EOL;
+
+        out('');
         return false;
     }
 
@@ -154,7 +155,8 @@ function checkPlatform()
             }
             out($text, 'info');
         }
-        echo PHP_EOL;
+
+        out('');
         return true;
     }
 
@@ -176,7 +178,7 @@ function installComposer($installDir)
 
     $retries = 3;
     while ($retries--) {
-        out("Downloading...".PHP_EOL, 'info');
+        out("Downloading...", 'info');
         copy('http://getcomposer.org/composer.phar', $file);
         try {
             // test the phar validity
