@@ -22,9 +22,14 @@ function process($argv)
     $help       = in_array('--help', $argv);
     $force      = in_array('--force', $argv);
     $installDir = false;
-    foreach ($argv as $val) {
+
+    foreach ($argv as $key => $val) {
         if (0 === strpos($val, '--install-dir')) {
-            $installDir = trim(substr($val, 14));
+            if (13 === strlen($val) && isset($argv[$key+1])) {
+                $installDir = trim($argv[$key+1]);
+            } else {
+                $installDir = trim(substr($val, 14));
+            }
         }
     }
 
@@ -35,7 +40,7 @@ function process($argv)
 
     $ok = checkPlatform();
 
-    if ($installDir && !realpath($installDir)) {
+    if (false !== $installDir && !is_dir($installDir)) {
         out("The defined install dir ({$installDir}) does not exist.", 'info');
         $ok = false;
     }
@@ -169,6 +174,7 @@ function checkPlatform()
  */
 function installComposer($installDir)
 {
+    $installPath = (is_dir($installDir) ? rtrim($installDir, '/').'/' : '') . 'composer.phar';
     $installDir = realpath($installDir) ? realpath($installDir) : getcwd();
     $file       = $installDir.DIRECTORY_SEPARATOR.'composer.phar';
 
@@ -202,7 +208,7 @@ function installComposer($installDir)
     chmod($file, 0755);
 
     out(PHP_EOL."Composer successfully installed to: " . $file, 'success', false);
-    out(PHP_EOL."Use it: php composer.phar", 'info');
+    out(PHP_EOL."Use it: php $installPath", 'info');
 }
 
 /**
