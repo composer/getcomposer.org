@@ -213,13 +213,13 @@ function out($text, $color = null, $newLine = true)
         'error' => "\033[31;31m%s\033[0m",
         'info' => "\033[33;33m%s\033[0m"
     );
-    
+
     $format = '%s';
-    
-    if (array_key_exists($color, $styles)) {
-        $format = $styles[ $color ];
+
+    if (isset($styles[$color])) {
+        $format = $styles[$color];
     }
-    
+
     if ($newLine) {
         $format .= PHP_EOL;
     }
