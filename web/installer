@@ -36,7 +36,7 @@ function process($argv)
     $ok = checkPlatform();
 
     if ($installDir && !realpath($installDir)) {
-        out("The defined install dir ({$installDir}) does not exist.".PHP_EOL, 'info');
+        out("The defined install dir ({$installDir}) does not exist.", 'info');
         $ok = false;
     }
 
@@ -101,37 +101,37 @@ function checkPlatform()
     }
 
     if (!empty($errors)) {
-        out("Some settings on your machine make Composer unable to work properly.".PHP_EOL, 'error');
+        out("Some settings on your machine make Composer unable to work properly.", 'error');
 
-        out('Make sure that you fix the issues listed below and run this script again:'.PHP_EOL, 'error');
+        out('Make sure that you fix the issues listed below and run this script again:', 'error');
         foreach ($errors as $error => $current) {
             switch ($error) {
                 case 'unicode':
                     $text = PHP_EOL."The detect_unicode setting must be disabled.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
-                    $text .= "    detect_unicode = Off".PHP_EOL;
+                    $text .= "    detect_unicode = Off";
                     break;
 
                 case 'suhosin':
                     $text = PHP_EOL."The suhosin.executor.include.whitelist setting is incorrect.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
-                    $text .= "    suhosin.executor.include.whitelist = phar ".$current.PHP_EOL;
+                    $text .= "    suhosin.executor.include.whitelist = phar ".$current;
                     break;
 
                 case 'php':
-                    $text = PHP_EOL."Your PHP ({$current}) is too old, you must upgrade to PHP 5.3.2 or higher.".PHP_EOL;
+                    $text = PHP_EOL."Your PHP ({$current}) is too old, you must upgrade to PHP 5.3.2 or higher.";
                     break;
 
                 case 'allow_url_fopen':
                     $text = PHP_EOL."The allow_url_fopen setting is incorrect.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
-                    $text .= "    allow_url_fopen = On".PHP_EOL;
+                    $text .= "    allow_url_fopen = On";
                     break;
 
                 case 'ioncube':
                     $text = PHP_EOL."The ionCube Loader extension is incompatible with Phar files.".PHP_EOL;
                     $text .= "Remove this line (path may be different) from your `php.ini`:".PHP_EOL;
-                    $text .= "    zend_extension = /usr/lib/php5/20090626+lfs/ioncube_loader_lin_5.3.so".PHP_EOL;
+                    $text .= "    zend_extension = /usr/lib/php5/20090626+lfs/ioncube_loader_lin_5.3.so";
                     break;
             }
             out($text, 'info');
@@ -141,15 +141,15 @@ function checkPlatform()
     }
 
     if (!empty($warnings)) {
-        out("Some settings on your machine may cause stability issues with Composer.".PHP_EOL, 'error');
+        out("Some settings on your machine may cause stability issues with Composer.", 'error');
 
-        out('If you encounter issues, try to change the following:'.PHP_EOL, 'error');
+        out('If you encounter issues, try to change the following:', 'error');
         foreach ($warnings as $warning => $current) {
             switch ($warning) {
                 case 'apc_cli':
                     $text = PHP_EOL."The apc.enable_cli setting is incorrect.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
-                    $text .= "    apc.enable_cli = Off".PHP_EOL;
+                    $text .= "    apc.enable_cli = Off";
                     break;
             }
             out($text, 'info');
@@ -158,7 +158,7 @@ function checkPlatform()
         return true;
     }
 
-    out("All settings correct for using Composer".PHP_EOL, 'success');
+    out("All settings correct for using Composer", 'success');
     return true;
 }
 
@@ -190,29 +190,39 @@ function installComposer($installDir)
             }
             unlink($file);
             if ($retries) {
-                out('The download is corrupt, retrying...'.PHP_EOL, 'error');
+                out('The download is corrupt, retrying...', 'error');
             } else {
-                out('The download is corrupt ('.$e->getMessage().'), aborting.'.PHP_EOL, 'error');
+                out('The download is corrupt ('.$e->getMessage().'), aborting.', 'error');
                 exit(1);
             }
         }
     }
     chmod($file, 0755);
 
-    out(PHP_EOL."Composer successfully installed to: " . $file, 'success');
-    out(PHP_EOL."Use it: php composer.phar".PHP_EOL, 'info');
+    out(PHP_EOL."Composer successfully installed to: " . $file, 'success', false);
+    out(PHP_EOL."Use it: php composer.phar", 'info');
 }
 
 /**
  * colorize output
  */
-function out($text, $color = null)
+function out($text, $color = null, $newLine = true)
 {
     $styles = array(
         'success' => "\033[0;32m%s\033[0m",
         'error' => "\033[31;31m%s\033[0m",
         'info' => "\033[33;33m%s\033[0m"
     );
+    
+    $format = '%s';
+    
+    if (array_key_exists($color, $styles)) {
+        $format = $styles[ $color ];
+    }
+    
+    if ($newLine) {
+        $format .= PHP_EOL;
+    }
 
-    printf(isset($styles[$color]) ? $styles[$color] : "%s", $text);
+    printf($format, $text);
 }
