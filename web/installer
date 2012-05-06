@@ -105,6 +105,17 @@ function checkPlatform()
         $warnings['apc_cli'] = true;
     }
 
+    ob_start();
+    phpinfo(INFO_GENERAL);
+    $phpinfo = ob_get_clean();
+    if (preg_match('{Configure Command(?: *</td><td class="v">| *=> *)(.*?)(?:</td>|$)}m', $phpinfo, $match)) {
+        $configure = $match[1];
+
+        if (false !== strpos($configure, '--enable-sigchild')) {
+            $warnings['sigchild'] = true;
+        }
+    }
+
     if (!empty($errors)) {
         out("Some settings on your machine make Composer unable to work properly.", 'error');
 
@@ -156,6 +167,12 @@ function checkPlatform()
                     $text = PHP_EOL."The apc.enable_cli setting is incorrect.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
                     $text .= "    apc.enable_cli = Off";
+                    break;
+
+                case 'sigchild':
+                    $text = PHP_EOL."PHP was compiled with --enable-sigchild which can cause issues on some platforms.".PHP_EOL;
+                    $text .= "Recompile it without this flag if possible, see also:".PHP_EOL;
+                    $text .= "    https://bugs.php.net/bug.php?id=22999";
                     break;
             }
             out($text, 'info');
