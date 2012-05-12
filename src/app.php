@@ -147,8 +147,8 @@ $app->get('/doc/{page}', function ($page) use ($app) {
     };
 
     // build TOC & deep links
-    $h1 = $h2 = $h3 = 0;
-    $nodes = $xpath->query('//*[self::h1 or self::h2 or self::h3]');
+    $h1 = $h2 = $h3 = $h4 = 0;
+    $nodes = $xpath->query('//*[self::h1 or self::h2 or self::h3 or self::h4]');
     foreach ($nodes as $node) {
         // set id and add anchor link
         $id = $genId($node);
@@ -172,6 +172,10 @@ $app->get('/doc/{page}', function ($page) use ($app) {
 
             case 'h3':
                 $toc[$h1][$h2][++$h3] = array('title' => $title, 'id' => $id, 'desc' => $desc);
+            break;
+
+            case 'h4':
+                $toc[$h1][$h2][$h3][++$h4] = array('title' => $title, 'id' => $id, 'desc' => $desc);
             break;
         }
     }
