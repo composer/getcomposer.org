@@ -116,7 +116,7 @@ h1 {
   line-height: 130%;
 }
 
-h1 .anchor, h2 .anchor, h3 .anchor {
+h1 .anchor, h2 .anchor, h3 .anchor, h4 .anchor {
   display: inline-block;
   margin-left: 5px;
   color: #ccc;
