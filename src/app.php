@@ -32,6 +32,10 @@ $app->get('/download/', function () use ($app) {
     foreach (glob(__DIR__.'/../web/download/*', GLOB_ONLYDIR) as $version) {
         $versions[] = basename($version);
     }
+
+    usort($versions, 'version_compare');
+    $versions = array_reverse($versions);
+
     return $app['twig']->render('download.html.twig', array(
         'page' => 'download',
         'versions' => $versions
