@@ -4,12 +4,14 @@
     <h1>Download Composer</h1>
     <p>Run this in your terminal to get the latest Composer version:</p>
     <code>curl -s http://getcomposer.org/installer | php</code>
+    <p>Or if you don't have curl:</p>
+    <code>php -r "eval('?>'.file_get_contents('http://getcomposer.org/installer'));"</code>
     <p>This installer script will simply check some php.ini settings, warn you if they are set incorrectly, and then download the latest composer.phar in the current directory</p>
 
-    <p>You can install composer to a specific directory by using the `--install-dir` option and providing a target directory (it can be an absolute or relative path):</p>
+    <p>You can install composer to a specific directory by using the `--install-dir` option and providing a target directory. Options must be appended to <code>--</code> so that PHP ignores them, like <code>-- --install-dir=bin</code>, example:</p>
     <code>curl -s http://getcomposer.org/installer | php -- --install-dir=bin</code>
 
-    <p>If you prefer to download a phar directly, here are the available composer.phar archives:</p>
+    <p>If you prefer to download the phar manually, here are the available versions:</p>
     <p>
         <a href="{{ app.request.basePath }}/composer.phar">Latest Snapshot</a><br />
         {% for version in versions %}
