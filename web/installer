@@ -233,6 +233,18 @@ function installComposer($installDir)
  */
 function out($text, $color = null, $newLine = true)
 {
+    static $hasColorSupport;
+
+    if (null === $hasColorSupport) {
+        if (DIRECTORY_SEPARATOR == '\\') {
+            $hasColorSupport = false !== getenv('ANSICON');
+        } else {
+            $stream = fopen('php://stdout', 'w');
+            $hasColorSupport = function_exists('posix_isatty') && @posix_isatty($stream);
+            fclose($stream);
+        }
+    }
+
     $styles = array(
         'success' => "\033[0;32m%s\033[0m",
         'error' => "\033[31;31m%s\033[0m",
@@ -240,12 +252,6 @@ function out($text, $color = null, $newLine = true)
     );
 
     $format = '%s';
-
-    if (DIRECTORY_SEPARATOR == '\\') {
-        $hasColorSupport = false !== getenv('ANSICON');
-    } else {
-        $hasColorSupport = function_exists('posix_isatty') && @posix_isatty($this->stream);
-    }
 
     if (isset($styles[$color]) && $hasColorSupport) {
         $format = $styles[$color];
