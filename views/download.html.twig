@@ -14,8 +14,8 @@
     <p>If you prefer to download the phar manually, here are the available versions:</p>
     <p>
         <a href="{{ app.request.basePath }}/composer.phar">Latest Snapshot</a><br />
-        {% for version in versions %}
-            <a href="{{ path('download_version', {version: version}) }}">{{ version }}</a><br />
+        {% for version, date in versions %}
+            <a href="{{ path('download_version', {version: version}) }}">{{ version }}</a> ({{ date|date('Y-m-d') }})<br />
         {% endfor %}
     </p>
 {% endblock %}

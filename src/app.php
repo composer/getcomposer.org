@@ -30,10 +30,10 @@ $app->get('/', function () use ($app) {
 $app->get('/download/', function () use ($app) {
     $versions = array();
     foreach (glob(__DIR__.'/../web/download/*', GLOB_ONLYDIR) as $version) {
-        $versions[] = basename($version);
+        $versions[basename($version)] = new \DateTime('@'.filemtime($version));
     }
 
-    usort($versions, 'version_compare');
+    uksort($versions, 'version_compare');
     $versions = array_reverse($versions);
 
     return $app['twig']->render('download.html.twig', array(
