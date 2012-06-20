@@ -30,7 +30,7 @@ $app->get('/', function () use ($app) {
 $app->get('/download/', function () use ($app) {
     $versions = array();
     foreach (glob(__DIR__.'/../web/download/*', GLOB_ONLYDIR) as $version) {
-        $versions[basename($version)] = new \DateTime('@'.filemtime($version));
+        $versions[basename($version)] = new \DateTime('@'.filemtime($version.'/composer.phar'));
     }
 
     uksort($versions, 'version_compare');
