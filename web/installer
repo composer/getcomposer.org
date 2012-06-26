@@ -21,6 +21,7 @@ function process($argv)
     $check      = in_array('--check', $argv);
     $help       = in_array('--help', $argv);
     $force      = in_array('--force', $argv);
+    $quiet      = in_array('--quiet', $argv);
     $installDir = false;
 
     foreach ($argv as $key => $val) {
@@ -38,7 +39,7 @@ function process($argv)
         exit(0);
     }
 
-    $ok = checkPlatform();
+    $ok = checkPlatform($quiet);
 
     if (false !== $installDir && !is_dir($installDir)) {
         out("The defined install dir ({$installDir}) does not exist.", 'info');
@@ -50,7 +51,7 @@ function process($argv)
     }
 
     if ($ok || $force) {
-        installComposer($installDir);
+        installComposer($installDir, $quiet);
     }
 
     exit(0);
@@ -76,7 +77,7 @@ EOF;
 /**
  * check the platform for possible issues on running composer
  */
-function checkPlatform()
+function checkPlatform($quiet)
 {
     $errors = array();
     $warnings = array();
@@ -182,14 +183,16 @@ function checkPlatform()
         return true;
     }
 
-    out("All settings correct for using Composer", 'success');
+    if (!$quiet) {
+        out("All settings correct for using Composer", 'success');
+    }
     return true;
 }
 
 /**
  * installs composer to the current working directory
  */
-function installComposer($installDir)
+function installComposer($installDir, $quiet)
 {
     $installPath = (is_dir($installDir) ? rtrim($installDir, '/').'/' : '') . 'composer.phar';
     $installDir = realpath($installDir) ? realpath($installDir) : getcwd();
@@ -201,7 +204,9 @@ function installComposer($installDir)
 
     $retries = 3;
     while ($retries--) {
-        out("Downloading...", 'info');
+        if (!$quiet) {
+            out("Downloading...", 'info');
+        }
         copy('http://getcomposer.org/composer.phar', $file, getStreamContext());
         try {
             // test the phar validity
@@ -215,7 +220,9 @@ function installComposer($installDir)
             }
             unlink($file);
             if ($retries) {
-                out('The download is corrupt, retrying...', 'error');
+                if (!$quiet) {
+                   out('The download is corrupt, retrying...', 'error');
+                }
             } else {
                 out('The download is corrupt ('.$e->getMessage().'), aborting.', 'error');
                 exit(1);
@@ -224,8 +231,10 @@ function installComposer($installDir)
     }
     chmod($file, 0755);
 
-    out(PHP_EOL."Composer successfully installed to: " . $file, 'success', false);
-    out(PHP_EOL."Use it: php $installPath", 'info');
+    if (!$quiet) {
+        out(PHP_EOL."Composer successfully installed to: " . $file, 'success', false);
+        out(PHP_EOL."Use it: php $installPath", 'info');
+    }
 }
 
 /**
