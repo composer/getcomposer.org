@@ -90,6 +90,10 @@ function checkPlatform($quiet)
         $errors['suhosin'] = $suhosin;
     }
 
+    if (!extension_loaded('Phar')) {
+        $errors['phar'] = true;
+    }
+
     if (!ini_get('allow_url_fopen')) {
         $errors['allow_url_fopen'] = true;
     }
@@ -123,6 +127,11 @@ function checkPlatform($quiet)
         out('Make sure that you fix the issues listed below and run this script again:', 'error');
         foreach ($errors as $error => $current) {
             switch ($error) {
+                case 'phar':
+                    $text = PHP_EOL."The phar extension is missing.".PHP_EOL;
+                    $text .= "Install it or recompile php without --disable-phar";
+                    break;
+
                 case 'unicode':
                     $text = PHP_EOL."The detect_unicode setting must be disabled.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
