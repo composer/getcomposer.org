@@ -21,6 +21,7 @@ function process($argv)
     $check      = in_array('--check', $argv);
     $help       = in_array('--help', $argv);
     $force      = in_array('--force', $argv);
+    $quiet      = in_array('--quiet', $argv);
     $installDir = false;
 
     foreach ($argv as $key => $val) {
@@ -31,6 +32,10 @@ function process($argv)
                 $installDir = trim(substr($val, 14));
             }
         }
+    }
+
+    if ($quiet) {
+        ob_start();
     }
 
     if ($help) {
@@ -51,6 +56,10 @@ function process($argv)
 
     if ($ok || $force) {
         installComposer($installDir);
+    }
+
+    if ($quiet) {
+        ob_end_clean();
     }
 
     exit(0);
