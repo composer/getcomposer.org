@@ -1,2 +1,5 @@
 vendor
 silex.phar
+composer-src/
+web/composer.phar
+web/version
