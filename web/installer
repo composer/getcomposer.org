@@ -217,7 +217,8 @@ function installComposer($installDir, $quiet)
         if (!$quiet) {
             out("Downloading...", 'info');
         }
-        copy('http://getcomposer.org/composer.phar', $file, getStreamContext());
+        $source = (extension_loaded('openssl') ? 'https' : 'http').'://getcomposer.org/composer.phar';
+        copy($source, $file, getStreamContext());
         try {
             // test the phar validity
             $phar = new Phar($file);
