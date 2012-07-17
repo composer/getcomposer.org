@@ -111,6 +111,10 @@ function checkPlatform($quiet)
         $warnings['apc_cli'] = true;
     }
 
+    if (!ini_get('date.timezone')) {
+        $warnings['timezone'] = true;
+    }
+
     ob_start();
     phpinfo(INFO_GENERAL);
     $phpinfo = ob_get_clean();
@@ -185,6 +189,12 @@ function checkPlatform($quiet)
                     $text .= "Recompile it without this flag if possible, see also:".PHP_EOL;
                     $text .= "    https://bugs.php.net/bug.php?id=22999";
                     break;
+
+                case 'timezone':
+                    $text = PHP_EOL."The date.timezone setting should be provided.".PHP_EOL;
+                    $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
+                    $text .= "    ; UTC here is an example, use your own timezone, see http://www.php.net/manual/en/timezones.php".PHP_EOL;
+                    $text .= "    date.timezone = UTC";
             }
             out($text, 'info');
         }
