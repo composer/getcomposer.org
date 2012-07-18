@@ -107,6 +107,10 @@ function checkPlatform($quiet)
         $errors['php'] = PHP_VERSION;
     }
 
+    if (version_compare(PHP_VERSION, '5.3.4', '<')) {
+        $warnings['php'] = PHP_VERSION;
+    }
+
     if (ini_get('apc.enable_cli')) {
         $warnings['apc_cli'] = true;
     }
@@ -195,6 +199,11 @@ function checkPlatform($quiet)
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
                     $text .= "    ; UTC here is an example, use your own timezone, see http://www.php.net/manual/en/timezones.php".PHP_EOL;
                     $text .= "    date.timezone = UTC";
+
+                case 'php':
+                    $text = PHP_EOL."Your PHP ({$current}) is quite old, upgrading to PHP 5.3.4 or higher is recommended.".PHP_EOL;
+                    $text .= "Composer works with 5.3.2+ for most people, but there might be edge case issues.";
+                    break;
             }
             out($text, 'info');
         }
