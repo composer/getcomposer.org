@@ -199,6 +199,7 @@ function checkPlatform($quiet)
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
                     $text .= "    ; UTC here is an example, use your own timezone, see http://www.php.net/manual/en/timezones.php".PHP_EOL;
                     $text .= "    date.timezone = UTC";
+                    break;
 
                 case 'php':
                     $text = PHP_EOL."Your PHP ({$current}) is quite old, upgrading to PHP 5.3.4 or higher is recommended.".PHP_EOL;
