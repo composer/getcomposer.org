@@ -210,13 +210,13 @@ function checkPlatform($quiet)
                     break;
 
                 case 'xdebug_scream':
-                    $text = PHP_EOL."The xdebug.scream setting might make you see suppressed errors, it is recommended you turn it of.".PHP_EOL;
+                    $text = PHP_EOL."The xdebug.scream setting might make you see suppressed errors, it is recommended you turn it off.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
                     $text .= "    xdebug.scream = Off";
                     break;
 
                 case 'xdebug_exception':
-                    $text = PHP_EOL."The xdebug.show_exception_trace setting will make you see caught exceptions, it is recommended you turn it of.".PHP_EOL;
+                    $text = PHP_EOL."The xdebug.show_exception_trace setting will make you see caught exceptions, it is recommended you turn it off.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
                     $text .= "    xdebug.show_exception_trace = Off";
                     break;
