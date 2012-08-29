@@ -237,8 +237,23 @@ function installComposer($installDir, $quiet)
         if (!$quiet) {
             out("Downloading...", 'info');
         }
+
         $source = (extension_loaded('openssl') ? 'https' : 'http').'://getcomposer.org/composer.phar';
-        copy($source, $file, getStreamContext());
+        $errorMessage = '';
+        set_error_handler(function ($code, $msg) use (&$errorMessage) {
+            if ($errorMessage) {
+                $errorMessage .= "\n";
+            }
+            $errorMessage .= preg_replace('{^copy\(.*?\): }', '', $msg);
+        });
+        if (!copy($source, $file, getStreamContext())) {
+            out('Download failed: '.$errorMessage, 'error');
+        }
+        restore_error_handler();
+        if ($errorMessage) {
+            continue;
+        }
+
         try {
             // test the phar validity
             $phar = new Phar($file);
@@ -260,6 +275,12 @@ function installComposer($installDir, $quiet)
             }
         }
     }
+
+    if ($errorMessage) {
+        out('The download failed repeatedly, aborting.', 'error');
+        exit(1);
+    }
+
     chmod($file, 0755);
 
     if (!$quiet) {
