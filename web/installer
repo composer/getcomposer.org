@@ -86,9 +86,12 @@ function checkPlatform($quiet)
         $errors['unicode'] = 'On';
     }
 
-    $suhosin = ini_get('suhosin.executor.include.whitelist');
-    if (false !== $suhosin && false === stripos($suhosin, 'phar')) {
-        $errors['suhosin'] = $suhosin;
+    if (extension_loaded('suhosin')) {
+        $suhosin = ini_get('suhosin.executor.include.whitelist');
+        $suhosinBlacklist = ini_get('suhosin.executor.include.blacklist');
+        if (false === stripos($suhosin, 'phar') && (!$suhosinBlacklist || false !== stripos($suhosinBlacklist, 'phar'))) {
+            $errors['suhosin'] = $suhosin;
+        }
     }
 
     if (!extension_loaded('Phar')) {
