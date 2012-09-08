@@ -82,6 +82,14 @@ function checkPlatform($quiet)
 {
     $errors = array();
     $warnings = array();
+    $inipath = php_ini_loaded_file();
+    $displayIniMessage = false;
+    if ($inipath) {
+        $iniMessage = 'Loaded php.ini: ' . $inipath;
+    } else {
+        $iniMessage = "A php.ini file doesn't exist.  Please create one.";
+    }
+
     if (ini_get('detect_unicode')) {
         $errors['unicode'] = 'On';
     }
@@ -147,13 +155,15 @@ function checkPlatform($quiet)
                 case 'unicode':
                     $text = PHP_EOL."The detect_unicode setting must be disabled.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
-                    $text .= "    detect_unicode = Off";
+                    $text .= "    detect_unicode = Off".PHP_EOL;
+                    $displayIniMessage = true;
                     break;
 
                 case 'suhosin':
                     $text = PHP_EOL."The suhosin.executor.include.whitelist setting is incorrect.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini` or suhosin.ini (Example path [for Debian]: /etc/php5/cli/conf.d/suhosin.ini):".PHP_EOL;
-                    $text .= "    suhosin.executor.include.whitelist = phar ".$current;
+                    $text .= "    suhosin.executor.include.whitelist = phar ".$current.PHP_EOL;
+                    $displayIniMessage = true;
                     break;
 
                 case 'php':
@@ -163,14 +173,19 @@ function checkPlatform($quiet)
                 case 'allow_url_fopen':
                     $text = PHP_EOL."The allow_url_fopen setting is incorrect.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
-                    $text .= "    allow_url_fopen = On";
+                    $text .= "    allow_url_fopen = On".PHP_EOL;
+                    $displayIniMessage = true;
                     break;
 
                 case 'ioncube':
                     $text = PHP_EOL."The ionCube Loader extension is incompatible with Phar files.".PHP_EOL;
                     $text .= "Remove this line (path may be different) from your `php.ini`:".PHP_EOL;
-                    $text .= "    zend_extension = /usr/lib/php5/20090626+lfs/ioncube_loader_lin_5.3.so";
+                    $text .= "    zend_extension = /usr/lib/php5/20090626+lfs/ioncube_loader_lin_5.3.so".PHP_EOL;
+                    $displayIniMessage = true;
                     break;
+            }
+            if ($displayIniMessage) {
+                $text .= $iniMessage;
             }
             out($text, 'info');
         }
@@ -188,7 +203,8 @@ function checkPlatform($quiet)
                 case 'apc_cli':
                     $text = PHP_EOL."The apc.enable_cli setting is incorrect.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
-                    $text .= "    apc.enable_cli = Off";
+                    $text .= "    apc.enable_cli = Off".PHP_EOL;
+                    $displayIniMessage = true;
                     break;
 
                 case 'sigchild':
@@ -201,13 +217,17 @@ function checkPlatform($quiet)
                     $text = PHP_EOL."The date.timezone setting should be provided.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
                     $text .= "    ; UTC here is an example, use your own timezone, see http://www.php.net/manual/en/timezones.php".PHP_EOL;
-                    $text .= "    date.timezone = UTC";
+                    $text .= "    date.timezone = UTC".PHP_EOL;
+                    $displayIniMessage = true;
                     break;
 
                 case 'php':
                     $text = PHP_EOL."Your PHP ({$current}) is quite old, upgrading to PHP 5.3.4 or higher is recommended.".PHP_EOL;
                     $text .= "Composer works with 5.3.2+ for most people, but there might be edge case issues.";
                     break;
+            }
+            if ($displayIniMessage) {
+                $text .= $iniMessage;
             }
             out($text, 'info');
         }
