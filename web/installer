@@ -102,8 +102,8 @@ function checkPlatform($quiet)
         $errors['allow_url_fopen'] = true;
     }
 
-    if (extension_loaded('ionCube Loader')) {
-        $errors['ioncube'] = true;
+    if (extension_loaded('ionCube Loader') && version_compare(ioncube_loader_version(), '4.0.9', '<')) {
+        $errors['ioncube'] = ioncube_loader_version();
     }
 
     if (version_compare(PHP_VERSION, '5.3.2', '<')) {
@@ -167,8 +167,8 @@ function checkPlatform($quiet)
                     break;
 
                 case 'ioncube':
-                    $text = PHP_EOL."The ionCube Loader extension is incompatible with Phar files.".PHP_EOL;
-                    $text .= "Remove this line (path may be different) from your `php.ini`:".PHP_EOL;
+                    $text = PHP_EOL."Your ionCube Loader extension ($current) is incompatible with Phar files.".PHP_EOL;
+                    $text .= "Upgrade to ionCube 4.0.9 or higher or remove this line (path may be different) from your `php.ini` to disable it:".PHP_EOL;
                     $text .= "    zend_extension = /usr/lib/php5/20090626+lfs/ioncube_loader_lin_5.3.so";
                     break;
             }
