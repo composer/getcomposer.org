@@ -242,18 +242,13 @@ function installComposer($installDir, $quiet)
         }
 
         $source = (extension_loaded('openssl') ? 'https' : 'http').'://getcomposer.org/composer.phar';
-        $errorMessage = '';
-        set_error_handler(function ($code, $msg) use (&$errorMessage) {
-            if ($errorMessage) {
-                $errorMessage .= "\n";
-            }
-            $errorMessage .= preg_replace('{^copy\(.*?\): }', '', $msg);
-        });
+        $errorHandler = new ErrorHandler();
+        set_error_handler(array($errorHandler, 'handleError'));
         if (!copy($source, $file, getStreamContext())) {
-            out('Download failed: '.$errorMessage, 'error');
+            out('Download failed: '.$errorHandler->message, 'error');
         }
         restore_error_handler();
-        if ($errorMessage) {
+        if ($errorHandler->message) {
             continue;
         }
 
@@ -279,7 +274,7 @@ function installComposer($installDir, $quiet)
         }
     }
 
-    if ($errorMessage) {
+    if ($errorHandler->message) {
         out('The download failed repeatedly, aborting.', 'error');
         exit(1);
     }
@@ -373,4 +368,17 @@ function getStreamContext()
     }
 
     return stream_context_create($options);
+}
+
+class ErrorHandler
+{
+    public $message = '';
+
+    public function handleError($code, $msg)
+    {
+        if ($this->message) {
+            $this->message .= "\n";
+        }
+        $this->message .= preg_replace('{^copy\(.*?\): }', '', $msg);
+    }
 }
