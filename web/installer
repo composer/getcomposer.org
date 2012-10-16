@@ -102,7 +102,7 @@ function checkPlatform($quiet)
         $errors['allow_url_fopen'] = true;
     }
 
-    if (extension_loaded('ionCube Loader') && version_compare(ioncube_loader_version(), '4.0.9', '<')) {
+    if (extension_loaded('ionCube Loader') && ioncube_loader_iversion() >= 40009) {
         $errors['ioncube'] = ioncube_loader_version();
     }
 
