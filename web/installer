@@ -86,9 +86,9 @@ function checkPlatform($quiet)
     $iniPath = php_ini_loaded_file();
     $displayIniMessage = false;
     if ($iniPath) {
-        $iniMessage = PHP_EOL.'Loaded php.ini: ' . $iniPath;
+        $iniMessage = PHP_EOL.PHP_EOL.'The php.ini used by your command-line PHP is: ' . $iniPath;
     } else {
-        $iniMessage = PHP_EOL.'A php.ini file does not exist.  Please create one.';
+        $iniMessage = PHP_EOL.PHP_EOL.'A php.ini file does not exist. You will have to create one.';
     }
 
     if (ini_get('detect_unicode')) {
