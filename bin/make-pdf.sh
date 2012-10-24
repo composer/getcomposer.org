@@ -69,6 +69,7 @@ echo "\end{document}" >> book.tex
 # apply to whole book
 sed -i.bak 's/\\begin{verbatim}/\\begin{minipage}{\\textwidth} \\begin{lstlisting}/g' book.tex
 sed -i.bak 's/\\end{verbatim}/\\end{lstlisting} \\end{minipage}/g' book.tex
+sed -i.bak 's/\\textasciitilde{}/{\\raise.17ex\\hbox{$\\scriptstyle\\mathtt{\\sim}$}}/g' book.tex
 rm book.tex.bak
 
 pdflatex book.tex
