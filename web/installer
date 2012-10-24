@@ -82,6 +82,15 @@ function checkPlatform($quiet)
 {
     $errors = array();
     $warnings = array();
+
+    $iniPath = php_ini_loaded_file();
+    $displayIniMessage = false;
+    if ($iniPath) {
+        $iniMessage = PHP_EOL.PHP_EOL.'The php.ini used by your command-line PHP is: ' . $iniPath;
+    } else {
+        $iniMessage = PHP_EOL.PHP_EOL.'A php.ini file does not exist. You will have to create one.';
+    }
+
     if (ini_get('detect_unicode')) {
         $errors['unicode'] = 'On';
     }
@@ -102,8 +111,8 @@ function checkPlatform($quiet)
         $errors['allow_url_fopen'] = true;
     }
 
-    if (extension_loaded('ionCube Loader')) {
-        $errors['ioncube'] = true;
+    if (extension_loaded('ionCube Loader') && ioncube_loader_iversion() < 40009) {
+        $errors['ioncube'] = ioncube_loader_version();
     }
 
     if (version_compare(PHP_VERSION, '5.3.2', '<')) {
@@ -148,12 +157,14 @@ function checkPlatform($quiet)
                     $text = PHP_EOL."The detect_unicode setting must be disabled.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
                     $text .= "    detect_unicode = Off";
+                    $displayIniMessage = true;
                     break;
 
                 case 'suhosin':
                     $text = PHP_EOL."The suhosin.executor.include.whitelist setting is incorrect.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini` or suhosin.ini (Example path [for Debian]: /etc/php5/cli/conf.d/suhosin.ini):".PHP_EOL;
                     $text .= "    suhosin.executor.include.whitelist = phar ".$current;
+                    $displayIniMessage = true;
                     break;
 
                 case 'php':
@@ -164,13 +175,18 @@ function checkPlatform($quiet)
                     $text = PHP_EOL."The allow_url_fopen setting is incorrect.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
                     $text .= "    allow_url_fopen = On";
+                    $displayIniMessage = true;
                     break;
 
                 case 'ioncube':
-                    $text = PHP_EOL."The ionCube Loader extension is incompatible with Phar files.".PHP_EOL;
-                    $text .= "Remove this line (path may be different) from your `php.ini`:".PHP_EOL;
+                    $text = PHP_EOL."Your ionCube Loader extension ($current) is incompatible with Phar files.".PHP_EOL;
+                    $text .= "Upgrade to ionCube 4.0.9 or higher or remove this line (path may be different) from your `php.ini` to disable it:".PHP_EOL;
                     $text .= "    zend_extension = /usr/lib/php5/20090626+lfs/ioncube_loader_lin_5.3.so";
+                    $displayIniMessage = true;
                     break;
+            }
+            if ($displayIniMessage) {
+                $text .= $iniMessage;
             }
             out($text, 'info');
         }
@@ -189,6 +205,7 @@ function checkPlatform($quiet)
                     $text = PHP_EOL."The apc.enable_cli setting is incorrect.".PHP_EOL;
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
                     $text .= "    apc.enable_cli = Off";
+                    $displayIniMessage = true;
                     break;
 
                 case 'sigchild':
@@ -202,12 +219,16 @@ function checkPlatform($quiet)
                     $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
                     $text .= "    ; UTC here is an example, use your own timezone, see http://www.php.net/manual/en/timezones.php".PHP_EOL;
                     $text .= "    date.timezone = UTC";
+                    $displayIniMessage = true;
                     break;
 
                 case 'php':
                     $text = PHP_EOL."Your PHP ({$current}) is quite old, upgrading to PHP 5.3.4 or higher is recommended.".PHP_EOL;
                     $text .= "Composer works with 5.3.2+ for most people, but there might be edge case issues.";
                     break;
+            }
+            if ($displayIniMessage) {
+                $text .= $iniMessage;
             }
             out($text, 'info');
         }
@@ -242,18 +263,13 @@ function installComposer($installDir, $quiet)
         }
 
         $source = (extension_loaded('openssl') ? 'https' : 'http').'://getcomposer.org/composer.phar';
-        $errorMessage = '';
-        set_error_handler(function ($code, $msg) use (&$errorMessage) {
-            if ($errorMessage) {
-                $errorMessage .= "\n";
-            }
-            $errorMessage .= preg_replace('{^copy\(.*?\): }', '', $msg);
-        });
+        $errorHandler = new ErrorHandler();
+        set_error_handler(array($errorHandler, 'handleError'));
         if (!copy($source, $file, getStreamContext())) {
-            out('Download failed: '.$errorMessage, 'error');
+            out('Download failed: '.$errorHandler->message, 'error');
         }
         restore_error_handler();
-        if ($errorMessage) {
+        if ($errorHandler->message) {
             continue;
         }
 
@@ -279,7 +295,7 @@ function installComposer($installDir, $quiet)
         }
     }
 
-    if ($errorMessage) {
+    if ($errorHandler->message) {
         out('The download failed repeatedly, aborting.', 'error');
         exit(1);
     }
@@ -373,4 +389,17 @@ function getStreamContext()
     }
 
     return stream_context_create($options);
+}
+
+class ErrorHandler
+{
+    public $message = '';
+
+    public function handleError($code, $msg)
+    {
+        if ($this->message) {
+            $this->message .= "\n";
+        }
+        $this->message .= preg_replace('{^copy\(.*?\): }', '', $msg);
+    }
 }

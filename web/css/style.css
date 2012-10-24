@@ -199,9 +199,9 @@ li .tagline {
   font-style: italic;
   height: 40px;
   margin: 40px auto 0;
-  width: 640px;
+  max-width: 580px;
   padding-top: 5px;
-  text-align: center;
+  padding-left: 40px;
 }
 
 /* ==|== non-semantic helper classes ======================================== */

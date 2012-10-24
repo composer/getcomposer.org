@@ -17,10 +17,13 @@ $app->get('/download/', function () use ($app) {
     uksort($versions, 'version_compare');
     $versions = array_reverse($versions);
 
-    return $app['twig']->render('download.html.twig', array(
+    $data = array(
         'page' => 'download',
-        'versions' => $versions
-    ));
+        'versions' => $versions,
+        'windows' => false !== strpos($app['request']->headers->get('User-Agent'), 'Windows'),
+    );
+
+    return $app['twig']->render('download.html.twig', $data);
 })
 ->bind('download');
 

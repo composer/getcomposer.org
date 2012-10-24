@@ -1,4 +1,5 @@
 cd vendor/composer/composer
-git checkout master
-git pull origin master
-cd -
+git checkout -q master
+git fetch -q origin
+git rebase -q origin/master
+cd ../../..
