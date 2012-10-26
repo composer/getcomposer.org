@@ -35,8 +35,8 @@ cat > book.tex <<EOF
 \usepackage[htt]{hyphenat}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{lmodern}
 \usepackage{textcomp}
+\usepackage{tgpagella}
 
 \lstset{
     breaklines=true,
@@ -78,6 +78,8 @@ sed -i 's/\\begin{verbatim}/\\begin{minipage}{\\textwidth} \\begin{lstlisting}/g
 sed -i 's/\\end{verbatim}/\\end{lstlisting} \\end{minipage}/g' book.tex
 sed -i 's/\\textasciitilde{}/{\\raise.17ex\\hbox{$\\scriptstyle\\mathtt{\\sim}$}}/g' book.tex
 
+# first run to build index, second run to render everything
+pdflatex book.tex
 pdflatex book.tex
 
 mv book.pdf ../../web/
