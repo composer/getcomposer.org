@@ -5,15 +5,22 @@
 # * pandoc
 # * latex
 
+rm -rf cache/pdf
+mkdir cache/pdf
+mkdir cache/pdf/dev
+mkdir cache/pdf/articles
+mkdir cache/pdf/faqs
+
 cd vendor/composer/composer/doc
 
 for file in $(find . -type f -name '*.md')
 do
-    pandoc -o $(dirname $file)/$(basename $file .md).tex $file
+    pandoc -o ../../../../cache/pdf/$(dirname $file)/$(basename $file .md).tex $file
 done
 
-> book.tex
-cat >> book.tex <<EOF
+cd ../../../../cache/pdf
+
+cat > book.tex <<EOF
 \documentclass[letterpaper]{book}
 
 \title{Composer}
@@ -28,8 +35,8 @@ cat >> book.tex <<EOF
 \usepackage[htt]{hyphenat}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{lmodern}
 \usepackage{textcomp}
-\usepackage{tgpagella}
 
 \lstset{
     breaklines=true,
@@ -52,12 +59,12 @@ EOF
 cat *.tex >> book.tex
 
 # apply only to main part of book
-sed -i.bak 's/\\section{/\\chapter{/g' book.tex
-sed -i.bak 's/\\subsection{/\\section{/g' book.tex
-sed -i.bak 's/\\subsubsection{/\\subsection{/g' book.tex
-sed -i.bak '/←/d' book.tex
-sed -i.bak '/→/d' book.tex
-sed -i.bak 's/\\chapter{composer.json}/\\chapter[Schema]{composer.json}/g' book.tex
+sed -i 's/\\section{/\\chapter{/g' book.tex
+sed -i 's/\\subsection{/\\section{/g' book.tex
+sed -i 's/\\subsubsection{/\\subsection{/g' book.tex
+sed -i '/←/d' book.tex
+sed -i '/→/d' book.tex
+sed -i 's/\\chapter{composer.json}/\\chapter[Schema]{composer.json}/g' book.tex
 
 echo "\chapter{Articles}" >> book.tex
 cat articles/*.tex >> book.tex
@@ -67,15 +74,10 @@ echo >> book.tex
 echo "\end{document}" >> book.tex
 
 # apply to whole book
-sed -i.bak 's/\\begin{verbatim}/\\begin{minipage}{\\textwidth} \\begin{lstlisting}/g' book.tex
-sed -i.bak 's/\\end{verbatim}/\\end{lstlisting} \\end{minipage}/g' book.tex
-sed -i.bak 's/\\textasciitilde{}/{\\raise.17ex\\hbox{$\\scriptstyle\\mathtt{\\sim}$}}/g' book.tex
-rm book.tex.bak
+sed -i 's/\\begin{verbatim}/\\begin{minipage}{\\textwidth} \\begin{lstlisting}/g' book.tex
+sed -i 's/\\end{verbatim}/\\end{lstlisting} \\end{minipage}/g' book.tex
+sed -i 's/\\textasciitilde{}/{\\raise.17ex\\hbox{$\\scriptstyle\\mathtt{\\sim}$}}/g' book.tex
 
 pdflatex book.tex
-pdflatex book.tex
 
-rm *.tex articles/*.tex dev/*.tex faqs/*.tex
-rm book.{aux,log,out,toc}
-
-mv book.pdf ../../../..
+mv book.pdf ../../web/
