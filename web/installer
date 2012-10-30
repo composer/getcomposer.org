@@ -140,6 +140,10 @@ function checkPlatform($quiet)
         if (false !== strpos($configure, '--enable-sigchild')) {
             $warnings['sigchild'] = true;
         }
+
+        if (false !== strpos($configure, '--with-curlwrappers')) {
+            $warnings['curlwrappers'] = true;
+        }
     }
 
     if (!empty($errors)) {
@@ -212,6 +216,11 @@ function checkPlatform($quiet)
                     $text = PHP_EOL."PHP was compiled with --enable-sigchild which can cause issues on some platforms.".PHP_EOL;
                     $text .= "Recompile it without this flag if possible, see also:".PHP_EOL;
                     $text .= "    https://bugs.php.net/bug.php?id=22999";
+                    break;
+
+                case 'curlwrappers':
+                    $text = PHP_EOL."PHP was compiled with --with-curlwrappers which will cause issues with HTTP authentication and GitHub.".PHP_EOL;
+                    $text .= "Recompile it without this flag if possible";
                     break;
 
                 case 'timezone':
