@@ -81,5 +81,6 @@ sed -i 's/\\textasciitilde{}/{\\raise.17ex\\hbox{$\\scriptstyle\\mathtt{\\sim}$}
 # first run to build index, second run to render everything
 pdflatex book.tex
 pdflatex book.tex
+pdflatex book.tex
 
 mv book.pdf ../../web/
