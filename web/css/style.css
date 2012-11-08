@@ -157,9 +157,9 @@ blockquote p {
 }
 
 .toc, .toc ul {
-  padding-left: 0;
+  padding-left: 40px;
   margin: 0 0 10px 0;
-  list-style: decimal inside none;
+  list-style: decimal outside none;
   color: #000;
 }
 .toc ul {

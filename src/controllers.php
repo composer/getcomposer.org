@@ -141,6 +141,9 @@ $app->get('/doc/{page}', function ($page) use ($app) {
         // set id and add anchor link
         $id = $genId($node);
         $title = $getTitle($node);
+        if ('03-cli.md' === $page && 'Options' === $title) {
+            continue;
+        }
         $desc = $getDesc($node);
         $node->setAttribute('id', $id);
         $link = $dom->createElement('a', '#');
