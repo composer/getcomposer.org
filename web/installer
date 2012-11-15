@@ -123,6 +123,10 @@ function checkPlatform($quiet)
         $warnings['php'] = PHP_VERSION;
     }
 
+    if (!extension_loaded('openssl')) {
+        $warnings['openssl'] = true;
+    }
+
     if (ini_get('apc.enable_cli')) {
         $warnings['apc_cli'] = true;
     }
@@ -221,6 +225,11 @@ function checkPlatform($quiet)
                 case 'curlwrappers':
                     $text = PHP_EOL."PHP was compiled with --with-curlwrappers which will cause issues with HTTP authentication and GitHub.".PHP_EOL;
                     $text .= "Recompile it without this flag if possible";
+                    break;
+
+                case 'openssl':
+                    $text = PHP_EOL."The openssl extension is missing, which will reduce the security and stability of Composer.".PHP_EOL;
+                    $text .= "If possible you should enable it or recompile php with --with-openssl";
                     break;
 
                 case 'timezone':
