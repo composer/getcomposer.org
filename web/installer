@@ -131,10 +131,6 @@ function checkPlatform($quiet)
         $warnings['apc_cli'] = true;
     }
 
-    if (!ini_get('date.timezone')) {
-        $warnings['timezone'] = true;
-    }
-
     ob_start();
     phpinfo(INFO_GENERAL);
     $phpinfo = ob_get_clean();
@@ -230,14 +226,6 @@ function checkPlatform($quiet)
                 case 'openssl':
                     $text = PHP_EOL."The openssl extension is missing, which will reduce the security and stability of Composer.".PHP_EOL;
                     $text .= "If possible you should enable it or recompile php with --with-openssl";
-                    break;
-
-                case 'timezone':
-                    $text = PHP_EOL."The date.timezone setting should be provided.".PHP_EOL;
-                    $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
-                    $text .= "    ; UTC here is an example, use your own timezone, see http://www.php.net/manual/en/timezones.php".PHP_EOL;
-                    $text .= "    date.timezone = UTC";
-                    $displayIniMessage = true;
                     break;
 
                 case 'php':
