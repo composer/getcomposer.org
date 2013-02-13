@@ -24,7 +24,7 @@ git rebase origin/master -q && \
 $composer install -q && \
 php -d phar.readonly=0 $buildscript && \
 mv $buildphar "$root/$target/$buildphar" && \
-git log --pretty="%h" -n1 HEAD > "$root/$target/version"
+git log --pretty="%H" -n1 HEAD > "$root/$target/version"
 
 # create tagged releases
 for version in `git tag`; do
