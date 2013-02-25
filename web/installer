@@ -90,6 +90,7 @@ function checkPlatform($quiet)
     } else {
         $iniMessage = PHP_EOL.PHP_EOL.'A php.ini file does not exist. You will have to create one.';
     }
+    $iniMessage .= PHP_EOL.'If you can not modify the ini file, you can also run `php -d option=value` to modify ini values on the fly. You can use -d multiple times.';
 
     if (ini_get('detect_unicode')) {
         $errors['unicode'] = 'On';
