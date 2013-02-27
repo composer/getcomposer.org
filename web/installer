@@ -272,9 +272,16 @@ function installComposer($installDir, $quiet)
         $source = (extension_loaded('openssl') ? 'https' : 'http').'://getcomposer.org/composer.phar';
         $errorHandler = new ErrorHandler();
         set_error_handler(array($errorHandler, 'handleError'));
-        if (!copy($source, $file, getStreamContext())) {
-            out('Download failed: '.$errorHandler->message, 'error');
+
+        $fh = fopen($file, 'w');
+        if (!$fh) {
+            out('Create file $file failed: '.$errorHandler->message, 'error');
         }
+        if (!fwrite($fh, file_get_contents($source, false, getStreamContext()))) {
+            out('Copy data to file $file failed: '.$errorHandler->message, 'error');
+        }
+        fclose($fh);
+                                        
         restore_error_handler();
         if ($errorHandler->message) {
             continue;
