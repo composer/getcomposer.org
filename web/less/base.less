@@ -24,9 +24,12 @@
 		--- Intro
 		--- Page
 		--- Sidebar
+		--- Block buttons
+		--- Docs
 	--- Media Queries
-		--- width < 1210px
-		--- width < 845
+		--- width < 1280px
+		--- width < 845px
+		--- width < 690px
 	
 ------------------------------------------------------ */
 
@@ -125,6 +128,7 @@
 			.clearfix();
 			position:	relative;
 			z-index: 	10;
+			overflow-x:	hidden;
 		}
 		
 		a {
@@ -137,10 +141,16 @@
 		
 		.logo {
 			display:		block;
-			width:			300px;
-			height:			150px;
-			background:		#333;
+			width:			125px;
+			height:			20px;
+			background:		url('../img/logo_white.png') no-repeat center center;
 			text-indent:	-999em;
+			
+			&:hover {
+				background:		url('../img/logo_white.png') no-repeat center center transparent !important;
+				border-color:	transparent !important;
+				opacity:		0.7;
+			}
 		}
 		
 		.icon {
@@ -439,6 +449,16 @@
 					}
 				}
 			}
+			
+			&.loading {
+				display: block;
+				height: 200px;
+				background: url('../img/icons/loader.gif') no-repeat center center #333;
+				
+				span, a, div, p, h1, h2, h3, h4, #post_info {
+					display: none;
+				}
+			}
 		}
 	}
 	
@@ -549,31 +569,31 @@
 /* ---		Media Queries	--- */
 
 	/* Max width: 1210px */
-	@media screen and (max-width: 1210px) {
+	@media screen and (max-width: 1280px) {
 		
 		/* Header */
 		#header {
-			height: 70px;
-			line-height: 25px;
+			height: 		70px;
+			line-height:	25px;
 			
 			ul li {
 				display: inline-block;
 				
 				a {
-					display: block;
-					padding-top: 10px;
-					height: 60px;
+					display: 		block;
+					padding-top: 	10px;
+					height: 		60px;
 					
 					span.icon {
-						margin-right: 0;
-						display: block;
-						text-align: center;
+						margin-right: 	0;
+						display: 		block;
+						text-align: 	center;
 					}
 					
 					p {
-						display: block;
+						display: 	block;
 						text-align: center;
-						font-size: 0.8em;
+						font-size: 	0.8em;
 					}
 				}
 			}
@@ -603,17 +623,17 @@
 		
 		/* Header */
 		#header {
-			display: block;
-			height: 50px;
+			display: 	block;
+			height: 	50px;
 			
 			ul li {
 				display: inline-block;
 				
 				a {
-					display: block;
-					height: 50px;
-					line-height: 50px;
-					padding-top: 0;
+					display: 		block;
+					height: 		50px;
+					line-height: 	50px;
+					padding-top: 	0;
 					
 					p {
 						display: none;
@@ -684,8 +704,19 @@
 			}
 		}
 		
+		/* Page */
+		#page {
+			display: block;
+			
+			h4, h2 {
+				font-size: 1.25em;
+			}
+		}
+		
 		/* Block buttons */
 		.button_block {
+			padding: 10px !important;
+			
 			a {
 				font-size: 1em !important;
 				
@@ -706,6 +737,27 @@
 					a {
 						font-size: 	0.75em;
 						padding: 	20px;
+					}
+				}
+			}
+		}
+		
+		/* Footer */
+		#footer {
+			display: block;
+			
+			ul {
+				display: block;
+				
+				li {
+					display:	block;
+					float:		none;
+					clear:		both;
+					width:		100%;
+					
+					a {
+						display: 	block;
+						padding:	20px 0;
 					}
 				}
 			}

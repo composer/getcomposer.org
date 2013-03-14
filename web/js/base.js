@@ -15,9 +15,19 @@
 
 /* ---		Document Ready		--- */
 $(document).ready(function() {
-	$('.realtime_time').timeago();
+	// Controls the mobile navigation stack.
 	MobileNavigation.init();
 	
+	// Get the stuff from Github.
+	LatestCommit.init('https://api.github.com/repos/composer/composer/commits');
+	
+	// Resizer.
+	Resizer.init(new Array('MobileNavigation.close()'));
+	
+	// Time since something happened.
+	$('.realtime_time').timeago();
+	
+	// Prettier scrolling.
 	$('body').on('click', 'a.anchor, .toc li a', function(e) {
 		e.preventDefault();
 		
@@ -26,6 +36,29 @@ $(document).ready(function() {
 		}, 1000);
 	});
 });
+
+/* ---		Latest Commit		--- */
+var LatestCommit = {
+	location: false,
+	
+	init: function(location) {
+		if($('#latest_commit').length > 0) {
+			this.location = location;
+			this.getLatestCommit();
+		}
+	},
+	
+	getLatestCommit: function() {
+		$.get(this.location, function(data) {
+			var commit = data[0];
+			
+			$('#latest_commit #post_info a:first span:last').text(commit.commit.author.name);
+			$('#latest_commit #post_info a:last span:last').text($.timeago(commit.commit.author.date));
+			$('#latest_commit p').text(commit.commit.message);
+			$('#latest_commit').removeClass('loading');
+		});
+	}
+}
 
 /* ---		Mobile Navigation	--- */
 var MobileNavigation = {
@@ -79,6 +112,29 @@ var MobileNavigation = {
 		$('#header ul').on('click', 'li.show_menu a', function(e) {
 			e.preventDefault();
 			instance.toggle();
+		});
+	}
+}
+
+/* ---		Resizer		--- */
+var Resizer = {
+	width: false,
+	
+	init: function(functions) {
+		this.calculate(functions);
+	},
+	
+	calculate: function(functions) {
+		this.width = $(window).width();
+		console.log(this.width);
+		var obj = this;
+		$(window).resize(function(e) {
+			obj.width = $(window).width();
+			if(functions && functions.length > 0) {
+				$.each(functions, function(key, value) {
+					eval(value);
+				});
+			}
 		});
 	}
 }

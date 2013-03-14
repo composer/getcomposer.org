@@ -4,8 +4,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Response;
 
 $app->get('/', function () use ($app) {
-	$commits = json_decode(file_get_contents('https://api.github.com/repos/composer/composer/commits'));
-    return $app['twig']->render('index.html.twig', array('commit' => $commits[0]));
+    return $app['twig']->render('index.html.twig');
 })
 ->bind('home');
 

@@ -32,13 +32,13 @@
 					<a href="{{ path('docs.view', {page: '00-intro.md'}) }}"><span class="icon">Y</span>Getting Started</a>
 				</div>
 				<p class="margintop marginbottom"><span>Composer</span>, written by <a href="#">Nils Andermann</a>, <a href="#">Jordi Boggiano</a> and many <a href="#">community contributors</a>, is an <span>open-source technology</span> licensed under the <a href="#">MIT license</a>.</p>
-				<div id="latest_commit" class="margintop">
+				<div id="latest_commit" class="margintop loading">
 					<div id="post_info">
-						<a href="{{ commit.author.html_url }}" target="_blank"><span class="icon">&acirc;</span>{{ commit.commit.committer.name }}</a>
-						<a href="https://github.com/composer/composer/commit/7b549010d59a45fcdda1cd1e6b6aed9843b6ee4e/{{ commit.sha }}" target="_blank"><span class="icon">[</span><span class="realtime_time" title="{{ commit.commit.committer.date }}">{{ commit.commit.committer.date }}</span></a>
+						<a href="#" target="_blank"><span class="icon">&acirc;</span><span>Loading</span></a>
+						<a href="#" target="_blank"><span class="icon">[</span><span class="realtime_time">Loading</span></a>
 					</div>
 					<h2>Latest Commit:</h2>
-					<p>{{ commit.commit.message }}</p>
+					<p>Loading</p>
 				</div>
 				<div id="get_github" class="button_block">
 					<a href="http://github.com/composer/composer"><span class="icon social icon-github"></span>Get it on Github</a>
