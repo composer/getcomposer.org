@@ -12,7 +12,7 @@
 	
 	--- Variables
 		--- Fonts
-		--- Colours
+		--- colors
 		--- Sizing
 		
 	--- Mixins
@@ -38,12 +38,12 @@
 	@font_icon:				'Sosa';		/* Provided by TenByTwenty (http://www.tenbytwenty.com/sosa.php) */
 	@font_icon_social:		'Brandico';
 	
-	/* Colours */
-	@colour_bg_base:		#fff;
-	@colour_bg_highlight:	#ece9e2;
-	@colour_type_base:		#313131;
-	@colour_type_link:		#446CB3;
-	@colour_header_base:	#446CB3;
+	/* colors */
+	@color_bg_base:			#fff;
+	@color_bg_highlight:	#ece9e2;
+	@color_type_base:		#313131;
+	@color_type_link:		#446CB3;
+	@color_header_base:		#446CB3;
 	
 	/* Sizing */
 	@width_wrapper:			90%;
@@ -93,7 +93,7 @@
 		
 		&:hover {
 			.twoway_gradient(#fff, #f9f9f9);
-			border-colour:	#ddd;
+			border-color:	#ddd;
 			color:			#333;
 			text-shadow:	none;
 		}
@@ -118,8 +118,8 @@
 		font-size:		16px;
 		line-height:	1.6em;
 		font-family:	@font_base, Helvetica, Tahoma, Arial;
-		background:		@colour_bg_base;
-		color:			@colour_type_base;
+		background:		@color_bg_base;
+		color:			@color_type_base;
 		
 		#slide_wrapper {
 			.clearfix();
@@ -128,11 +128,11 @@
 		}
 		
 		a {
-			color: @colour_type_link;
+			color: @color_type_link;
 		}
 		
 		a:hover {
-			color: darken(@colour_type_link, 15%);
+			color: darken(@color_type_link, 15%);
 		}
 		
 		.logo {
@@ -167,7 +167,7 @@
 	#header {
 		.clearfix();
 		display: 		block;
-		background: 	@colour_header_base;
+		background: 	@color_header_base;
 		height: 		50px;
 		line-height: 	50px;
 		position:		fixed;
@@ -215,7 +215,7 @@
 					&:hover {
 						background: 	#fff;
 						border-color: 	#fff;
-						color: 			@colour_header_base;
+						color: 			@color_header_base;
 					}
 					
 					.icon {
@@ -285,8 +285,8 @@
 	/* Intro */
 	#intro {
 		display: 		block;
-		background:		@colour_bg_highlight;
-		border-bottom:	1px solid darken(@colour_bg_highlight, 10%);
+		background:		@color_bg_highlight;
+		border-bottom:	1px solid darken(@color_bg_highlight, 10%);
 		padding: 		100px 0 50px 0;
 			
 		h1, p {
@@ -318,7 +318,7 @@
 	/* Page */
 	#page {
 		display: 	block;
-		background:	@colour_bg_base;
+		background:	@color_bg_base;
 		
 		&.paddingtop {
 			padding-top: 50px;
@@ -330,6 +330,10 @@
 		
 		&.nudgeheader {
 			margin-top: 50px;
+		}
+		
+		&.nudgeheader.paddingtop {
+			margin-top: 20px;
 		}
 		
 		.column:first-child {
@@ -365,6 +369,54 @@
 				
 				&:last-child {
 					margin-bottom: 0;
+				}
+			}
+		}
+	}
+	
+	/* Docs */
+	.docs {		
+		h2 {
+			padding-bottom:	20px;
+			border-bottom:	1px solid #eee;
+		}
+		
+		pre {
+			.box_sizing(border-box);
+			display:		block;
+			padding:		10px;
+			border:			1px solid #eee;
+			margin-bottom:	20px;
+			width:			100%;
+		}
+		
+		ul {
+			display:		block;
+			margin-bottom:	20px;
+			list-style: 	disc;
+			color:			#888;
+			padding-left:	20px;
+		}
+		
+		.toc {
+			.box_sizing(border-box);
+			padding:	10px 20px;
+			display: 	block;
+			background:	#f9f9f9;
+			border:		1px solid #eee;
+			list-style: none;
+			
+			li {
+				display: block;
+				
+				a {
+					display: 	block;
+					padding: 	10px;
+					color:		#aaa;
+					
+					&:hover {
+						color: @color_header_base;
+					}
 				}
 			}
 		}
@@ -444,7 +496,7 @@
 	}
 	
 	#get_github {
-		.block_button(@colour_header_base);
+		.block_button(@color_header_base);
 	}
 	
 	/* Footer */
@@ -585,7 +637,7 @@
 					padding:	0px;
 					
 					&:hover {
-						background: @colour_header_base;
+						background: @color_header_base;
 						color:		#fff;
 					}
 				}

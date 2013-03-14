@@ -1,30 +1,35 @@
 {% extends "layout.html.twig" %}
 
 {% block content %}
-    <h1>Book</h1>
-    <ul>
-    {% for filename, data in book %}
-        {{ _self.renderFile(filename, data) }}
-    {% endfor %}
-    </ul>
-    <h1>Articles</h1>
-    <ul>
-    {% for filename, data in articles %}
-        {{ _self.renderFile(filename, data) }}
-    {% endfor %}
-    </ul>
-    <h1>FAQs</h1>
-    <ul>
-    {% for filename, data in faqs %}
-        {{ _self.renderFile(filename, data) }}
-    {% endfor %}
-    </ul>
-
-    <h1>PDF Docs</h1>
-    <p>The whole documentation is also available as a <a href="/book.pdf">PDF download</a>.</p>
-
-    <h1>API Docs</h1>
-    <p>If you need to work with composer as a library you may also want to check out the <a href="/apidoc/master/index.html">API Docs</a></p>
+	<!-- Page -->
+	<div id="page" class="docs paddingtop paddingbottom nudgeheader">
+		<div class="wrapper">
+		    <h1>Book</h1>
+		    <ul>
+		    {% for filename, data in book %}
+		        {{ _self.renderFile(filename, data) }}
+		    {% endfor %}
+		    </ul>
+		    <h1>Articles</h1>
+		    <ul>
+		    {% for filename, data in articles %}
+		        {{ _self.renderFile(filename, data) }}
+		    {% endfor %}
+		    </ul>
+		    <h1>FAQs</h1>
+		    <ul>
+		    {% for filename, data in faqs %}
+		        {{ _self.renderFile(filename, data) }}
+		    {% endfor %}
+		    </ul>
+		
+		    <h1>PDF Docs</h1>
+		    <p>The whole documentation is also available as a <a href="/book.pdf">PDF download</a>.</p>
+		
+		    <h1>API Docs</h1>
+		    <p>If you need to work with composer as a library you may also want to check out the <a href="/apidoc/master/index.html">API Docs</a></p>
+		</div>
+	</div>
 {% endblock %}
 
 {% macro renderFile(filename, data) %}

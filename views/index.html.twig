@@ -29,7 +29,7 @@
 			</div>
 			<div class="column col-1-third" id="sidebar">
 				<div id="get_started" class="button_block">
-					<a href="#"><span class="icon">Y</span>Getting Started</a>
+					<a href="{{ path('docs.view', {page: '00-intro.md'}) }}"><span class="icon">Y</span>Getting Started</a>
 				</div>
 				<p class="margintop marginbottom"><span>Composer</span>, written by <a href="#">Nils Andermann</a>, <a href="#">Jordi Boggiano</a> and many <a href="#">community contributors</a>, is an <span>open-source technology</span> licensed under the <a href="#">MIT license</a>.</p>
 				<div id="latest_commit" class="margintop">
@@ -41,7 +41,7 @@
 					<p>{{ commit.commit.message }}</p>
 				</div>
 				<div id="get_github" class="button_block">
-					<a href="#"><span class="icon social icon-github"></span>Get it on Github</a>
+					<a href="http://github.com/composer/composer"><span class="icon social icon-github"></span>Get it on Github</a>
 				</div>
 			</div>
 		</div>
