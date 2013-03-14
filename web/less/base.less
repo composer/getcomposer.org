@@ -157,6 +157,10 @@
 			width: 			@width_wrapper;
 			margin: 		0 auto;
 		}
+		
+		.realtime_time:first-letter {
+			text-transform: capitalize;
+		}
 	}
 	
 	/* Header */
@@ -324,6 +328,10 @@
 			padding-bottom: 50px;
 		}
 		
+		&.nudgeheader {
+			margin-top: 50px;
+		}
+		
 		.column:first-child {
 			padding-right: 130px;
 		}
@@ -420,7 +428,7 @@
 						text-align:	right;
 					}
 					
-					span {
+					span.icon {
 						display:		inline-block;
 						font-size:		1.3em;
 						padding-right:	15px;

@@ -15,6 +15,8 @@
 
 /* ---		Document Ready		--- */
 $(document).ready(function() {
+	$('.realtime_time').timeago();
+
 	MobileNavigation.init();
 });
 

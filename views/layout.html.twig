@@ -21,24 +21,24 @@
 				<div class="wrapper">
 					<ul>
 						<li class="mini_nav"><a href="#">Logo</a></li>
-						<li><a href="#"><span class="icon">Y</span><p>Getting Started</p></a></li>
+						<li><a href="{{ path('docs.view', {page: '00-intro.md'}) }}"><span class="icon">Y</span><p>Getting Started</p></a></li>
 						<li><a href="#"><span class="icon">\</span><p>Browse Packages</p></a></li>
-						<li><a href="#"><span class="icon">&eacute;</span><p>Documentation</p></a></li>
+						<li><a href="{{ path('docs') }}"><span class="icon">&eacute;</span><p>Documentation</p></a></li>
 						<li><a href="#"><span class="icon">!</span><p>Issues</p></a></li>
 						
 						<li class="right mini_nav show_menu"><a href="#">Open Menu</a></li>
-						<li class="right"><a href="#"><span class="icon">&agrave;</span><p>Download</p></a></li>
+						<li class="right"><a href="{{ path('download') }}"><span class="icon">&agrave;</span><p>Download</p></a></li>
 						<li class="right"><a href="#"><span class="icon social icon-github"></span><p>Github</p></a></li>
 					</ul>
 				</div>
 			</div>
 			
 			<ul id="mini_nav">
-				<li><a href="#"><span class="icon">Y</span><p>Getting Started</p></a></li>
+				<li><a href="{{ path('docs.view', {page: '00-intro.md'}) }}"><span class="icon">Y</span><p>Getting Started</p></a></li>
 				<li><a href="#"><span class="icon">\</span><p>Browse Packages</p></a></li>
-				<li><a href="#"><span class="icon">&eacute;</span><p>Documentation</p></a></li>
+				<li><a href="{{ path('docs') }}"><span class="icon">&eacute;</span><p>Documentation</p></a></li>
 				<li><a href="#"><span class="icon">!</span><p>Issues</p></a></li>
-				<li><a href="#"><span class="icon">&agrave;</span><p>Download</p></a></li>
+				<li><a href="{{ path('download') }}"><span class="icon">&agrave;</span><p>Download</p></a></li>
 				<li><a href="#"><span class="icon social icon-github"></span><p>Github</p></a></li>
 			</ul>
         {% endblock %}
@@ -67,6 +67,8 @@
         </div>
 
         <script type="text/javascript" src="https://raw.github.com/cloudhead/less.js/master/dist/less-1.3.3.min.js"></script>
+        <script type="text/javascript" src="{{ app.request.basePath }}/js/libs/jquery.js"></script>
+        <script type="text/javascript" src="{{ app.request.basePath }}/js/libs/timeago.js"></script>
         <script type="text/javascript" src="{{ app.request.basePath }}/js/base.js"></script>
         {#
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
