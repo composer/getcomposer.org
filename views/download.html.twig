@@ -1,29 +1,34 @@
 {% extends "layout.html.twig" %}
 
 {% block content %}
-    <h1>Download Composer</h1>
-    <p>Run this in your terminal to get the latest Composer version:</p>
-    <code>curl -s https://getcomposer.org/installer | php</code>
-    <p>Or if you don't have curl:</p>
-    <code>php -r "eval('?>'.file_get_contents('https://getcomposer.org/installer'));"</code>
-    <p>This installer script will simply check some php.ini settings, warn you if they are set incorrectly, and then download the latest composer.phar in the current directory</p>
-
-    <h2>Installer Options</h2>
-    <p>You can install composer to a specific directory by using the <code>--install-dir</code> option and providing a target directory. Options must be appended to <code>--</code> so that PHP ignores them, like <code>-- --install-dir=bin</code>, example:</p>
-    <code>curl -s https://getcomposer.org/installer | php -- --install-dir=bin</code>
-
-    {% if windows %}
-        <h2>Windows Installer</h2>
-        <p>The installer will download composer for you and set up your PATH environment variable so you can simply call <code>composer</code> from any directory.</p>
-        <p>Download and run <a href="/Composer-Setup.exe">Composer-Setup.exe</a> - it will install the latest composer version whenever it is executed.</p>
-    {% endif %}
-
-    <h2>Manual Download</h2>
-    <p>If you prefer to download the phar manually, here are the available versions:</p>
-    <p>
-        <a href="{{ app.request.basePath }}/composer.phar">Latest Snapshot</a><br />
-        {% for version, date in versions %}
-            <a href="{{ path('download_version', {version: version}) }}">{{ version }}</a> ({{ date|date('Y-m-d') }})<br />
-        {% endfor %}
-    </p>
+	<!-- Page -->
+	<div id="page" class="docs paddingtop paddingbottom nudgeheader">
+		<div class="wrapper">
+		    <h1>Download Composer</h1>
+		    <p>Run this in your terminal to get the latest Composer version:</p>
+		    <pre><code>curl -s https://getcomposer.org/installer | php</code></pre>
+		    <p>Or if you don't have curl:</p>
+		    <pre><code>php -r "eval('?>'.file_get_contents('https://getcomposer.org/installer'));"</code></pre>
+		    <p>This installer script will simply check some php.ini settings, warn you if they are set incorrectly, and then download the latest composer.phar in the current directory</p>
+		
+		    <h2>Installer Options</h2>
+		    <p>You can install composer to a specific directory by using the <code>--install-dir</code> option and providing a target directory. Options must be appended to <code>--</code> so that PHP ignores them, like <code>-- --install-dir=bin</code>, example:</p>
+		    <pre><code>curl -s https://getcomposer.org/installer | php -- --install-dir=bin</code></pre>
+		
+		    {% if windows %}
+		        <h2>Windows Installer</h2>
+		        <p>The installer will download composer for you and set up your PATH environment variable so you can simply call <code>composer</code> from any directory.</p>
+		        <p>Download and run <a href="/Composer-Setup.exe">Composer-Setup.exe</a> - it will install the latest composer version whenever it is executed.</p>
+		    {% endif %}
+		
+		    <h2>Manual Download</h2>
+		    <p>If you prefer to download the phar manually, here are the available versions:</p>
+		    <p>
+		        <a href="{{ app.request.basePath }}/composer.phar">Latest Snapshot</a><br />
+		        {% for version, date in versions %}
+		            <a href="{{ path('download_version', {version: version}) }}">{{ version }}</a> ({{ date|date('Y-m-d') }})<br />
+		        {% endfor %}
+		    </p>
+		</div>
+	</div>
 {% endblock %}

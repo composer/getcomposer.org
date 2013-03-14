@@ -16,8 +16,15 @@
 /* ---		Document Ready		--- */
 $(document).ready(function() {
 	$('.realtime_time').timeago();
-
 	MobileNavigation.init();
+	
+	$('body').on('click', 'a.anchor, .toc li a', function(e) {
+		e.preventDefault();
+		
+		$('body').animate({
+			'scrollTop': ($($(this).attr('href')).offset().top - 70)
+		}, 1000);
+	});
 });
 
 /* ---		Mobile Navigation	--- */

@@ -333,7 +333,7 @@
 		}
 		
 		&.nudgeheader.paddingtop {
-			margin-top: 20px;
+			margin-top: 40px;
 		}
 		
 		.column:first-child {
@@ -369,54 +369,6 @@
 				
 				&:last-child {
 					margin-bottom: 0;
-				}
-			}
-		}
-	}
-	
-	/* Docs */
-	.docs {		
-		h2 {
-			padding-bottom:	20px;
-			border-bottom:	1px solid #eee;
-		}
-		
-		pre {
-			.box_sizing(border-box);
-			display:		block;
-			padding:		10px;
-			border:			1px solid #eee;
-			margin-bottom:	20px;
-			width:			100%;
-		}
-		
-		ul {
-			display:		block;
-			margin-bottom:	20px;
-			list-style: 	disc;
-			color:			#888;
-			padding-left:	20px;
-		}
-		
-		.toc {
-			.box_sizing(border-box);
-			padding:	10px 20px;
-			display: 	block;
-			background:	#f9f9f9;
-			border:		1px solid #eee;
-			list-style: none;
-			
-			li {
-				display: block;
-				
-				a {
-					display: 	block;
-					padding: 	10px;
-					color:		#aaa;
-					
-					&:hover {
-						color: @color_header_base;
-					}
 				}
 			}
 		}
@@ -497,6 +449,54 @@
 	
 	#get_github {
 		.block_button(@color_header_base);
+	}
+	
+	/* Docs */
+	.docs {		
+		h2 {
+			padding-bottom:	20px;
+			border-bottom:	1px solid #eee;
+		}
+		
+		pre {
+			.box_sizing(border-box);
+			display:		block;
+			padding:		10px;
+			border:			1px solid #eee;
+			margin-bottom:	20px;
+			width:			100%;
+		}
+		
+		ul {
+			display:		block;
+			margin-bottom:	20px;
+			list-style: 	disc;
+			color:			#888;
+			padding-left:	20px;
+		}
+		
+		.toc {
+			.box_sizing(border-box);
+			padding:	10px 20px;
+			display: 	block;
+			background:	#f9f9f9;
+			border:		1px solid #eee;
+			list-style: none;
+			
+			li {
+				display: block;
+				
+				a {
+					display: 	block;
+					padding: 	10px;
+					color:		#aaa;
+					
+					&:hover {
+						color: @color_header_base;
+					}
+				}
+			}
+		}
 	}
 	
 	/* Footer */
@@ -620,6 +620,15 @@
 					}
 				}
 			}	
+		}
+		
+		/* Docs */
+		.docs {
+			display: block;
+			
+			.toc {
+				display: none;
+			}
 		}
 	}
 	
