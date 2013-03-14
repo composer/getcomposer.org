@@ -1,0 +1,43 @@
+/*	------------------------------------------------------
+
+	Typography.less
+	
+	Typography styles
+	
+	Written by Joey Emery.
+	Last modified: 14/03/2013 11:04AM.
+	--- By: Joey Emery.
+	
+	Contents:
+		--- h1
+		--- h2
+		--- h3
+		--- h4
+		--- h1, h2, h3, h4
+	
+------------------------------------------------------ */
+
+h1 {
+	font-size: 		2.5em;
+	color:			@colour_type_base;
+}
+
+h2 {
+	font-size: 		2em;
+	color:			lighten(@colour_type_base, 10%);
+}
+
+h3 {
+	font-size: 		1.75em;
+	color:			lighten(@colour_type_base, 20%);
+}
+
+h4 {
+	font-size: 		1.5em;
+	color:			lighten(@colour_type_base, 30%);
+}
+
+h1, h2, h3, h4 {
+	font-family: 	@font_heading, @font_base;
+	line-height:	1.4em;	
+}

@@ -1,0 +1,90 @@
+/*	------------------------------------------------------
+
+	Grid.less
+	
+	Simple responsive grid/column system.
+	
+	Written by Joey Emery.
+	Last modified: 13/03/2013 14:12PM.
+	--- By: Joey Emery.
+	
+	Contents:
+	
+	--- Grid
+	--- Column
+		--- Half
+		--- Thirds
+		--- Quarters
+		--- Fifths
+		--- Sixths
+	
+------------------------------------------------------ */
+
+.grid {
+	display: block;
+	.clearfix;
+	
+	.column {
+		display: inline-block;
+		float: left;
+		width: 100%;
+		.box_sizing(border-box);
+	}
+	
+	/* --- Half --- */
+	.col-1-half {
+		width: 50%;
+	}
+	
+	/* --- Thirds --- */
+	.col-1-third {
+		width: 33.3333%;
+	}
+	
+	.col-2-third {
+		width: 66.6666%;
+	}
+	
+	/* --- Quarters --- */
+	.col-1-quarter {
+		width: 25%;
+	}
+	
+	.col-3-quarter {
+		width: 75%;
+	}
+	
+	/* --- Fifths --- */
+	.col-1-fifth {
+		width: 20%;
+	}
+	
+	.col-2-fifth {
+		width: 40%;
+	}
+	
+	.col-3-fifth {
+		width: 60%;
+	}
+	
+	.col-4-fifth {
+		width: 80%;
+	}
+	
+	/* Sixths */
+	.col-1-sixth {
+		width: 16.667%;
+	}
+	
+	.col-2-sixth {
+		width: 33.334%;
+	}
+	
+	.col-4-sixth {
+		width: 66.668%;
+	}
+	
+	.col-5-sixth {
+		width: 84.335%;
+	}
+}
