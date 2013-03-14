@@ -8,3 +8,4 @@ web/Composer-Setup.exe
 web/book.pdf
 cache/
 silex.log
+.DS_Store
