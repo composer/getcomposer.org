@@ -88,6 +88,7 @@ var MobileNavigation = {
 	/* Opens the navigation */
 	open: function() {
 		$('#slide_wrapper').css('width', $('body').innerWidth());
+		$('#mini_nav').css('display', 'block');
 		
 		$('#slide_wrapper').animate({
 			'margin-left'	:	this.distance
@@ -105,6 +106,7 @@ var MobileNavigation = {
 			'margin-left'	:	0
 		}, this.speed, function() {			
 			$('#slide_wrapper').css('width', 'auto');
+			$('#mini_nav').css('display', 'none');
 		});
 		this.is_open = false;
 	},
