@@ -60,7 +60,7 @@ var LatestCommit = {
 			$('#latest_commit #post_info a:last span:last').text($.timeago(commit.commit.author.date));
 			$('#latest_commit p').text(commit.commit.message);
 			$('#latest_commit').removeClass('loading');
-		});
+		}, 'json');
 	}
 }
 
