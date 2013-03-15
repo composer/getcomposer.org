@@ -23,7 +23,10 @@ $(document).ready(function() {
 	LatestCommit.init('https://api.github.com/repos/composer/composer/commits');
 	
 	// Resizer.
-	Resizer.init(new Array('MobileNavigation.close()'));
+	Resizer.init(function() {
+		if(MobileNavigation.is_open)
+			MobileNavigation.close();
+	});
 	
 	// Time since something happened.
 	$('.realtime_time').timeago();
@@ -119,22 +122,22 @@ var MobileNavigation = {
 
 /* ---		Resizer		--- */
 var Resizer = {
-	width: false,
+	width: 		false,
+	callback:	false,
 	
-	init: function(functions) {
-		this.calculate(functions);
+	init: function(callback) {
+		this.callback = (typeof callback == 'function') ? callback : false;
+		this.calculate();
 	},
 	
-	calculate: function(functions) {
+	calculate: function() {
 		this.width = $(window).width();
 		var obj = this;
 		$(window).resize(function(e) {
 			obj.width = $(window).width();
-			if(functions && functions.length > 0) {
-				$.each(functions, function(key, value) {
-					eval(value);
-				});
-			}
+			
+			if(obj.callback)
+				obj.callback();
 		});
 	}
 }
