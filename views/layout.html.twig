@@ -3,15 +3,16 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>{% block title %}Composer{% endblock %}</title>
-        
         <meta name="description" content="Dependency Management for PHP">
         <meta name="viewport" content="width=320, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/> 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
+        <title>{% block title %}Composer{% endblock %}</title>
+        <!--  Google Webfonts -->
 		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Montserrat:400,700" />
 		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato:400,700" />
-		<link rel="stylesheet/less" type="text/css" href="{{ app.request.basePath }}/less/base.less" />
-        <script src="{{ app.request.basePath }}/js/libs/modernizr-2.0.6.min.js"></script>
+		<!-- /Google Webfonts -->
+		
+		<link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/css/base.css" />
     </head>
 
     <body>
@@ -66,18 +67,9 @@
         	{% endblock %}
         </div>
 
-        <script type="text/javascript" src="https://raw.github.com/cloudhead/less.js/master/dist/less-1.3.3.min.js"></script>
         <script type="text/javascript" src="{{ app.request.basePath }}/js/libs/jquery.js"></script>
         <script type="text/javascript" src="{{ app.request.basePath }}/js/libs/timeago.js"></script>
-        <script type="text/javascript" src="{{ app.request.basePath }}/js/base.js"></script>
-        {#
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="{{ app.request.basePath }}/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
-
-        <script defer src="{{ app.request.basePath }}/js/plugins.js"></script>
-        <script defer src="{{ app.request.basePath }}/js/script.js"></script>
-        #}
-
+        <script type="text/javascript" src="{{ app.request.basePath }}/js/base.min.js"></script>
         <script>
         	var _gaq=[['_setAccount','UA-26723099-2'],['_trackPageview']];
         	(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
