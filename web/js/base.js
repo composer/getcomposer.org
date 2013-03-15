@@ -1,15 +1,18 @@
 /*	------------------------------------------------------
 
-	Base.less
+	Base.js
 	
 	The master JS file.
 	
 	Written by Joey Emery.
-	Last modified: 13/03/2013 13:23PM.
+	Last modified: 15/03/2013 11:40AM.
 	--- By: Joey Emery.
 	
 	Contents:
 		--- Document ready
+		--- Latest Commit
+		--- Mobile Navigation
+		--- Resizer
 	
 ------------------------------------------------------ */
 
