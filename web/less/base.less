@@ -22,6 +22,7 @@
 		--- Intro
 		--- Page
 		--- Sidebar
+		--- Latest commit
 		--- Block buttons
 		--- Docs
 		--- Footer
@@ -406,61 +407,62 @@
 			font-size: 	1.5em;
 			color: 		#fff;
 		}
+	}
+	
+	/* Latest commit */
+	#latest_commit {
+		display: block;
+		background: #232323;
 		
-		#latest_commit {
-			display: block;
-			background: #232323;
+		&.margintop {
+			margin-top: 30px;
+		}
+		
+		p {
+			padding: 		0 30px 30px 30px;
+			margin-bottom:	0;
+		}
+		
+		#post_info {
+			.clearfix();
+			display: 		block;
+			border-bottom: 	1px solid #333;
 			
-			&.margintop {
-				margin-top: 30px;
-			}
-			
-			p {
-				padding: 		0 30px 30px 30px;
-				margin-bottom:	0;
-			}
-			
-			#post_info {
-				.clearfix();
-				display: 		block;
-				border-bottom: 	1px solid #333;
+			a {
+				.box_sizing(border-box);
+				display:		inline-block;
+				float:			left;
+				color:			#656565;
+				font-size:		0.9em;
+				line-height:	1.3em;
+				padding:		20px 30px;
+				width:			50%;
+				font-family:	@font_heading;
 				
-				a {
-					.box_sizing(border-box);
+				&:hover {
+					color: #fff;
+				}
+				
+				&:last-child {
+					float:		right;
+					text-align:	right;
+				}
+				
+				span.icon {
 					display:		inline-block;
-					float:			left;
-					color:			#656565;
-					font-size:		0.9em;
-					line-height:	1.3em;
-					padding:		20px 30px;
-					width:			50%;
-					font-family:	@font_heading;
-					
-					&:hover {
-						color: #fff;
-					}
-					
-					&:last-child {
-						float:		right;
-						text-align:	right;
-					}
-					
-					span.icon {
-						display:		inline-block;
-						font-size:		1.3em;
-						padding-right:	15px;
-					}
+					font-size:		1.3em;
+					padding-right:	15px;
 				}
 			}
+		}
+		
+		&.loading {
+			display: block;
+			height: 200px;
+			background: url('../img/icons/loader.gif') no-repeat center center #333;
 			
-			&.loading {
-				display: block;
-				height: 200px;
-				background: url('../img/icons/loader.gif') no-repeat center center #333;
-				
-				span, a, div, p, h1, h2, h3, h4, #post_info {
-					display: none;
-				}
+			span, a, div, p, h1, h2, h3, h4, #post_info {
+				display: none;
 			}
 		}
 	}
@@ -762,18 +764,16 @@
 			}
 		}
 		
-		/* Sidebar */
-		#sidebar {
-			#latest_commit {
+		/* Latest commit */
+		#latest_commit {
+			display: block;
+			
+			#post_info {
 				display: block;
 				
-				#post_info {
-					display: block;
-					
-					a {
-						font-size: 	0.75em;
-						padding: 	20px;
-					}
+				a {
+					font-size: 	0.75em;
+					padding: 	20px;
 				}
 			}
 		}
