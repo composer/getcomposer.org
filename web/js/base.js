@@ -5,8 +5,6 @@
 	The master JS file.
 	
 	Written by Joey Emery.
-	Last modified: 15/03/2013 11:40AM.
-	--- By: Joey Emery.
 	
 	Contents:
 		--- Document ready
@@ -129,7 +127,6 @@ var Resizer = {
 	
 	calculate: function(functions) {
 		this.width = $(window).width();
-		console.log(this.width);
 		var obj = this;
 		$(window).resize(function(e) {
 			obj.width = $(window).width();

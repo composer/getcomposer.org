@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" class="no-js">
+<!DOCTYPE html>
+<html>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -56,7 +56,7 @@
 							<div class="column">
 								<ul>
 									<li><a href="{{ path('docs') }}">Documentation</a></li>
-									<li><a href="{{ path('docs') }}">API</a></li>
+									<li><a href="/apidoc/master/index.html">API</a></li>
 									<li><a href="{{ path('docs') }}">FAQs</a></li>
 									<li class="right"><a href="http://www.joeyemery.com">Redesign by Joey Emery</a></li>
 								</ul>
@@ -67,9 +67,9 @@
         	{% endblock %}
         </div>
 
-        <script type="text/javascript" src="{{ app.request.basePath }}/js/libs/jquery.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
         <script type="text/javascript" src="{{ app.request.basePath }}/js/libs/timeago.js"></script>
-        <script type="text/javascript" src="{{ app.request.basePath }}/js/base.min.js"></script>
+        <script type="text/javascript" src="{{ app.request.basePath }}/js/base.js"></script>
         <script>
         	var _gaq=[['_setAccount','UA-26723099-2'],['_trackPageview']];
         	(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
