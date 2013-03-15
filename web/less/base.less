@@ -27,8 +27,8 @@
 		--- Block buttons
 		--- Docs
 	--- Media Queries
-		--- width < 1280px
-		--- width < 845px
+		--- width < 1290px
+		--- width < 945px
 		--- width < 690px
 	
 ------------------------------------------------------ */
@@ -71,8 +71,12 @@
 
 .block_button(@color) {
 	display:	block;
-	padding: 	20px 30px;
+	padding: 	10px;
 	background: @color;
+	
+	&.marginbottom {
+		margin-bottom: 20px;
+	}
 	
 	a {
 		.twoway_gradient(lighten(@color, 10%), lighten(@color, 5%));
@@ -463,12 +467,20 @@
 	}
 	
 	/* Block buttons */
-	#get_started {
+	#get_started, #pdf_docs {
 		.block_button(#6B5A8E);
 	}
 	
-	#get_github {
+	#get_github, #api_docs {
 		.block_button(@color_header_base);
+	}
+	
+	.download_button {
+		.block_button(@color_header_base);
+		
+		&:nth-child(odd) {
+			.block_button(#6B5A8E);
+		}
 	}
 	
 	/* Docs */
@@ -482,9 +494,17 @@
 			.box_sizing(border-box);
 			display:		block;
 			padding:		10px;
-			border:			1px solid #eee;
+			border:			1px solid #111;
 			margin-bottom:	20px;
 			width:			100%;
+			color:			#fff;
+			background:		#333;
+			
+			code {
+				display:	block;
+				width:		100%;
+				overflow:	scroll;
+			}
 		}
 		
 		ul {
@@ -568,8 +588,8 @@
 	
 /* ---		Media Queries	--- */
 
-	/* Max width: 1210px */
-	@media screen and (max-width: 1280px) {
+	/* Max width: 1290px */
+	@media screen and (max-width: 1290px) {
 		
 		/* Header */
 		#header {
@@ -599,27 +619,22 @@
 			}
 		}
 		
-		/* Columns */
-		#page .column:first-child {
-			padding-right: 0;
-		}
-		
-		.column {
-			display: 		block;
-			float: 			none;
-			clear: 			both;
-			width: 			100% !important;
-			margin-bottom: 	50px;
-			padding-right:	0;
+		/* Block buttons */
+		.button_block {
+			padding: 10px !important;
 			
-			&:last-child {
-				margin-bottom: 0;
+			a {
+				font-size: 1em !important;
+				
+				span {
+					margin-right: 10px !important;
+				}
 			}
 		}
 	}
 	
-	/* Max width: 854px */
-	@media screen and (max-width: 845px) {
+	/* Max width: 945px */
+	@media screen and (max-width: 945px) {
 		
 		/* Header */
 		#header {
@@ -640,6 +655,24 @@
 					}
 				}
 			}	
+		}
+		
+		/* Columns */
+		#page .column:first-child {
+			padding-right: 0;
+		}
+		
+		.column {
+			display: 		block;
+			float: 			none;
+			clear: 			both;
+			width: 			100% !important;
+			margin-bottom: 	50px;
+			padding-right:	0;
+			
+			&:last-child {
+				margin-bottom: 0;
+			}
 		}
 		
 		/* Docs */
