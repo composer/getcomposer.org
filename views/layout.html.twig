@@ -1,56 +1,80 @@
 <!DOCTYPE html>
-<html class="no-js" lang="en">
+<html>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
-        <title>{% block title %}Composer{% endblock %}</title>
         <meta name="description" content="Dependency Management for PHP">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-
-        <link rel="stylesheet" href="{{ app.request.basePath }}/css/style.css?v=6">
-
-        <script src="{{ app.request.basePath }}/js/libs/modernizr-2.0.6.min.js"></script>
+        <meta name="viewport" content="width=320, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/> 
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+        <title>{% block title %}Composer{% endblock %}</title>
+        <!--  Google Webfonts -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Montserrat:400,700" />
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato:400,700" />
+		<!-- /Google Webfonts -->
+		
+		<link rel="stylesheet" type="text/css" href="{{ app.request.basePath }}/css/base.css" />
     </head>
 
     <body>
-        <div id="container">
-            <header>
-                {% block header %}
-                {% spaceless %}
-                    <a href="{{ path('home') }}">Home</a>
-                    <a class="{{ page == 'getting-started' ? 'active':'' }}" href="{{ path('docs.view', {page: '00-intro.md'}) }}">Getting Started</a>
-                    <a class="{{ page == 'download' ? 'active':'' }}" href="{{ path('download') }}">Download</a>
-                    <a class="{{ page == 'docs' ? 'active':'' }}" href="{{ path('docs') }}">Documentation</a>
-                    <a class="last" href="http://packagist.org/">Browse Packages</a>
-                {% endspaceless %}
-                {% endblock %}
-            </header>
-            <div id="main" role="main">
-                {% block content %}
-                {% endblock %}
-            </div>
-            <footer>
-                {% block footer %}
-                {% endblock %}
-
-                <p class="license">Composer and all content on this site are released under the <a href="https://github.com/composer/composer/blob/master/LICENSE">MIT license</a>.</p>
-            </footer>
+        {% block header %}
+           <!-- Header -->
+			<div id="header">
+				<div class="wrapper">
+					<ul>
+						<li class="mini_nav"><a href="{{ path('home') }}" class="logo">Composer</a></li>
+						<li><a href="{{ path('docs.view', {page: '00-intro.md'}) }}"><span class="icon">Y</span><p>Getting Started</p></a></li>
+						<li><a href="http://packagist.org/"><span class="icon">\</span><p>Browse Packages</p></a></li>
+						<li><a href="{{ path('docs') }}"><span class="icon">&eacute;</span><p>Documentation</p></a></li>
+						<li><a href="http://github.com/composer/composer/issues"><span class="icon">!</span><p>Issues</p></a></li>
+						
+						<li class="right mini_nav show_menu"><a href="#">Open Menu</a></li>
+						<li class="right"><a href="{{ path('download') }}"><span class="icon">&agrave;</span><p>Download</p></a></li>
+						<li class="right"><a href="http://github.com/composer/composer"><span class="icon social icon-github"></span><p>Github</p></a></li>
+					</ul>
+				</div>
+			</div>
+			
+			<ul id="mini_nav">
+				<li><a href="{{ path('docs.view', {page: '00-intro.md'}) }}"><span class="icon">Y</span><p>Getting Started</p></a></li>
+				<li><a href="http://packagist.org/"><span class="icon">\</span><p>Browse Packages</p></a></li>
+				<li><a href="{{ path('docs') }}"><span class="icon">&eacute;</span><p>Documentation</p></a></li>
+				<li><a href="http://github.com/composer/composer/issues"><span class="icon">!</span><p>Issues</p></a></li>
+				<li><a href="{{ path('download') }}"><span class="icon">&agrave;</span><p>Download</p></a></li>
+				<li><a href="http://github.com/composer/composer"><span class="icon social icon-github"></span><p>Github</p></a></li>
+			</ul>
+        {% endblock %}
+               
+        <div id="slide_wrapper">
+        	{% block content %}
+        	{% endblock %}
+        
+        	{% block footer %}
+	        	<!-- Footer -->
+				<div id="footer">
+					<div class="wrapper">
+						<div class="grid">
+							<div class="column">
+								<ul>
+									<li><a href="{{ path('docs') }}">Documentation</a></li>
+									<li><a href="/apidoc/master/index.html">API</a></li>
+									<li><a href="{{ path('docs') }}">FAQs</a></li>
+									<li class="right"><a href="http://www.joeyemery.com">Redesign by Joey Emery</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+        	{% endblock %}
         </div>
 
-        {#
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="{{ app.request.basePath }}/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
-
-        <script defer src="{{ app.request.basePath }}/js/plugins.js"></script>
-        <script defer src="{{ app.request.basePath }}/js/script.js"></script>
-        #}
-
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="{{ app.request.basePath }}/js/libs/timeago.js"></script>
+        <script type="text/javascript" src="{{ app.request.basePath }}/js/base.js"></script>
         <script>
-            var _gaq=[['_setAccount','UA-26723099-2'],['_trackPageview']];
-            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
-            g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-            s.parentNode.insertBefore(g,s)}(document,'script'));
-        </script>
+        	var _gaq=[['_setAccount','UA-26723099-2'],['_trackPageview']];
+        	(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
+	        g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+	        s.parentNode.insertBefore(g,s)}(document,'script'));
+	    </script>
     </body>
 </html>

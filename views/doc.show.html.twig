@@ -1,16 +1,29 @@
 {% extends "layout.html.twig" %}
 
 {% block content %}
-    {% if toc|length %}
-        <ul class="toc">
-            {{ _self.tocTree(toc|length > 3 ? toc : toc.1) }}
-        </ul>
-    {% endif %}
-    {{ doc|raw }}
-
-    <p class="fork-and-edit">
-        Found a typo? Something is wrong in this documentation? Just <a href="http://github.com/composer/composer/edit/master/doc/{{ file }}">fork and edit</a> it!
-    </p>
+	<!-- Page -->
+	<div id="page" class="docs paddingtop paddingbottom nudgeheader">
+		<div class="wrapper">
+		    {% if toc|length %}
+		    	<div class="grid">
+		    		<div class="column col-2-third">
+		    			{{ doc|raw }}
+		    		</div>
+		    		<div class="column col-1-third">
+				        <ul class="toc">
+				            {{ _self.tocTree(toc|length > 3 ? toc : toc.1) }}
+				        </ul>
+		    		</div>
+		    	</div>
+		    {% else %}
+		    	{{ doc|raw }}
+		    {% endif %}
+		
+		    <p class="fork-and-edit">
+		        Found a typo? Something is wrong in this documentation? Just <a href="http://github.com/composer/composer/edit/master/doc/{{ file }}">fork and edit</a> it!
+		    </p>
+		</div>
+	</div>
 {% endblock %}
 
 {% macro tocTree(tree) %}

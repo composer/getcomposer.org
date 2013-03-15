@@ -1,31 +1,49 @@
 {% extends "layout.html.twig" %}
 
-{% block header %}
-{% endblock %}
-
 {% block content %}
-    <div class="logo">
-        <img src="{{ app.request.basePath }}/img/logo-composer-transparent.png">
-        <h1 class="slogan">
-            Dependency Manager for PHP
-        </h1>
-    </div>
-
-    <p class="buttons">
-        <a href="{{ path('docs.view', {page: '00-intro.md'}) }}">Getting Started</a>
-        <a href="{{ path('download') }}">Download</a>
-    </p>
-    <p class="buttons">
-        <a href="{{ path('docs') }}">Documentation</a>
-        <a href="http://packagist.org/">Browse Packages</a>
-    </p>
-    <p class="buttons">
-        <a href="http://github.com/composer/composer/issues">Issues</a>
-        <a href="http://github.com/composer/composer">GitHub</a>
-    </p>
-{% endblock %}
-
-{% block footer %}
-    <p>Authors: <a href="http://naderman.de">Nils Adermann</a>, <a href="http://nelm.io/jordi">Jordi Boggiano</a> and many <a href="https://github.com/composer/composer/graphs/contributors">community contributions</a></p>
-    <p>Logo: <a href="http://wizardcat.com/">WizardCat</a></p>
+   <!-- Intro -->
+	<div id="intro">
+		<h1>Composer is a dependency manager for PHP</h1>
+		<p>Allowing you to declare the dependant libraries your project needs and it will automatically install them for you</p>
+		<div id="composer_graphic">
+			<img src="{{ app.request.basePath }}/img/logo-composer-transparent.png" />
+		</div>
+	</div>
+	
+	<!-- Page -->
+	<div id="page" class="paddingtop paddingbottom">
+		<div class="wrapper grid">
+			<div class="column col-2-third">
+				<h2>What is Composer?</h2>
+				<p>Composer is a tool for dependency management in PHP. It allows you to declare the dependent libraries your project needs and it will install them in your project for you.</p>
+				<h4>Dependency Management</h4>
+				<p>Composer is not a package manager. Yes, it deals with "packages" or libraries, but it manages them on a per-project basis, installing them in a directory (e.g. vendor) inside your project. By default it will never install anything globally. Thus, it is a dependency manager.</p>
+				<p>This idea is not new and Composer is strongly inspired by node's npm and ruby's bundler. But there has not been such a tool for PHP.</p>
+				<h4>The problem Composer solves:</h4>
+				<ol>
+					<li>You have a project that depends on a number of libraries.</li>
+					<li>Some of those libraries depend on other libraries.</li>
+					<li>You declare the things you depend on.</li>
+					<li>Composer finds out which versions of which packages need to be installed, and installs them (meaning it downloads them into your project).</li>
+				</ol>
+			</div>
+			<div class="column col-1-third" id="sidebar">
+				<div id="get_started" class="button_block">
+					<a href="{{ path('docs.view', {page: '00-intro.md'}) }}"><span class="icon">Y</span>Getting Started</a>
+				</div>
+				<p class="margintop marginbottom"><span>Composer</span>, written by <a href="#">Nils Andermann</a>, <a href="#">Jordi Boggiano</a> and many <a href="#">community contributors</a>, is an <span>open-source technology</span> licensed under the <a href="#">MIT license</a>.</p>
+				<div id="latest_commit" class="margintop loading">
+					<div id="post_info">
+						<a href="#" target="_blank"><span class="icon">&acirc;</span><span>Loading</span></a>
+						<a href="#" target="_blank"><span class="icon">[</span><span class="realtime_time">Loading</span></a>
+					</div>
+					<h2>Latest Commit:</h2>
+					<p>Loading</p>
+				</div>
+				<div id="get_github" class="button_block">
+					<a href="http://github.com/composer/composer"><span class="icon social icon-github"></span>Get it on Github</a>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}
