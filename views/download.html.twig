@@ -3,14 +3,14 @@
 {% block content %}
     <h1>Download Composer</h1>
     <p>Run this in your terminal to get the latest Composer version:</p>
-    <code>curl -s https://getcomposer.org/installer | php</code>
+    <code>curl -sS https://getcomposer.org/installer | php</code>
     <p>Or if you don't have curl:</p>
     <code>php -r "eval('?>'.file_get_contents('https://getcomposer.org/installer'));"</code>
     <p>This installer script will simply check some php.ini settings, warn you if they are set incorrectly, and then download the latest composer.phar in the current directory</p>
 
     <h2>Installer Options</h2>
     <p>You can install composer to a specific directory by using the <code>--install-dir</code> option and providing a target directory. Options must be appended to <code>--</code> so that PHP ignores them, like <code>-- --install-dir=bin</code>, example:</p>
-    <code>curl -s https://getcomposer.org/installer | php -- --install-dir=bin</code>
+    <code>curl -sS https://getcomposer.org/installer | php -- --install-dir=bin</code>
 
     {% if windows %}
         <h2>Windows Installer</h2>
