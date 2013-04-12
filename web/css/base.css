@@ -528,6 +528,7 @@ body .realtime_time:first-letter {
 }
 #header ul li.right a {
   border: none !important;
+  box-shadow: none !important;
 }
 #header ul li.show_menu {
   display: none;
