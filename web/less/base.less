@@ -204,6 +204,10 @@
 				
 				&.right {
 					float: right;
+					
+					a {
+						border:	none !important;
+					}
 				}
 				
 				&.show_menu {
@@ -211,6 +215,7 @@
 				}
 				
 				a {
+					.box_sizing(border-box);
 					display: 			block;
 					height: 			inherit;
 					line-height: 		inherit;
@@ -221,6 +226,12 @@
 					padding: 			0 20px;
 					border-right: 		1px solid rgba(0, 0, 0, 0.1);
 					box-shadow: 		1px 0 0 rgba(255, 255, 255, 0.11);
+					
+					&.download {
+						background:		darken(@color_header_base, 10%);
+						box-shadow:		none;
+						height:			50px;
+					}
 					
 					p {
 						display: inline-block;
