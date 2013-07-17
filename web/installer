@@ -104,6 +104,10 @@ function checkPlatform($quiet)
         }
     }
 
+    if (!function_exists('json_decode')) {
+        $errors['json'] = true;
+    }
+
     if (!extension_loaded('Phar')) {
         $errors['phar'] = true;
     }
@@ -153,6 +157,11 @@ function checkPlatform($quiet)
         out('Make sure that you fix the issues listed below and run this script again:', 'error');
         foreach ($errors as $error => $current) {
             switch ($error) {
+                case 'json':
+                    $text = PHP_EOL."The json extension is missing.".PHP_EOL;
+                    $text .= "Install it or recompile php without --disable-json";
+                    break;
+
                 case 'phar':
                     $text = PHP_EOL."The phar extension is missing.".PHP_EOL;
                     $text .= "Install it or recompile php without --disable-phar";
