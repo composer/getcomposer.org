@@ -105,7 +105,7 @@ header .slogan {
 
 footer {
   margin: auto;
-  width: 600px;
+  max-width: 600px;
   margin-bottom: 5px;
   text-align: center;
 }
