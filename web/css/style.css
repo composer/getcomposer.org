@@ -204,6 +204,23 @@ li .tagline {
   padding-left: 40px;
 }
 
+table {
+  width: 100%;
+}
+
+tr {
+  border-bottom: 1px solid #999;
+}
+
+tr:last-child {
+  border-bottom: none;
+}
+
+th, td {
+  text-align: left;
+  padding: 0.5em;
+}
+
 /* ==|== non-semantic helper classes ======================================== */
 .ir { display: block; border: 0; text-indent: -999em; overflow: hidden; background-color: transparent; background-repeat: no-repeat; text-align: left; direction: ltr; }
 .ir br { display: none; }
