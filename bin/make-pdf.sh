@@ -5,6 +5,18 @@
 # * pandoc
 # * latex
 
+# abort on error
+set -e
+
+# use gsed if available
+# gsed is part of the gnu-sed homebrew package on osx
+if [[ -x "/usr/local/bin/gsed" ]]
+then
+    SED="/usr/local/bin/gsed"
+else
+    SED="sed"
+fi
+
 rm -rf cache/pdf
 mkdir cache/pdf
 mkdir cache/pdf/dev
@@ -20,7 +32,7 @@ done
 
 cd ../../../../cache/pdf
 
-cat > book.tex <<EOF
+cat > book.tmp <<EOF
 \documentclass[letterpaper]{book}
 
 \title{Composer}
@@ -37,6 +49,7 @@ cat > book.tex <<EOF
 \usepackage[T1]{fontenc}
 \usepackage{textcomp}
 \usepackage{tgpagella}
+\usepackage{longtable}
 
 \lstset{
     breaklines=true,
@@ -56,15 +69,17 @@ cat > book.tex <<EOF
 \setlength{\parskip}{0.4cm}
 EOF
 
-cat *.tex >> book.tex
+cat *.tex >> book.tmp
+mv book.tmp book.tex
 
 # apply only to main part of book
-sed -i 's/\\section{/\\chapter{/g' book.tex
-sed -i 's/\\subsection{/\\section{/g' book.tex
-sed -i 's/\\subsubsection{/\\subsection{/g' book.tex
-sed -i '/←/d' book.tex
-sed -i '/→/d' book.tex
-sed -i 's/\\chapter{composer.json}/\\chapter[Schema]{composer.json}/g' book.tex
+$SED -i 's/\\section{/\\chapter{/g' book.tex
+$SED -i 's/\\subsection{/\\section{/g' book.tex
+$SED -i 's/\\subsubsection{/\\subsection{/g' book.tex
+$SED -i '/←/d' book.tex
+$SED -i '/→/d' book.tex
+$SED -i 's/\\chapter{composer.json}/\\chapter[Schema]{composer.json}/g' book.tex
+$SED -i 's/\\begin{longtable}\[c\]{@{}lll@{}}/\\begin{longtable}\[c\]{@{}p{\\dimexpr 0.2\\linewidth-2\\tabcolsep}p{\\dimexpr 0.2\\linewidth-2\\tabcolsep}p{\\dimexpr 0.6\\linewidth-2\\tabcolsep}@{}}/g' book.tex
 
 echo "\chapter{Articles}" >> book.tex
 cat articles/*.tex >> book.tex
@@ -74,9 +89,9 @@ echo >> book.tex
 echo "\end{document}" >> book.tex
 
 # apply to whole book
-sed -i 's/\\begin{verbatim}/\\begin{minipage}{\\textwidth} \\begin{lstlisting}/g' book.tex
-sed -i 's/\\end{verbatim}/\\end{lstlisting} \\end{minipage}/g' book.tex
-sed -i 's/\\textasciitilde{}/{\\raise.17ex\\hbox{$\\scriptstyle\\mathtt{\\sim}$}}/g' book.tex
+$SED -i 's/\\begin{verbatim}/\\begin{minipage}{\\textwidth} \\begin{lstlisting}/g' book.tex
+$SED -i 's/\\end{verbatim}/\\end{lstlisting} \\end{minipage}/g' book.tex
+$SED -i 's/\\textasciitilde{}/{\\raise.17ex\\hbox{$\\scriptstyle\\mathtt{\\sim}$}}/g' book.tex
 
 # first run to build index, second run to render everything
 pdflatex book.tex
