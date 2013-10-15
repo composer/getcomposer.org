@@ -5,6 +5,15 @@
 # * pandoc
 # * latex
 
+# use gsed if available
+# gsed is part of the gnu-sed homebrew package on osx
+if [[ -x "/usr/local/bin/gsed" ]]
+then
+    SED="/usr/local/bin/gsed"
+else
+    SED="sed"
+fi
+
 rm -rf cache/pdf
 mkdir cache/pdf
 mkdir cache/pdf/dev
@@ -59,12 +68,12 @@ EOF
 cat *.tex >> book.tex
 
 # apply only to main part of book
-sed -i 's/\\section{/\\chapter{/g' book.tex
-sed -i 's/\\subsection{/\\section{/g' book.tex
-sed -i 's/\\subsubsection{/\\subsection{/g' book.tex
-sed -i '/←/d' book.tex
-sed -i '/→/d' book.tex
-sed -i 's/\\chapter{composer.json}/\\chapter[Schema]{composer.json}/g' book.tex
+$SED -i 's/\\section{/\\chapter{/g' book.tex
+$SED -i 's/\\subsection{/\\section{/g' book.tex
+$SED -i 's/\\subsubsection{/\\subsection{/g' book.tex
+$SED -i '/←/d' book.tex
+$SED -i '/→/d' book.tex
+$SED -i 's/\\chapter{composer.json}/\\chapter[Schema]{composer.json}/g' book.tex
 
 echo "\chapter{Articles}" >> book.tex
 cat articles/*.tex >> book.tex
@@ -74,9 +83,9 @@ echo >> book.tex
 echo "\end{document}" >> book.tex
 
 # apply to whole book
-sed -i 's/\\begin{verbatim}/\\begin{minipage}{\\textwidth} \\begin{lstlisting}/g' book.tex
-sed -i 's/\\end{verbatim}/\\end{lstlisting} \\end{minipage}/g' book.tex
-sed -i 's/\\textasciitilde{}/{\\raise.17ex\\hbox{$\\scriptstyle\\mathtt{\\sim}$}}/g' book.tex
+$SED -i 's/\\begin{verbatim}/\\begin{minipage}{\\textwidth} \\begin{lstlisting}/g' book.tex
+$SED -i 's/\\end{verbatim}/\\end{lstlisting} \\end{minipage}/g' book.tex
+$SED -i 's/\\textasciitilde{}/{\\raise.17ex\\hbox{$\\scriptstyle\\mathtt{\\sim}$}}/g' book.tex
 
 # first run to build index, second run to render everything
 pdflatex book.tex
