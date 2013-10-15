@@ -49,6 +49,7 @@ cat > book.tmp <<EOF
 \usepackage[T1]{fontenc}
 \usepackage{textcomp}
 \usepackage{tgpagella}
+\usepackage{longtable}
 
 \lstset{
     breaklines=true,
