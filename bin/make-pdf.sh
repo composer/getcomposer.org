@@ -5,6 +5,9 @@
 # * pandoc
 # * latex
 
+# abort on error
+set -e
+
 # use gsed if available
 # gsed is part of the gnu-sed homebrew package on osx
 if [[ -x "/usr/local/bin/gsed" ]]
