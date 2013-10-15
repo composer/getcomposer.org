@@ -32,7 +32,7 @@ done
 
 cd ../../../../cache/pdf
 
-cat > book.tex <<EOF
+cat > book.tmp <<EOF
 \documentclass[letterpaper]{book}
 
 \title{Composer}
@@ -68,7 +68,8 @@ cat > book.tex <<EOF
 \setlength{\parskip}{0.4cm}
 EOF
 
-cat *.tex >> book.tex
+cat *.tex >> book.tmp
+mv book.tmp book.tex
 
 # apply only to main part of book
 $SED -i 's/\\section{/\\chapter{/g' book.tex
