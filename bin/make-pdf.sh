@@ -79,6 +79,7 @@ $SED -i 's/\\subsubsection{/\\subsection{/g' book.tex
 $SED -i '/←/d' book.tex
 $SED -i '/→/d' book.tex
 $SED -i 's/\\chapter{composer.json}/\\chapter[Schema]{composer.json}/g' book.tex
+$SED -i 's/\\begin{longtable}\[c\]{@{}lll@{}}/\\begin{longtable}\[c\]{@{}p{\\dimexpr 0.2\\linewidth-2\\tabcolsep}p{\\dimexpr 0.2\\linewidth-2\\tabcolsep}p{\\dimexpr 0.6\\linewidth-2\\tabcolsep}@{}}/g' book.tex
 
 echo "\chapter{Articles}" >> book.tex
 cat articles/*.tex >> book.tex
