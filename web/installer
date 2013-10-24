@@ -24,6 +24,21 @@ function process($argv)
     $quiet      = in_array('--quiet', $argv);
     $installDir = false;
 
+    // --no-ansi wins over --ansi
+    if (in_array('--no-ansi', $argv)) {
+        define('USE_ANSI', false);
+    } elseif (in_array('--ansi', $argv)) {
+        define('USE_ANSI', true);
+    } else {
+        // On Windows, default to no ANSI, except in ANSICON.
+        // Everywhere else, default to ANSI if stdout is a terminal.
+        define('USE_ANSI',
+            (DIRECTORY_SEPARATOR == '\\')
+                ? (false !== getenv('ANSICON'))
+                : (posix_isatty(1))
+        );
+    }
+
     foreach ($argv as $key => $val) {
         if (0 === strpos($val, '--install-dir')) {
             if (13 === strlen($val) && isset($argv[$key+1])) {
@@ -70,6 +85,8 @@ Options
 --help               this help
 --check              for checking environment only
 --force              forces the installation
+--ansi               force ANSI color output
+--no-ansi            disable ANSI color output
 --install-dir="..."  accepts a target installation directory
 
 EOF;
@@ -336,12 +353,6 @@ function installComposer($installDir, $quiet)
  */
 function out($text, $color = null, $newLine = true)
 {
-    if (DIRECTORY_SEPARATOR == '\\') {
-        $hasColorSupport = false !== getenv('ANSICON');
-    } else {
-        $hasColorSupport = true;
-    }
-
     $styles = array(
         'success' => "\033[0;32m%s\033[0m",
         'error' => "\033[31;31m%s\033[0m",
@@ -350,7 +361,7 @@ function out($text, $color = null, $newLine = true)
 
     $format = '%s';
 
-    if (isset($styles[$color]) && $hasColorSupport) {
+    if (isset($styles[$color]) && USE_ANSI) {
         $format = $styles[$color];
     }
 
