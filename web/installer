@@ -30,12 +30,12 @@ function process($argv)
     } elseif (in_array('--ansi', $argv)) {
         define('USE_ANSI', true);
     } else {
-        // On Windows, default to no ANSI, except in ANSICON.
+        // On Windows, default to no ANSI, except in ANSICON and ConEmu.
         // Everywhere else, default to ANSI if stdout is a terminal.
         define('USE_ANSI',
             (DIRECTORY_SEPARATOR == '\\')
-                ? (false !== getenv('ANSICON'))
-                : (posix_isatty(1))
+                ? (false !== getenv('ANSICON') || 'ON' === getenv('ConEmuANSI'))
+                : (function_exists('posix_isatty') && posix_isatty(1))
         );
     }
 
