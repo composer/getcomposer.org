@@ -11,7 +11,7 @@ $app->before(function (Request $request) {
         return;
     }
 
-    $e->setResponse(new RedirectResponse('https://'.substr($request->getUri(), 7)));
+    return new RedirectResponse('https://'.substr($request->getUri(), 7));
 });
 
 $app->after(function (Request $request, Response $response) {
