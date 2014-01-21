@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 // force ssl
 $app->before(function (Request $request) {
     // skip SSL & non-GET/HEAD requests
-    if ($request->isSecure() || !$request->isMethodSafe()) {
+    if (strtolower($request->headers->get('X_FORWARDED_PROTO')) == 'https' || !$request->isMethodSafe()) {
         return;
     }
 
