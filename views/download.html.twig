@@ -5,7 +5,7 @@
     <p>Run this in your terminal to get the latest Composer version:</p>
     <code>curl -sS https://getcomposer.org/installer | php</code>
     <p>Or if you don't have curl:</p>
-    <code>php -r "eval('?>'.file_get_contents('https://getcomposer.org/installer'));"</code>
+    <code>php -r "readfile('https://getcomposer.org/installer');" | php</code>
     <p>This installer script will simply check some php.ini settings, warn you if they are set incorrectly, and then download the latest composer.phar in the current directory</p>
 
     <h2>Installer Options</h2>
