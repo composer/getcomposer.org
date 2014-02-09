@@ -18,11 +18,12 @@ process($argv);
  */
 function process($argv)
 {
-    $check      = in_array('--check', $argv);
-    $help       = in_array('--help', $argv);
-    $force      = in_array('--force', $argv);
-    $quiet      = in_array('--quiet', $argv);
-    $installDir = false;
+    $check          = in_array('--check', $argv);
+    $help           = in_array('--help', $argv);
+    $force          = in_array('--force', $argv);
+    $quiet          = in_array('--quiet', $argv);
+    $installDir     = false;
+    $installRelease = false;
 
     // --no-ansi wins over --ansi
     if (in_array('--no-ansi', $argv)) {
@@ -47,6 +48,13 @@ function process($argv)
                 $installDir = trim(substr($val, 14));
             }
         }
+        if (0 === strpos($val, '--install-release')) {
+            if (17 === strlen($val) && isset($argv[$key+1])) {
+                $installRelease = trim($argv[$key+1]);
+            } else {
+                $installRelease = trim(substr($val, 18));
+            }
+        }
     }
 
     if ($help) {
@@ -61,12 +69,17 @@ function process($argv)
         $ok = false;
     }
 
+    if (false !== $installRelease && 1 !== preg_match('/^\d+\.\d+\.\d+(\-(alpha|beta)\d+)*$/', $installRelease)) {
+        out("The defined install release ({$installRelease}) does not match release pattern.", 'info');
+        $ok = false;
+    }
+
     if ($check) {
         exit($ok ? 0 : 1);
     }
 
     if ($ok || $force) {
-        installComposer($installDir, $quiet);
+        installComposer($installRelease, $installDir, $quiet);
         exit(0);
     }
 
@@ -306,7 +319,7 @@ function checkPlatform($quiet)
 /**
  * installs composer to the current working directory
  */
-function installComposer($installDir, $quiet)
+function installComposer($installRelease, $installDir, $quiet)
 {
     $installPath = (is_dir($installDir) ? rtrim($installDir, '/').'/' : '') . 'composer.phar';
     $installDir = realpath($installDir) ? realpath($installDir) : getcwd();
@@ -322,7 +335,9 @@ function installComposer($installDir, $quiet)
             out("Downloading...", 'info');
         }
 
-        $source = (extension_loaded('openssl') ? 'https' : 'http').'://getcomposer.org/composer.phar';
+        $uriScheme = extension_loaded('openssl') ? 'https' : 'http';
+        $urlPath   = (false !== $installRelease ? "/download/{$installRelease}" : '') . '/composer.phar';
+        $url       = "{$uriScheme}://getcomposer.org{$urlPath}";
         $errorHandler = new ErrorHandler();
         set_error_handler(array($errorHandler, 'handleError'));
 
@@ -330,7 +345,7 @@ function installComposer($installDir, $quiet)
         if (!$fh) {
             out('Could not create file '.$file.': '.$errorHandler->message, 'error');
         }
-        if (!fwrite($fh, file_get_contents($source, false, getStreamContext($source)))) {
+        if (!fwrite($fh, file_get_contents($url, false, getStreamContext($url)))) {
             out('Download failed: '.$errorHandler->message, 'error');
         }
         fclose($fh);
