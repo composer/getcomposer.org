@@ -23,6 +23,7 @@ function process($argv)
     $force      = in_array('--force', $argv);
     $quiet      = in_array('--quiet', $argv);
     $installDir = false;
+    $filename   = 'composer.phar';
 
     // --no-ansi wins over --ansi
     if (in_array('--no-ansi', $argv)) {
@@ -47,6 +48,13 @@ function process($argv)
                 $installDir = trim(substr($val, 14));
             }
         }
+        if (0 === strpos($val, '--filename')) {
+            if (10 === strlen($val) && isset($argv[$key+1])) {
+                $filename = trim($argv[$key+1]);
+            } else {
+                $filename = trim(substr($val, 11));
+            }
+        }
     }
 
     if ($help) {
@@ -66,7 +74,7 @@ function process($argv)
     }
 
     if ($ok || $force) {
-        installComposer($installDir, $quiet);
+        installComposer($installDir, $filename, $quiet);
         exit(0);
     }
 
@@ -88,6 +96,7 @@ Options
 --ansi               force ANSI color output
 --no-ansi            disable ANSI color output
 --install-dir="..."  accepts a target installation directory
+--filename="..."     accepts a target filename (default: composer.phar)
 
 EOF;
 }
@@ -306,11 +315,11 @@ function checkPlatform($quiet)
 /**
  * installs composer to the current working directory
  */
-function installComposer($installDir, $quiet)
+function installComposer($installDir, $filename, $quiet)
 {
-    $installPath = (is_dir($installDir) ? rtrim($installDir, '/').'/' : '') . 'composer.phar';
+    $installPath = (is_dir($installDir) ? rtrim($installDir, '/').'/' : '') . $filename;
     $installDir = realpath($installDir) ? realpath($installDir) : getcwd();
-    $file       = $installDir.DIRECTORY_SEPARATOR.'composer.phar';
+    $file       = $installDir.DIRECTORY_SEPARATOR.$filename;
 
     if (is_readable($file)) {
         @unlink($file);
