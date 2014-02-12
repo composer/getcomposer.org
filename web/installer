@@ -18,12 +18,12 @@ process($argv);
  */
 function process($argv)
 {
-    $check          = in_array('--check', $argv);
-    $help           = in_array('--help', $argv);
-    $force          = in_array('--force', $argv);
-    $quiet          = in_array('--quiet', $argv);
-    $installDir     = false;
-    $installRelease = false;
+    $check      = in_array('--check', $argv);
+    $help       = in_array('--help', $argv);
+    $force      = in_array('--force', $argv);
+    $quiet      = in_array('--quiet', $argv);
+    $installDir = false;
+    $version    = false;
 
     // --no-ansi wins over --ansi
     if (in_array('--no-ansi', $argv)) {
@@ -48,11 +48,11 @@ function process($argv)
                 $installDir = trim(substr($val, 14));
             }
         }
-        if (0 === strpos($val, '--install-release')) {
-            if (17 === strlen($val) && isset($argv[$key+1])) {
-                $installRelease = trim($argv[$key+1]);
+        if (0 === strpos($val, '--version')) {
+            if (9 === strlen($val) && isset($argv[$key+1])) {
+                $version = trim($argv[$key+1]);
             } else {
-                $installRelease = trim(substr($val, 18));
+                $version = trim(substr($val, 10));
             }
         }
     }
@@ -69,8 +69,8 @@ function process($argv)
         $ok = false;
     }
 
-    if (false !== $installRelease && 1 !== preg_match('/^\d+\.\d+\.\d+(\-(alpha|beta)\d+)*$/', $installRelease)) {
-        out("The defined install release ({$installRelease}) does not match release pattern.", 'info');
+    if (false !== $version && 1 !== preg_match('/^\d+\.\d+\.\d+(\-(alpha|beta)\d+)*$/', $version)) {
+        out("The defined install version ({$version}) does not match release pattern.", 'info');
         $ok = false;
     }
 
@@ -79,7 +79,7 @@ function process($argv)
     }
 
     if ($ok || $force) {
-        installComposer($installRelease, $installDir, $quiet);
+        installComposer($version, $installDir, $quiet);
         exit(0);
     }
 
@@ -319,7 +319,7 @@ function checkPlatform($quiet)
 /**
  * installs composer to the current working directory
  */
-function installComposer($installRelease, $installDir, $quiet)
+function installComposer($version, $installDir, $quiet)
 {
     $installPath = (is_dir($installDir) ? rtrim($installDir, '/').'/' : '') . 'composer.phar';
     $installDir = realpath($installDir) ? realpath($installDir) : getcwd();
@@ -336,7 +336,7 @@ function installComposer($installRelease, $installDir, $quiet)
         }
 
         $uriScheme = extension_loaded('openssl') ? 'https' : 'http';
-        $urlPath   = (false !== $installRelease ? "/download/{$installRelease}" : '') . '/composer.phar';
+        $urlPath   = (false !== $version ? "/download/{$version}" : '') . '/composer.phar';
         $url       = "{$uriScheme}://getcomposer.org{$urlPath}";
         $errorHandler = new ErrorHandler();
         set_error_handler(array($errorHandler, 'handleError'));
