@@ -368,14 +368,29 @@ function installComposer($version, $installDir, $filename, $quiet)
         }
 
         try {
+            // create a temp file ending in .phar since the Phar class only accepts that
+            if ('.phar' !== substr($file, -5)) {
+                copy($file, $file.'.tmp.phar');
+                $pharFile = $file.'.tmp.phar';
+            } else {
+                $pharFile = $file;
+            }
             // test the phar validity
-            $phar = new Phar($file);
+            $phar = new Phar($pharFile);
             // free the variable to unlock the file
             unset($phar);
+            // clean up temp file if needed
+            if ($file !== $pharFile) {
+                unlink($pharFile);
+            }
             break;
         } catch (Exception $e) {
             if (!$e instanceof UnexpectedValueException && !$e instanceof PharException) {
                 throw $e;
+            }
+            // clean up temp file if needed
+            if ($file !== $pharFile) {
+                unlink($pharFile);
             }
             unlink($file);
             if ($retries) {
