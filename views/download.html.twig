@@ -9,8 +9,14 @@
     <p>This installer script will simply check some php.ini settings, warn you if they are set incorrectly, and then download the latest composer.phar in the current directory</p>
 
     <h2>Installer Options</h2>
+
+    <h3>--install-dir</h3>
     <p>You can install composer to a specific directory by using the <code>--install-dir</code> option and providing a target directory. Options must be appended to <code>--</code> so that PHP ignores them, like <code>-- --install-dir=bin</code>, example:</p>
     <code>curl -sS https://getcomposer.org/installer | php -- --install-dir=bin</code>
+
+    <h3>--version</h3>
+    <p>You can install composer to a specific release by using the <code>--version</code> option and providing a target release. example:</p>
+    <code>curl -sS https://getcomposer.org/installer | php -- --version=1.0.0-alpha8</code>
 
     {% if windows %}
         <h2>Windows Installer</h2>
