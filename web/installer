@@ -24,6 +24,7 @@ function process($argv)
     $quiet      = in_array('--quiet', $argv);
     $installDir = false;
     $version    = false;
+    $filename   = 'composer.phar';
 
     // --no-ansi wins over --ansi
     if (in_array('--no-ansi', $argv)) {
@@ -48,11 +49,20 @@ function process($argv)
                 $installDir = trim(substr($val, 14));
             }
         }
+
         if (0 === strpos($val, '--version')) {
             if (9 === strlen($val) && isset($argv[$key+1])) {
                 $version = trim($argv[$key+1]);
             } else {
                 $version = trim(substr($val, 10));
+            }
+        }
+
+        if (0 === strpos($val, '--filename')) {
+            if (10 === strlen($val) && isset($argv[$key+1])) {
+                $filename = trim($argv[$key+1]);
+            } else {
+                $filename = trim(substr($val, 11));
             }
         }
     }
@@ -79,7 +89,7 @@ function process($argv)
     }
 
     if ($ok || $force) {
-        installComposer($version, $installDir, $quiet);
+        installComposer($version, $installDir, $filename, $quiet);
         exit(0);
     }
 
@@ -101,6 +111,8 @@ Options
 --ansi               force ANSI color output
 --no-ansi            disable ANSI color output
 --install-dir="..."  accepts a target installation directory
+--version="..."      accepts a specific version to install instead of the latest
+--filename="..."     accepts a target filename (default: composer.phar)
 
 EOF;
 }
@@ -319,11 +331,11 @@ function checkPlatform($quiet)
 /**
  * installs composer to the current working directory
  */
-function installComposer($version, $installDir, $quiet)
+function installComposer($version, $installDir, $filename, $quiet)
 {
-    $installPath = (is_dir($installDir) ? rtrim($installDir, '/').'/' : '') . 'composer.phar';
+    $installPath = (is_dir($installDir) ? rtrim($installDir, '/').'/' : '') . $filename;
     $installDir = realpath($installDir) ? realpath($installDir) : getcwd();
-    $file       = $installDir.DIRECTORY_SEPARATOR.'composer.phar';
+    $file       = $installDir.DIRECTORY_SEPARATOR.$filename;
 
     if (is_readable($file)) {
         @unlink($file);
