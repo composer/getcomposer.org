@@ -82,7 +82,7 @@ function process($argv)
         exit(0);
     }
 
-    $ok = checkPlatform($quiet);
+    $ok = checkPlatform($quiet, $disableTls);
 
     if (false !== $installDir && !is_dir($installDir)) {
         out("The defined install dir ({$installDir}) does not exist.", 'info');
@@ -100,8 +100,8 @@ function process($argv)
     }
 
     if (true === $disableTls) {
-        out("You have instructed the Installer not to enforce SSL/TLS security on remote HTTPS requests.", 'warning');
-        out("This will leave all downloads during installation vulnerable to Man-In-The-Middle (MITM) attacks.", 'warning');
+        out("You have instructed the Installer not to enforce SSL/TLS security on remote HTTPS requests.", 'info');
+        out("This will leave all downloads during installation vulnerable to Man-In-The-Middle (MITM) attacks.", 'info');
     }
 
     if ($check) {
@@ -109,7 +109,7 @@ function process($argv)
     }
 
     if ($ok || $force) {
-        installComposer($version, $installDir, $filename, $quiet);
+        installComposer($version, $installDir, $filename, $quiet, $disableTls, $cafile);
         exit(0);
     }
 
@@ -133,6 +133,8 @@ Options
 --install-dir="..."  accepts a target installation directory
 --version="..."      accepts a specific version to install instead of the latest
 --filename="..."     accepts a target filename (default: composer.phar)
+--disable-tls        disable SSL/TLS security for file downloads
+--cafile="..."       accepts a path to a Certificate Authority (CA) certificate file for SSL/TLS verification
 
 EOF;
 }
@@ -140,7 +142,7 @@ EOF;
 /**
  * check the platform for possible issues on running composer
  */
-function checkPlatform($quiet)
+function checkPlatform($quiet, $disableTls)
 {
     $errors = array();
     $warnings = array();
@@ -202,8 +204,10 @@ function checkPlatform($quiet)
         $warnings['php'] = PHP_VERSION;
     }
 
-    if (!extension_loaded('openssl')) {
+    if (!extension_loaded('openssl') && true === $disableTls) {
         $warnings['openssl'] = true;
+    } elseif (!extension_loaded('openssl')) {
+        $errors['openssl'] = true;
     }
 
     if (ini_get('apc.enable_cli')) {
@@ -287,6 +291,11 @@ function checkPlatform($quiet)
                     $text .= "    zend_extension = /usr/lib/php5/20090626+lfs/ioncube_loader_lin_5.3.so";
                     $displayIniMessage = true;
                     break;
+
+                case 'openssl':
+                    $text = PHP_EOL."The openssl extension is missing, which means that secure HTTPS transfers are impossible.".PHP_EOL;
+                    $text .= "If possible you should enable it or recompile php with --with-openssl";
+                    break;
             }
             if ($displayIniMessage) {
                 $text .= $iniMessage;
@@ -323,7 +332,7 @@ function checkPlatform($quiet)
                     break;
 
                 case 'openssl':
-                    $text = PHP_EOL."The openssl extension is missing, which will reduce the security and stability of Composer.".PHP_EOL;
+                    $text = PHP_EOL."The openssl extension is missing, which means that secure HTTPS transfers are impossible.".PHP_EOL;
                     $text .= "If possible you should enable it or recompile php with --with-openssl";
                     break;
 
@@ -351,7 +360,7 @@ function checkPlatform($quiet)
 /**
  * installs composer to the current working directory
  */
-function installComposer($version, $installDir, $filename, $quiet)
+function installComposer($version, $installDir, $filename, $quiet, $disableTls, $cafile)
 {
     $installPath = (is_dir($installDir) ? rtrim($installDir, '/').'/' : '') . $filename;
     $installDir = realpath($installDir) ? realpath($installDir) : getcwd();
@@ -361,13 +370,15 @@ function installComposer($version, $installDir, $filename, $quiet)
         @unlink($file);
     }
 
+    $httpClient = new HttpClient($disableTls, $cafile);
+
     $retries = 3;
     while ($retries--) {
         if (!$quiet) {
             out("Downloading...", 'info');
         }
 
-        $uriScheme = extension_loaded('openssl') ? 'https' : 'http';
+        $uriScheme = false === $disableTls ? 'https' : 'http';
         $urlPath   = (false !== $version ? "/download/{$version}" : '') . '/composer.phar';
         $url       = "{$uriScheme}://getcomposer.org{$urlPath}";
         $errorHandler = new ErrorHandler();
@@ -377,7 +388,7 @@ function installComposer($version, $installDir, $filename, $quiet)
         if (!$fh) {
             out('Could not create file '.$file.': '.$errorHandler->message, 'error');
         }
-        if (!fwrite($fh, file_get_contents($url, false, getStreamContext($url)))) {
+        if (!fwrite($fh, $httpClient->get($url))) {
             out('Download failed: '.$errorHandler->message, 'error');
         }
         fclose($fh);
@@ -461,79 +472,6 @@ function out($text, $color = null, $newLine = true)
     printf($format, $text);
 }
 
-/**
- * function copied from Composer\Util\StreamContextFactory::getContext
- *
- * Any changes should be applied there as well, or backported here.
- * 
- * @param string $url URL the context is to be used for
- * @return resource Default context
- * @throws \RuntimeException if https proxy required and OpenSSL uninstalled
- */
-function getStreamContext($url)
-{
-    $options = array('http' => array());
-
-    // Handle system proxy
-    if (!empty($_SERVER['HTTP_PROXY']) || !empty($_SERVER['http_proxy'])) {
-        // Some systems seem to rely on a lowercased version instead...
-        $proxy = parse_url(!empty($_SERVER['http_proxy']) ? $_SERVER['http_proxy'] : $_SERVER['HTTP_PROXY']);
-    }
-
-    if (!empty($proxy)) {
-        $proxyURL = isset($proxy['scheme']) ? $proxy['scheme'] . '://' : '';
-        $proxyURL .= isset($proxy['host']) ? $proxy['host'] : '';
-
-        if (isset($proxy['port'])) {
-            $proxyURL .= ":" . $proxy['port'];
-        } elseif ('http://' == substr($proxyURL, 0, 7)) {
-            $proxyURL .= ":80";
-        } elseif ('https://' == substr($proxyURL, 0, 8)) {
-            $proxyURL .= ":443";
-        }
-
-        // http(s):// is not supported in proxy
-        $proxyURL = str_replace(array('http://', 'https://'), array('tcp://', 'ssl://'), $proxyURL);
-
-        if (0 === strpos($proxyURL, 'ssl:') && !extension_loaded('openssl')) {
-            throw new \RuntimeException('You must enable the openssl extension to use a proxy over https');
-        }
-        
-        $options['http'] = array(
-            'proxy'           => $proxyURL,
-        );
-        
-        // enabled request_fulluri unless it is explicitly disabled
-        switch (parse_url($url, PHP_URL_SCHEME)) {
-            case 'http': // default request_fulluri to true
-                $reqFullUriEnv = getenv('HTTP_PROXY_REQUEST_FULLURI');
-                if ($reqFullUriEnv === false || $reqFullUriEnv === '' || (strtolower($reqFullUriEnv) !== 'false' && (bool) $reqFullUriEnv)) {
-                    $options['http']['request_fulluri'] = true;
-                }
-                break;
-            case 'https': // default request_fulluri to true
-                $reqFullUriEnv = getenv('HTTPS_PROXY_REQUEST_FULLURI');
-                if ($reqFullUriEnv === false || $reqFullUriEnv === '' || (strtolower($reqFullUriEnv) !== 'false' && (bool) $reqFullUriEnv)) {
-                    $options['http']['request_fulluri'] = true;
-                }
-                break;
-        }
-        
-
-        if (isset($proxy['user'])) {
-            $auth = urldecode($proxy['user']);
-            if (isset($proxy['pass'])) {
-                $auth .= ':' . urldecode($proxy['pass']);
-            }
-            $auth = base64_encode($auth);
-
-            $options['http']['header'] = "Proxy-Authorization: Basic {$auth}\r\n";
-        }
-    }
-
-    return stream_context_create($options);
-}
-
 class ErrorHandler
 {
     public $message = '';
@@ -549,32 +487,190 @@ class ErrorHandler
 
 class HttpClient {
 
-    private $options = array();
+    private $options = array('http' => array());
     private $disableTls = false;
 
-    public function __construct($disableTls = false, $cafile = null)
+    public function __construct($disableTls = false, $cafile = false)
     {
         $this->disableTls = $disableTls;
-        /**
-         * Setup TLS options
-         * The cafile option can be set via config.json
-         */
-        if ($disableTls === false) {
-            $this->options = $this->getTlsDefaults();
-            if (isset($options['ssl']['cafile'])
-            && (!is_readable($options['ssl']['cafile'])
-            || !\openssl_x509_parse(file_get_contents($options['ssl']['cafile'])))) {
-                throw new RuntimeException('The configured cafile was not valid or could not be read.');
+        if ($this->disableTls === false) {
+            $options = $this->getTlsStreamContextDefaults();
+            if (!empty($cafile)) {
+                if (!is_readable($cafile) || !\openssl_x509_parse(file_get_contents($cafile))) {
+                    throw new RuntimeException('The configured cafile (' .$cafile. ') was not valid or could not be read.');
+                } else {
+                    $options['ssl']['cafile'] = $cafile;
+                }
             }
+            $this->options = array_replace_recursive($this->options, $options);
         }
-
-        // handle the other externally set options normally.
-        $this->options = array_replace_recursive($this->options, $options);
     }
 
     public function get($url)
     {
+        $context = $this->getStreamContext($url);
+        return file_get_contents($url, null, $context);
+    }
 
+    protected function getStreamContext($url)
+    {
+        if ($this->disableTls === false) {
+            $host = parse_url($url, PHP_URL_HOST);
+            $this->options['ssl']['CN_match'] = $host;
+            $this->options['ssl']['SNI_server_name'] = $host;
+        }
+        // Keeping the above mostly isolated from the code copied from Composer.
+        return $this->getMergedStreamContext($url);
+    }
+
+    protected function getTlsStreamContextDefaults()
+    {
+        $ciphers = implode(':', array(
+            'ECDHE-RSA-AES128-GCM-SHA256',
+            'ECDHE-ECDSA-AES128-GCM-SHA256',
+            'ECDHE-RSA-AES256-GCM-SHA384',
+            'ECDHE-ECDSA-AES256-GCM-SHA384',
+            'DHE-RSA-AES128-GCM-SHA256',
+            'DHE-DSS-AES128-GCM-SHA256',
+            'kEDH+AESGCM',
+            'ECDHE-RSA-AES128-SHA256',
+            'ECDHE-ECDSA-AES128-SHA256',
+            'ECDHE-RSA-AES128-SHA',
+            'ECDHE-ECDSA-AES128-SHA',
+            'ECDHE-RSA-AES256-SHA384',
+            'ECDHE-ECDSA-AES256-SHA384',
+            'ECDHE-RSA-AES256-SHA',
+            'ECDHE-ECDSA-AES256-SHA',
+            'DHE-RSA-AES128-SHA256',
+            'DHE-RSA-AES128-SHA',
+            'DHE-DSS-AES128-SHA256',
+            'DHE-RSA-AES256-SHA256',
+            'DHE-DSS-AES256-SHA',
+            'DHE-RSA-AES256-SHA',
+            'AES128-GCM-SHA256',
+             'AES256-GCM-SHA384',
+            'ECDHE-RSA-RC4-SHA',
+            'ECDHE-ECDSA-RC4-SHA',
+            'AES128',
+            'AES256',
+            'RC4-SHA',
+            'HIGH',
+            '!aNULL',
+            '!eNULL',
+            '!EXPORT',
+            '!DES',
+            '!3DES',
+            '!MD5',
+            '!PSK'
+        ));
+
+        /**
+         * CN_match and SNI_server_name are only known once a URL is passed.
+         * They will be set in the getOptionsForUrl() method which receives a URL.
+         *
+         * cafile or capath can be overridden by passing in those options to constructor.
+         */
+        $options = array(
+            'ssl' => array(
+                'ciphers' => $ciphers,
+                'verify_peer' => true,
+                'verify_depth' => 7,
+                'SNI_enabled' => true,
+            )
+        );
+        
+        /**
+         * Attempt to find a local cafile or throw an exception.
+         * The user may go download one if this occurs.
+         */
+        $result = $this->getSystemCaRootBundlePath();
+        if ($result) {
+            $options['ssl']['cafile'] = $result;
+        } else {
+            throw new TransportException('A valid cafile could not be located automatically.');
+        }
+
+        /**
+         * Disable TLS compression to prevent CRIME attacks where supported.
+         */
+        if (version_compare(PHP_VERSION, '5.4.13') >= 0) {
+            $options['ssl']['disable_compression'] = true;
+        }
+
+        return $options;
+    }
+
+    /**
+     * function copied from Composer\Util\StreamContextFactory::getContext
+     *
+     * Any changes should be applied there as well, or backported here.
+     * 
+     * @param string $url URL the context is to be used for
+     * @return resource Default context
+     * @throws \RuntimeException if https proxy required and OpenSSL uninstalled
+     */
+    function getMergedStreamContext($url)
+    {
+        $options = $this->options;
+
+        // Handle system proxy
+        if (!empty($_SERVER['HTTP_PROXY']) || !empty($_SERVER['http_proxy'])) {
+            // Some systems seem to rely on a lowercased version instead...
+            $proxy = parse_url(!empty($_SERVER['http_proxy']) ? $_SERVER['http_proxy'] : $_SERVER['HTTP_PROXY']);
+        }
+
+        if (!empty($proxy)) {
+            $proxyURL = isset($proxy['scheme']) ? $proxy['scheme'] . '://' : '';
+            $proxyURL .= isset($proxy['host']) ? $proxy['host'] : '';
+
+            if (isset($proxy['port'])) {
+                $proxyURL .= ":" . $proxy['port'];
+            } elseif ('http://' == substr($proxyURL, 0, 7)) {
+                $proxyURL .= ":80";
+            } elseif ('https://' == substr($proxyURL, 0, 8)) {
+                $proxyURL .= ":443";
+            }
+
+            // http(s):// is not supported in proxy
+            $proxyURL = str_replace(array('http://', 'https://'), array('tcp://', 'ssl://'), $proxyURL);
+
+            if (0 === strpos($proxyURL, 'ssl:') && !extension_loaded('openssl')) {
+                throw new \RuntimeException('You must enable the openssl extension to use a proxy over https');
+            }
+            
+            $options['http'] = array(
+                'proxy'           => $proxyURL,
+            );
+            
+            // enabled request_fulluri unless it is explicitly disabled
+            switch (parse_url($url, PHP_URL_SCHEME)) {
+                case 'http': // default request_fulluri to true
+                    $reqFullUriEnv = getenv('HTTP_PROXY_REQUEST_FULLURI');
+                    if ($reqFullUriEnv === false || $reqFullUriEnv === '' || (strtolower($reqFullUriEnv) !== 'false' && (bool) $reqFullUriEnv)) {
+                        $options['http']['request_fulluri'] = true;
+                    }
+                    break;
+                case 'https': // default request_fulluri to true
+                    $reqFullUriEnv = getenv('HTTPS_PROXY_REQUEST_FULLURI');
+                    if ($reqFullUriEnv === false || $reqFullUriEnv === '' || (strtolower($reqFullUriEnv) !== 'false' && (bool) $reqFullUriEnv)) {
+                        $options['http']['request_fulluri'] = true;
+                    }
+                    break;
+            }
+            
+
+            if (isset($proxy['user'])) {
+                $auth = urldecode($proxy['user']);
+                if (isset($proxy['pass'])) {
+                    $auth .= ':' . urldecode($proxy['pass']);
+                }
+                $auth = base64_encode($auth);
+
+                $options['http']['header'] = "Proxy-Authorization: Basic {$auth}\r\n";
+            }
+        }
+
+        return stream_context_create($options);
     }
 
     /**
