@@ -22,9 +22,11 @@ function process($argv)
     $help       = in_array('--help', $argv);
     $force      = in_array('--force', $argv);
     $quiet      = in_array('--quiet', $argv);
+    $disableTls = in_array('--disable-tls', $argv);
     $installDir = false;
     $version    = false;
     $filename   = 'composer.phar';
+    $cafile     = false;
 
     // --no-ansi wins over --ansi
     if (in_array('--no-ansi', $argv)) {
@@ -65,6 +67,14 @@ function process($argv)
                 $filename = trim(substr($val, 11));
             }
         }
+
+        if (0 === strpos($val, '--cafile')) {
+            if (8 === strlen($val) && isset($argv[$key+1])) {
+                $cafile = trim($argv[$key+1]);
+            } else {
+                $cafile = trim(substr($val, 9));
+            }
+        }
     }
 
     if ($help) {
@@ -82,6 +92,16 @@ function process($argv)
     if (false !== $version && 1 !== preg_match('/^\d+\.\d+\.\d+(\-(alpha|beta)\d+)*$/', $version)) {
         out("The defined install version ({$version}) does not match release pattern.", 'info');
         $ok = false;
+    }
+
+    if (false !== $cafile && (!file_exists($cafile) || is_readable($cafile))) {
+        out("The defined Certificate Authority (CA) cert file ({$cafile}) does not exist or is not readable.", 'info');
+        $ok = false;
+    }
+
+    if (true === $disableTls) {
+        out("You have instructed the Installer not to enforce SSL/TLS security on remote HTTPS requests.", 'warning');
+        out("This will leave all downloads during installation vulnerable to Man-In-The-Middle (MITM) attacks.", 'warning');
     }
 
     if ($check) {
@@ -525,4 +545,105 @@ class ErrorHandler
         }
         $this->message .= preg_replace('{^copy\(.*?\): }', '', $msg);
     }
+}
+
+class HttpClient {
+
+    private $options = array();
+    private $disableTls = false;
+
+    public function __construct($disableTls = false, $cafile = null)
+    {
+        $this->disableTls = $disableTls;
+        /**
+         * Setup TLS options
+         * The cafile option can be set via config.json
+         */
+        if ($disableTls === false) {
+            $this->options = $this->getTlsDefaults();
+            if (isset($options['ssl']['cafile'])
+            && (!is_readable($options['ssl']['cafile'])
+            || !\openssl_x509_parse(file_get_contents($options['ssl']['cafile'])))) {
+                throw new RuntimeException('The configured cafile was not valid or could not be read.');
+            }
+        }
+
+        // handle the other externally set options normally.
+        $this->options = array_replace_recursive($this->options, $options);
+    }
+
+    public function get($url)
+    {
+
+    }
+
+    /**
+    * This method was adapted from Sslurp.
+    * https://github.com/EvanDotPro/Sslurp
+    *
+    * (c) Evan Coury <me@evancoury.com>
+    *
+    * For the full copyright and license information, please see below:
+    *
+    * Copyright (c) 2013, Evan Coury
+    * All rights reserved.
+    * 
+    * Redistribution and use in source and binary forms, with or without modification,
+    * are permitted provided that the following conditions are met:
+    * 
+    *     * Redistributions of source code must retain the above copyright notice,
+    *       this list of conditions and the following disclaimer.
+    * 
+    *     * Redistributions in binary form must reproduce the above copyright notice,
+    *       this list of conditions and the following disclaimer in the documentation
+    *       and/or other materials provided with the distribution.
+    * 
+    * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+    * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+    * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+    * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    */
+    protected function getSystemCaRootBundlePath()
+    {
+        if (isset($found)) {
+            return $found;
+        }
+        // If SSL_CERT_FILE env variable points to a valid certificate/bundle, use that.
+        // This mimics how OpenSSL uses the SSL_CERT_FILE env variable.
+        $envCertFile = getenv('SSL_CERT_FILE');
+        if ($envCertFile && is_readable($envCertFile) && \openssl_x509_parse(file_get_contents($envCertFile))) {
+            // Possibly throw exception instead of ignoring SSL_CERT_FILE if it's invalid?
+            return $envCertFile;
+        }
+
+        $caBundlePaths = array(
+            '/etc/pki/tls/certs/ca-bundle.crt', // Fedora, RHEL, CentOS (ca-certificates package)
+            '/etc/ssl/certs/ca-certificates.crt', // Debian, Ubuntu, Gentoo, Arch Linux (ca-certificates package)
+            '/etc/ssl/ca-bundle.pem', // SUSE, openSUSE (ca-certificates package)
+            '/usr/local/share/certs/ca-root-nss.crt', // FreeBSD (ca_root_nss_package)
+            '/usr/ssl/certs/ca-bundle.crt', // Cygwin
+            '/opt/local/share/curl/curl-ca-bundle.crt', // OS X macports, curl-ca-bundle package
+            '/usr/local/share/curl/curl-ca-bundle.crt', // Default cURL CA bunde path (without --with-ca-bundle option)
+            '/usr/share/ssl/certs/ca-bundle.crt', // Really old RedHat?
+        );
+
+        static $found = false;
+        foreach ($caBundlePaths as $caBundle) {
+            if (is_readable($caBundle) && \openssl_x509_parse(file_get_contents($caBundle))) {
+                $found = true;
+                break;
+            }
+        }
+        if ($found) {
+            $found = $caBundle;
+        }
+        return $found;
+    }
+
 }
