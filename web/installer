@@ -370,18 +370,18 @@ function installComposer($version, $installDir, $filename, $quiet, $disableTls, 
         @unlink($file);
     }
 
-    if (is_readable('cacert.pem')) {
-        @unlink('cacert.pem');
-    }
-
     if (false === $disableTls && empty($cafile) && !HttpClient::getSystemCaRootBundlePath()) {
         $errorHandler = new ErrorHandler();
         set_error_handler(array($errorHandler, 'handleError'));
-        $result = file_put_contents($installDir.DIRECTORY_SEPARATOR.'cacert.pem', HttpClient::getPackagedCaFile());
-        if (!$result) {
-            out('Could not create file cacert.pem: '.$errorHandler->message, 'error');
+
+        $tmp = rtrim(sys_get_temp_dir(), '\\/');
+        $target = $tmp . DIRECTORY_SEPARATOR . 'composer-cacert.pem';
+        $write = file_put_contents($target, HttpClient::getPackagedCaFile(), LOCK_EX);
+        if (!$write) {
+            throw new TransportException('Unable to write bundled cacert.pem to: '.$target);
         }
-        $cafile = $installDir.DIRECTORY_SEPARATOR.'cacert.pem';
+        $cafile = $target;
+
         restore_error_handler();
     }
 
