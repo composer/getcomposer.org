@@ -377,12 +377,13 @@ function installComposer($version, $installDir, $filename, $quiet, $disableTls, 
         $tmp = rtrim(sys_get_temp_dir(), '\\/');
         $target = $tmp . DIRECTORY_SEPARATOR . 'composer-cacert.pem';
         $write = file_put_contents($target, HttpClient::getPackagedCaFile(), LOCK_EX);
+
+        restore_error_handler();
+        
         if (!$write) {
             throw new TransportException('Unable to write bundled cacert.pem to: '.$target);
         }
         $cafile = $target;
-
-        restore_error_handler();
     }
 
     $httpClient = new HttpClient($disableTls, $cafile);
