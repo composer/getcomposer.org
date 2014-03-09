@@ -394,6 +394,7 @@ function installComposer($version, $installDir, $filename, $quiet, $disableTls, 
             @mkdir($dir, 0777, true);
         }
         $write = file_put_contents($target, HttpClient::getPackagedCaFile(), LOCK_EX);
+        @chmod($target, 0644);
 
         restore_error_handler();
 
