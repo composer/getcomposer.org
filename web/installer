@@ -379,7 +379,7 @@ function installComposer($version, $installDir, $filename, $quiet, $disableTls, 
         $write = file_put_contents($target, HttpClient::getPackagedCaFile(), LOCK_EX);
 
         restore_error_handler();
-        
+
         if (!$write) {
             throw new TransportException('Unable to write bundled cacert.pem to: '.$target);
         }
@@ -488,6 +488,20 @@ function out($text, $color = null, $newLine = true)
     printf($format, $text);
 }
 
+function validateCaFile($contents) {
+    // assume the CA is valid if php is vunerable to
+    // https://www.sektioneins.de/advisories/advisory-012013-php-openssl_x509_parse-memory-corruption-vulnerability.html
+    if (
+        PHP_VERSION_ID <= 50327
+        || (PHP_VERSION_ID >= 50400 && PHP_VERSION_ID < 50422)
+        || (PHP_VERSION_ID >= 50500 && PHP_VERSION_ID < 50506)
+    ) {
+        return !empty($contents);
+    }
+
+    return (bool) openssl_x509_parse($contents);
+}
+
 class ErrorHandler
 {
     public $message = '';
@@ -512,7 +526,7 @@ class HttpClient {
         if ($this->disableTls === false) {
             $options = $this->getTlsStreamContextDefaults();
             if (!empty($cafile)) {
-                if (!is_readable($cafile) || !\openssl_x509_parse(file_get_contents($cafile))) {
+                if (!is_readable($cafile) || !validateCaFile(file_get_contents($cafile))) {
                     throw new RuntimeException('The configured cafile (' .$cafile. ') was not valid or could not be read.');
                 } else {
                     $options['ssl']['cafile'] = $cafile;
@@ -594,7 +608,7 @@ class HttpClient {
                 'SNI_enabled' => true,
             )
         );
-        
+
         /**
          * Attempt to find a local cafile or throw an exception.
          * The user may go download one if this occurs.
@@ -620,7 +634,7 @@ class HttpClient {
      * function copied from Composer\Util\StreamContextFactory::getContext
      *
      * Any changes should be applied there as well, or backported here.
-     * 
+     *
      * @param string $url URL the context is to be used for
      * @return resource Default context
      * @throws \RuntimeException if https proxy required and OpenSSL uninstalled
@@ -653,11 +667,11 @@ class HttpClient {
             if (0 === strpos($proxyURL, 'ssl:') && !extension_loaded('openssl')) {
                 throw new \RuntimeException('You must enable the openssl extension to use a proxy over https');
             }
-            
+
             $options['http'] = array(
                 'proxy'           => $proxyURL,
             );
-            
+
             // enabled request_fulluri unless it is explicitly disabled
             switch (parse_url($url, PHP_URL_SCHEME)) {
                 case 'http': // default request_fulluri to true
@@ -673,7 +687,7 @@ class HttpClient {
                     }
                     break;
             }
-            
+
 
             if (isset($proxy['user'])) {
                 $auth = urldecode($proxy['user']);
@@ -699,17 +713,17 @@ class HttpClient {
     *
     * Copyright (c) 2013, Evan Coury
     * All rights reserved.
-    * 
+    *
     * Redistribution and use in source and binary forms, with or without modification,
     * are permitted provided that the following conditions are met:
-    * 
+    *
     *     * Redistributions of source code must retain the above copyright notice,
     *       this list of conditions and the following disclaimer.
-    * 
+    *
     *     * Redistributions in binary form must reproduce the above copyright notice,
     *       this list of conditions and the following disclaimer in the documentation
     *       and/or other materials provided with the distribution.
-    * 
+    *
     * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
     * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -729,7 +743,7 @@ class HttpClient {
         // If SSL_CERT_FILE env variable points to a valid certificate/bundle, use that.
         // This mimics how OpenSSL uses the SSL_CERT_FILE env variable.
         $envCertFile = getenv('SSL_CERT_FILE');
-        if ($envCertFile && is_readable($envCertFile) && \openssl_x509_parse(file_get_contents($envCertFile))) {
+        if ($envCertFile && is_readable($envCertFile) && validateCaFile(file_get_contents($envCertFile))) {
             // Possibly throw exception instead of ignoring SSL_CERT_FILE if it's invalid?
             return $envCertFile;
         }
@@ -747,12 +761,12 @@ class HttpClient {
 
         static $found = false;
         $configured = ini_get('openssl.cafile');
-        if ($configured && strlen($configured) > 0 && is_readable($caBundle) && \openssl_x509_parse(file_get_contents($caBundle))) {
+        if ($configured && strlen($configured) > 0 && is_readable($caBundle) && validateCaFile(file_get_contents($caBundle))) {
             $found = true;
             $caBundle = $configured;
         } else {
             foreach ($caBundlePaths as $caBundle) {
-                if (is_readable($caBundle) && \openssl_x509_parse(file_get_contents($caBundle))) {
+                if (is_readable($caBundle) && validateCaFile(file_get_contents($caBundle))) {
                     $found = true;
                     break;
                 }
@@ -766,7 +780,7 @@ class HttpClient {
 
     public static function getPackagedCaFile()
     {
-        $cacert = <<<CACERT
+        $cacert = <<<'CACERT'
 ##
 ## ca-bundle.crt -- Bundle of CA Root Certificates
 ##
