@@ -94,7 +94,7 @@ function process($argv)
         $ok = false;
     }
 
-    if (false !== $cafile && (!file_exists($cafile) || is_readable($cafile))) {
+    if (false !== $cafile && (!file_exists($cafile) || !is_readable($cafile))) {
         out("The defined Certificate Authority (CA) cert file ({$cafile}) does not exist or is not readable.", 'info');
         $ok = false;
     }
