@@ -391,7 +391,7 @@ function installComposer($version, $installDir, $filename, $quiet, $disableTls, 
 
         $target = $home . '/cacert.pem';
         if (!is_dir($home)) {
-            @mkdir($dir, 0777, true);
+            @mkdir($home, 0777, true);
         }
         $write = file_put_contents($target, HttpClient::getPackagedCaFile(), LOCK_EX);
         @chmod($target, 0644);
