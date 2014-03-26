@@ -16,6 +16,6 @@ $app->before(function (Request $request) {
 
 $app->after(function (Request $request, Response $response) {
     if (!$response->headers->has('Strict-Transport-Security')) {
-        $response->headers->set('Strict-Transport-Security', 'max-age=2592000');
+        $response->headers->set('Strict-Transport-Security', 'max-age=31104000');
     }
 });
