@@ -630,7 +630,7 @@ class HttpClient {
          * The user may go download one if this occurs.
          */
         if (!$cafile) {
-            $cafile = $this->getSystemCaRootBundlePath();
+            $cafile = self::getSystemCaRootBundlePath();
         }
         if (is_dir($cafile)) {
             $options['ssl']['capath'] = $cafile;
@@ -659,7 +659,7 @@ class HttpClient {
      * @return resource Default context
      * @throws \RuntimeException if https proxy required and OpenSSL uninstalled
      */
-    function getMergedStreamContext($url)
+    protected function getMergedStreamContext($url)
     {
         $options = $this->options;
 
@@ -757,9 +757,11 @@ class HttpClient {
     */
     public static function getSystemCaRootBundlePath()
     {
-        if (isset($found)) {
+        static $found = null;
+        if ($found !== null) {
             return $found;
         }
+
         // If SSL_CERT_FILE env variable points to a valid certificate/bundle, use that.
         // This mimics how OpenSSL uses the SSL_CERT_FILE env variable.
         $envCertFile = getenv('SSL_CERT_FILE');
@@ -779,7 +781,7 @@ class HttpClient {
             '/usr/share/ssl/certs/ca-bundle.crt', // Really old RedHat?
         );
 
-        static $found = false;
+        $found = null;
         $configured = ini_get('openssl.cafile');
         if ($configured && strlen($configured) > 0 && is_readable($caBundle) && validateCaFile(file_get_contents($caBundle))) {
             $found = true;
