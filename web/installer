@@ -632,7 +632,9 @@ class HttpClient {
         if (!$cafile) {
             $cafile = $this->getSystemCaRootBundlePath();
         }
-        if ($cafile) {
+        if (is_dir($cafile)) {
+            $options['ssl']['capath'] = $cafile;
+        } elseif ($cafile) {
             $options['ssl']['cafile'] = $cafile;
         } else {
             throw new \RuntimeException('A valid cafile could not be located automatically.');
@@ -787,6 +789,15 @@ class HttpClient {
                 if (@is_readable($caBundle) && validateCaFile(file_get_contents($caBundle))) {
                     $found = true;
                     break;
+                }
+            }
+            if (!$found) {
+                foreach ($caBundlePaths as $caBundle) {
+                    $caBundle = dirname($caBundle);
+                    if (is_dir($caBundle) && glob($caBundle.'/*')) {
+                        $found = true;
+                        break;
+                    }
                 }
             }
         }
