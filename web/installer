@@ -562,8 +562,10 @@ class HttpClient {
     {
         if ($this->disableTls === false) {
             $host = parse_url($url, PHP_URL_HOST);
-            $this->options['ssl']['CN_match'] = $host;
-            $this->options['ssl']['SNI_server_name'] = $host;
+            if (PHP_VERSION_ID < 50600) {
+                $this->options['ssl']['CN_match'] = $host;
+                $this->options['ssl']['SNI_server_name'] = $host;
+            }
         }
         // Keeping the above mostly isolated from the code copied from Composer.
         return $this->getMergedStreamContext($url);
