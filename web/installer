@@ -440,10 +440,12 @@ function installComposer($version, $installDir, $filename, $quiet, $disableTls, 
             } else {
                 $pharFile = $file;
             }
-            // test the phar validity
-            $phar = new Phar($pharFile);
-            // free the variable to unlock the file
-            unset($phar);
+            if (!ini_get('phar.readonly')) {
+                // test the phar validity
+                $phar = new Phar($pharFile);
+                // free the variable to unlock the file
+                unset($phar);
+            }
             // clean up temp file if needed
             if ($file !== $pharFile) {
                 unlink($pharFile);
