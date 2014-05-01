@@ -21,7 +21,7 @@ git fetch -q origin && \
 git fetch --tags -q origin && \
 git checkout master -q && \
 git rebase origin/master -q && \
-$composer install -q && \
+$composer install -q --no-dev && \
 php -d phar.readonly=0 $buildscript && \
 mv $buildphar "$root/$target/$buildphar" && \
 git log --pretty="%H" -n1 HEAD > "$root/$target/version"
@@ -32,7 +32,7 @@ for version in `git tag`; do
     then
         mkdir -p "$root/$target/download/$version/"
         git checkout $version -q && \
-        $composer install -q && \
+        $composer install -q --no-dev && \
         php -d phar.readonly=0 $buildscript && \
         touch --date="`git log -n1 --pretty=%ci $version`" $buildphar && \
         mv $buildphar "$root/$target/download/$version/$buildphar"
