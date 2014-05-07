@@ -378,12 +378,12 @@ function installComposer($version, $installDir, $filename, $quiet, $disableTls, 
         if (!$home) {
             if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
                 if (!getenv('APPDATA')) {
-                    throw new \RuntimeException('The APPDATA or COMPOSER_HOME environment variable must be set for composer to install correctly');
+                    throw new RuntimeException('The APPDATA or COMPOSER_HOME environment variable must be set for composer to install correctly');
                 }
                 $home = strtr(getenv('APPDATA'), '\\', '/') . '/Composer';
             } else {
                 if (!getenv('HOME')) {
-                    throw new \RuntimeException('The HOME or COMPOSER_HOME environment variable must be set for composer to install correctly');
+                    throw new RuntimeException('The HOME or COMPOSER_HOME environment variable must be set for composer to install correctly');
                 }
                 $home = rtrim(getenv('HOME'), '/') . '/.composer';
             }
@@ -399,7 +399,7 @@ function installComposer($version, $installDir, $filename, $quiet, $disableTls, 
         restore_error_handler();
 
         if (!$write) {
-            throw new \RuntimeException('Unable to write bundled cacert.pem to: '.$target);
+            throw new RuntimeException('Unable to write bundled cacert.pem to: '.$target);
         }
         $cafile = $target;
     }
@@ -641,7 +641,7 @@ class HttpClient {
         } elseif ($cafile) {
             $options['ssl']['cafile'] = $cafile;
         } else {
-            throw new \RuntimeException('A valid cafile could not be located automatically.');
+            throw new RuntimeException('A valid cafile could not be located automatically.');
         }
 
         /**
@@ -689,7 +689,7 @@ class HttpClient {
             $proxyURL = str_replace(array('http://', 'https://'), array('tcp://', 'ssl://'), $proxyURL);
 
             if (0 === strpos($proxyURL, 'ssl:') && !extension_loaded('openssl')) {
-                throw new \RuntimeException('You must enable the openssl extension to use a proxy over https');
+                throw new RuntimeException('You must enable the openssl extension to use a proxy over https');
             }
 
             $options['http'] = array(
