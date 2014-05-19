@@ -2,6 +2,8 @@
 
 use Silex\Provider\MonologServiceProvider;
 
+$env = 'dev';
+
 // include the prod configuration
 require __DIR__.'/prod.php';
 

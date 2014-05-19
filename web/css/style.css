@@ -166,7 +166,7 @@ blockquote p {
   padding-left: 20px;
 }
 
-code {
+p code {
   border: 1px solid #ccc;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -175,13 +175,6 @@ code {
   display: inline-block;
   line-height: 125%;
   margin: 0 2px;
-}
-
-pre code {
-  display: block;
-  border: 1px solid #ccc;
-  margin: 5px 0;
-  padding: 10px;
 }
 
 .prev-next {

@@ -9,6 +9,7 @@
         <meta name="viewport" content="width=device-width,initial-scale=1">
 
         <link rel="stylesheet" href="{{ app.request.basePath }}/css/style.css?v=6">
+        <link rel="stylesheet" href="{{ app.request.basePath }}/css/libs/prism.css?v=6">
 
         <script src="{{ app.request.basePath }}/js/libs/modernizr-2.0.6.min.js"></script>
     </head>
@@ -38,14 +39,7 @@
             </footer>
         </div>
 
-        {#
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="{{ app.request.basePath }}/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
-
-        <script defer src="{{ app.request.basePath }}/js/plugins.js"></script>
-        <script defer src="{{ app.request.basePath }}/js/script.js"></script>
-        #}
-
+        <script src="{{ app.request.basePath }}/js/libs/prism.js?v=6"></script>
         <script>
             var _gaq=[['_setAccount','UA-26723099-2'],['_trackPageview']];
             (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;

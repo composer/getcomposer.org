@@ -86,7 +86,10 @@ $app->get('/doc/{page}', function ($page) use ($app) {
     }
 
     $contents = file_get_contents($filename);
-    $content = $app['markdown']->transformMarkdown($contents);
+    $content = $app['markdown']->text($contents);
+    $content = str_replace(array('class="language-json', 'class="language-js'), 'class="language-javascript', $content);
+    $content = str_replace('class="language-sh', 'class="language-bash', $content);
+    $content = str_replace('class="language-ini', 'class="language-clike', $content);
 
     $dom = new DOMDocument();
     $dom->loadHtml($content);

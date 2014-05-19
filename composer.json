@@ -1,7 +1,7 @@
 {
     "require": {
         "composer/composer": "~1.0@dev",
-        "dflydev/markdown": "~1.0",
+        "erusev/parsedown": "~1.0",
         "monolog/monolog": "~1.4",
         "silex/silex": "~1.1",
         "symfony/class-loader": "~2.3",
