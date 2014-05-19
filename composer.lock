@@ -11,12 +11,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "0c343f925ad578a9da4d9a4cfff4e91b500d206c"
+                "reference": "0c85ca426d6e8235366340f29ad0e6aab1747b83"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/0c343f925ad578a9da4d9a4cfff4e91b500d206c",
-                "reference": "0c343f925ad578a9da4d9a4cfff4e91b500d206c",
+                "url": "https://api.github.com/repos/composer/composer/zipball/0c85ca426d6e8235366340f29ad0e6aab1747b83",
+                "reference": "0c85ca426d6e8235366340f29ad0e6aab1747b83",
                 "shasum": ""
             },
             "require": {
@@ -73,7 +73,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2014-05-14 09:25:20"
+            "time": "2014-05-19 10:17:07"
         },
         {
             "name": "erusev/parsedown",
