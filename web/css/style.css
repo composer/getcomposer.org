@@ -166,7 +166,7 @@ blockquote p {
   padding-left: 20px;
 }
 
-p code {
+code:not([class*="language-"]) {
   border: 1px solid #ccc;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
