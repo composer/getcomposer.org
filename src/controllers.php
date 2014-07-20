@@ -51,14 +51,19 @@ $app->get('/doc/', function () use ($app) {
             );
 
             $metadata = null;
-            if (preg_match('{^<!--(.*)-->}s', file_get_contents($file->getPathname()), $match)) {
+            $contents = file_get_contents($file->getPathname());
+            if (preg_match('{^<!--(.*)-->}s', $contents, $match)) {
                 preg_match_all('{^ *(?P<keyword>\w+): *(?P<value>.*)}m', $match[1], $matches, PREG_SET_ORDER);
                 foreach ($matches as $match) {
                     $metadata[$match['keyword']] = $match['value'];
                 }
             }
 
-            $displayName = preg_replace('{^\d{2} }', '', ucwords(str_replace('-', ' ', $filename)));
+            if (preg_match('{^# (.+)}', $contents, $match)) {
+                $displayName = $match[1];
+            } else {
+                $displayName = preg_replace('{^\d{2} }', '', ucwords(str_replace('-', ' ', $filename)));
+            }
             $filenames[$displayName] = array('link' => $url, 'metadata' => $metadata);
         }
 
