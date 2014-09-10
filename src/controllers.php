@@ -59,8 +59,8 @@ $app->get('/doc/', function () use ($app) {
                 }
             }
 
-            if (preg_match('{^# (.+)}', $contents, $match)) {
-                $displayName = $match[1];
+            if (preg_match('{^(<!--.+?-->\n+)?# (.+?)\n}s', $contents, $match)) {
+                $displayName = $match[2];
             } else {
                 $displayName = preg_replace('{^\d{2} }', '', ucwords(str_replace('-', ' ', $filename)));
             }
