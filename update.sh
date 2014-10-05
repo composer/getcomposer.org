@@ -39,4 +39,5 @@ for version in `git tag`; do
     else
         touch --date="`git log -n1 --pretty=%ci $version`" "$root/$target/download/$version/$buildphar"
     fi
+    gpg --out "$root/$target/download/$version/$buildphar.asc" --sign "$root/$target/download/$version/$buildphar"
 done
