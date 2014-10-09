@@ -130,6 +130,7 @@ Options
 --force              forces the installation
 --ansi               force ANSI color output
 --no-ansi            disable ANSI color output
+--quiet              do not output unimportant messages
 --install-dir="..."  accepts a target installation directory
 --version="..."      accepts a specific version to install instead of the latest
 --filename="..."     accepts a target filename (default: composer.phar)
