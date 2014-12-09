@@ -817,7 +817,7 @@ class HttpClient {
 
     public static function getPackagedCaFile()
     {
-        $cacert = <<<'CACERT'
+        return <<<'CACERT'
 ##
 ## ca-bundle.crt -- Bundle of CA Root Certificates
 ##
@@ -4604,7 +4604,6 @@ EHiGG3njxPPyBJUgriOCxLM6AGK/5jYk4Ve6xx6QddVfP5VhK8E7zeWzaGHQRiapIVJpLesux+t3
 zqY6tQMzT3bR51xUAV3LePTJDL/PEo4XLSNolOer/qmyKwbQBM0=
 -----END CERTIFICATE-----
 CACERT;
-        return $cacert;
     }
 
 }
