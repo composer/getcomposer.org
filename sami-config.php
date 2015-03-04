@@ -16,4 +16,5 @@ return new Sami($dir.'/src', array(
     'title' => 'Composer API',
     'build_dir' => 'web/apidoc/%version%',
     'cache_dir' => 'cache/%version%',
+    'default_opened_level' => 2,
 ));
