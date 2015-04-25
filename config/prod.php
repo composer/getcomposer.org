@@ -8,7 +8,7 @@ if (!isset($env) || $env !== 'dev') {
     // force ssl
     $app->before(function (Request $request) {
         // skip SSL & non-GET/HEAD requests
-        if (strtolower($request->headers->get('X_FORWARDED_PROTO')) == 'https' || !$request->isMethodSafe()) {
+        if (strtolower($request->server->get('HTTPS')) == 'on' || strtolower($request->headers->get('X_FORWARDED_PROTO')) == 'https' || !$request->isMethodSafe()) {
             return;
         }
 
