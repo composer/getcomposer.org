@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # config
 root=`pwd`
 build="composer-src"

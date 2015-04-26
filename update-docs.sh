@@ -1,3 +1,4 @@
+#!/bin/bash
 cd vendor/composer/composer
 git checkout -q master
 git fetch -q origin
