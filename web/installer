@@ -558,7 +558,34 @@ class HttpClient {
     public function get($url)
     {
         $context = $this->getStreamContext($url);
-        return file_get_contents($url, null, $context);
+        $result = file_get_contents($url, null, $context);
+
+        if ($result && extension_loaded('zlib')) {
+            $decode = false;
+            foreach ($http_response_header as $header) {
+                if (preg_match('{^content-encoding: *gzip *$}i', $header)) {
+                    $decode = true;
+                    continue;
+                } elseif (preg_match('{^HTTP/}i', $header)) {
+                    $decode = false;
+                }
+            }
+
+            if ($decode) {
+                if (version_compare(PHP_VERSION, '5.4.0', '>=')) {
+                    $result = zlib_decode($result);
+                } else {
+                    // work around issue with gzuncompress & co that do not work with all gzip checksums
+                    $result = file_get_contents('compress.zlib://data:application/octet-stream;base64,'.base64_encode($result));
+                }
+
+                if (!$result) {
+                    throw new \RuntimeException('Failed to decode zlib stream');
+                }
+            }
+        }
+
+        return $result;
     }
 
     protected function getStreamContext($url)
@@ -724,6 +751,17 @@ class HttpClient {
                 $options['http']['header'] = "Proxy-Authorization: Basic {$auth}\r\n";
             }
         }
+
+        if (isset($options['http']['header'])) {
+            $options['http']['header'] .= "Connection: close\r\n";
+        } else {
+            $options['http']['header'] = "Connection: close\r\n";
+        }
+        if (extension_loaded('zlib')) {
+            $options['http']['header'] .= "Accept-Encoding: gzip\r\n";
+        }
+        $options['http']['header'] .= "User-Agent: Composer Installer\r\n";
+        $options['http']['protocol_version'] = 1.1;
 
         return stream_context_create($options);
     }
