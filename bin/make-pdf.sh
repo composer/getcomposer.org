@@ -25,7 +25,7 @@ mkdir cache/pdf/faqs
 
 cd vendor/composer/composer/doc
 
-for file in $(find . -type f -name '*.md')
+for file in $(find . -type f -name '*.md' | sort | /bin/grep -v /fixtures)
 do
     pandoc -o ../../../../cache/pdf/$(dirname $file)/$(basename $file .md).tex $file
 done
@@ -50,6 +50,7 @@ cat > book.tmp <<EOF
 \usepackage{textcomp}
 \usepackage{tgpagella}
 \usepackage{longtable}
+\usepackage{framed,graphicx,xcolor}
 
 \lstset{
     breaklines=true,
@@ -62,6 +63,7 @@ cat > book.tmp <<EOF
 
 \setlength{\parindent}{0cm}
 \setlength{\parskip}{0.1cm}
+\definecolor{shadecolor}{gray}{0.9}
 
 \maketitle
 \tableofcontents
