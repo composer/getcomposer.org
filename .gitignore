@@ -4,7 +4,6 @@ composer-src/
 web/composer.phar
 web/version
 web/apidoc
-web/Composer-Setup.exe
 web/book.pdf
 cache/
 silex.log
