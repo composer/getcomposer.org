@@ -38,6 +38,7 @@ for version in `git tag`; do
         php -d phar.readonly=0 $buildscript && \
         touch --date="`git log -n1 --pretty=%ci $version`" $buildphar && \
         mv $buildphar "$root/$target/download/$version/$buildphar"
+        echo "$target/download/$version/$buildphar was just built and should be downloaded/committed to the repo"
     else
         touch --date="`git log -n1 --pretty=%ci $version`" "$root/$target/download/$version/$buildphar"
     fi
