@@ -5,7 +5,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 $app->get('/', function () use ($app) {
-    return $app['twig']->render('index.html.twig');
+    $logos = glob(__DIR__.'/../web/img/logo-composer-transparent*.png');
+    $logo = basename($logos[array_rand($logos)]);
+
+    return $app['twig']->render('index.html.twig', array('logo' => $logo));
 })
 ->bind('home');
 
