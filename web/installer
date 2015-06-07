@@ -18,6 +18,10 @@ process($argv);
  */
 function process($argv)
 {
+    // prevent possible warnings
+    if (!is_array($argv)) {
+        $argv = array();
+    }
     $check      = in_array('--check', $argv);
     $help       = in_array('--help', $argv);
     $force      = in_array('--force', $argv);
