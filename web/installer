@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-process($argv);
+process( is_array($argv) ? $argv : array() );
 
 /**
  * processes the installer
