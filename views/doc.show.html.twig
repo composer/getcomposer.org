@@ -1,5 +1,7 @@
 {% extends "layout.html.twig" %}
 
+{% block title %}Composer{% if title|length %} - {{ title }}{% endif %}{% endblock %}
+
 {% block content %}
     {% if toc|length %}
         <ul class="toc">

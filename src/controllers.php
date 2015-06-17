@@ -147,6 +147,7 @@ $app->get('/doc/{page}', function ($page) use ($app) {
     };
 
     // build TOC & deep links
+    $firstTitle = null;
     $h1 = $h2 = $h3 = $h4 = 0;
     $nodes = $xpath->query('//*[self::h1 or self::h2 or self::h3 or self::h4]');
     foreach ($nodes as $node) {
@@ -162,6 +163,10 @@ $app->get('/doc/{page}', function ($page) use ($app) {
         $link->setAttribute('href', '#'.$id);
         $link->setAttribute('class', 'anchor');
         $node->appendChild($link);
+
+        if (!isset($first_title) && strlen($title) > 0) {
+            $first_title = $title;
+        }
 
         // parse into a tree
         switch ($node->nodeName) {
@@ -195,6 +200,7 @@ $app->get('/doc/{page}', function ($page) use ($app) {
         'file' => $page,
         'page' => $page == '00-intro.md' ? 'getting-started' : 'docs',
         'toc' => $toc,
+        'title' => $first_title
     ));
 })
 ->assert('page', '[a-z0-9/\'-]+\.md')
