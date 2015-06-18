@@ -164,8 +164,8 @@ $app->get('/doc/{page}', function ($page) use ($app) {
         $link->setAttribute('class', 'anchor');
         $node->appendChild($link);
 
-        if (!isset($first_title) && strlen($title) > 0) {
-            $first_title = $title;
+        if (empty($firstTitle)) {
+            $firstTitle = $title;
         }
 
         // parse into a tree
@@ -200,7 +200,7 @@ $app->get('/doc/{page}', function ($page) use ($app) {
         'file' => $page,
         'page' => $page == '00-intro.md' ? 'getting-started' : 'docs',
         'toc' => $toc,
-        'title' => $first_title
+        'title' => $firstTitle
     ));
 })
 ->assert('page', '[a-z0-9/\'-]+\.md')
