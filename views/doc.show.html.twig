@@ -1,6 +1,6 @@
 {% extends "layout.html.twig" %}
 
-{% block title %}Composer{% if title|length %} - {{ title }}{% endif %}{% endblock %}
+{% block title %}{% if title is not empty %}{{ title }} - {% endif %}{{ parent() }}{% endblock %}
 
 {% block content %}
     {% if toc|length %}
