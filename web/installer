@@ -571,7 +571,7 @@ class HttpClient {
                 }
 
                 if (!$result) {
-                    throw new \RuntimeException('Failed to decode zlib stream');
+                    throw new RuntimeException('Failed to decode zlib stream');
                 }
             }
         }
