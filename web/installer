@@ -814,6 +814,7 @@ class HttpClient {
             '/usr/local/share/curl/curl-ca-bundle.crt', // Default cURL CA bunde path (without --with-ca-bundle option)
             '/usr/share/ssl/certs/ca-bundle.crt', // Really old RedHat?
             '/etc/ssl/cert.pem', // OpenBSD
+            '/usr/local/etc/ssl/cert.pem', // FreeBSD 10.x
         );
 
         $found = null;
