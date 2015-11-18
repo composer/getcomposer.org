@@ -26,7 +26,7 @@ git rebase origin/master -q
 
 version=`git log --pretty="%H" -n1 HEAD`
 
-if [ "$version" != `cat "$root/$target/$version"` ]
+if [ "$version" != `cat "$root/$target/version"` ]
 then
     $composer install -q --no-dev && \
     php -d phar.readonly=0 $buildscript && \
