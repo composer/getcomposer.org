@@ -206,9 +206,18 @@ $app->get('/doc/{page}', function ($page) use ($app) {
 ->assert('page', '[a-z0-9/\'-]+\.md')
 ->bind('docs.view');
 
-$app->get('/commit-deps', function () use ($app) {
-    return new RedirectResponse($app['url_generator']->generate(
-        'docs.view',
-        array('page' => 'faqs/should-i-commit-the-dependencies-in-my-vendor-directory.md')
-    ));
-});
+$shortcuts = [
+    '/commit-deps' => ['faqs/should-i-commit-the-dependencies-in-my-vendor-directory.md', ''],
+    '/xdebug' => ['articles/troubleshooting.md', '#xdebug-impact-on-composer'],
+];
+
+foreach ($shortcuts as $url => $page) {
+    $app->get($url, function () use ($app, $page) {
+        $url = $app['url_generator']->generate(
+            'docs.view',
+            array('page' => $page[0])
+        );
+
+        return new RedirectResponse($url . $page[1]);
+    });
+}
