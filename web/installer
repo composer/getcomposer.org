@@ -501,7 +501,7 @@ function out($text, $color = null, $newLine = true)
 }
 
 function validateCaFile($contents) {
-    // assume the CA is valid if php is vunerable to
+    // assume the CA is valid if php is vulnerable to
     // https://www.sektioneins.de/advisories/advisory-012013-php-openssl_x509_parse-memory-corruption-vulnerability.html
     if (
         PHP_VERSION_ID <= 50327
