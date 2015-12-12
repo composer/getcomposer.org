@@ -847,7 +847,7 @@ class HttpClient {
 
     public static function getPackagedCaFile()
     {
-        return <<<'CACERT'
+        return <<<CACERT
 ##
 ## ca-bundle.crt -- Bundle of CA Root Certificates
 ##
