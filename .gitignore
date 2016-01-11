@@ -2,7 +2,9 @@ vendor
 silex.phar
 composer-src/
 web/composer.phar
+web/composer.phar.sig
 web/version
+web/stable
 web/apidoc
 web/book.pdf
 cache/
