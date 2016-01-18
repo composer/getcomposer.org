@@ -70,7 +70,8 @@ then
         git reset --hard -q $version && \
         mv "$buildphar.sig" "$root/$target/$buildphar.sig" && \
         mv "$buildphar" "$root/$target/$buildphar" && \
-        echo $version > "$root/$target/version"
+        echo $version > "$root/$target/version_new" && \
+        mv "$root/$target/version_new" "$root/$target/version"
     fi
 fi
 
@@ -99,4 +100,4 @@ done
 
 # TODO once we have stable releases this should ignore -alphas and so on
 lastVersion=$(ls "$root/$target/download" | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
-echo $lastVersion > "$root/$target/stable"
+echo $lastVersion > "$root/$target/stable_new" && mv "$root/$target/stable_new" "$root/$target/stable"
