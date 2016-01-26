@@ -903,7 +903,7 @@ class HttpClient {
 
         $found = null;
         $configured = ini_get('openssl.cafile');
-        if ($configured && strlen($configured) > 0 && is_readable($caBundle) && validateCaFile(file_get_contents($caBundle))) {
+        if ($configured && strlen($configured) > 0 && is_readable($configured) && validateCaFile(file_get_contents($configured))) {
             $found = true;
             $caBundle = $configured;
         } else {
