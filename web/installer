@@ -206,6 +206,10 @@ function checkPlatform($quiet, $disableTls)
         $errors['openssl'] = true;
     }
 
+    if (extension_loaded('openssl') && OPENSSL_VERSION_NUMBER < 0x1000100f) {
+        $warnings['openssl_version'] = true;
+    }
+
     if (!defined('HHVM_VERSION') && !extension_loaded('apcu') && ini_get('apc.enable_cli')) {
         $warnings['apc_cli'] = true;
     }
@@ -325,6 +329,16 @@ function checkPlatform($quiet, $disableTls)
                 case 'openssl':
                     $text = PHP_EOL."The openssl extension is missing, which means that secure HTTPS transfers are impossible.".PHP_EOL;
                     $text .= "If possible you should enable it or recompile php with --with-openssl";
+                    break;
+
+                case 'openssl_version':
+                    // Attempt to parse version number out, fallback to whole string value.
+                    $opensslVersion = trim(strstr(OPENSSL_VERSION_TEXT, ' '));
+                    $opensslVersion = substr($opensslVersion, 0, strpos($opensslVersion, ' '));
+                    $opensslVersion = $opensslVersion ? $opensslVersion : OPENSSL_VERSION_TEXT;
+
+                    $text = PHP_EOL."The OpenSSL library ({$opensslVersion}) used by PHP does not support TLSv1.2 or TLSv1.1.".PHP_EOL;
+                    $text .= "If possible you should upgrade OpenSSL to version 1.0.1 or above.";
                     break;
 
                 case 'php':
