@@ -2,31 +2,47 @@
 
 {% block content %}
     <h1>Download Composer</h1>
-    <p>Run this in your terminal to get the latest Composer version:</p>
-    <code>curl -sS https://getcomposer.org/installer | php</code>
-    <p>Or if you don't have curl:</p>
-    <code>php -r "readfile('https://getcomposer.org/installer');" | php</code>
-    <p>This installer script will simply check some php.ini settings, warn you if they are set incorrectly, and then download the latest composer.phar in the current directory</p>
-
-    <h2>Installer Options</h2>
-
-    <h3>--install-dir</h3>
-    <p>You can install composer to a specific directory by using the <code>--install-dir</code> option and providing a target directory. Options must be appended to <code>--</code> so that PHP ignores them, like <code>-- --install-dir=bin</code>, example:</p>
-    <code>curl -sS https://getcomposer.org/installer | php -- --install-dir=bin</code>
-
-    <h3>--filename</h3>
-    <p>You can specify the filename (default: composer.phar) using the <code>--filename</code> option. example:</p>
-    <code>curl -sS https://getcomposer.org/installer | php -- --filename=composer</code>
-
-    <h3>--version</h3>
-    <p>You can install composer to a specific release by using the <code>--version</code> option and providing a target release. example:</p>
-    <code>curl -sS https://getcomposer.org/installer | php -- --version=1.0.0-alpha8</code>
 
     {% if windows %}
         <h2>Windows Installer</h2>
         <p>The installer will download composer for you and set up your PATH environment variable so you can simply call <code>composer</code> from any directory.</p>
         <p>Download and run <a href="/Composer-Setup.exe">Composer-Setup.exe</a> - it will install the latest composer version whenever it is executed.</p>
+
+        <h2>Command-line installation</h2>
     {% endif %}
+
+    <p>Run this in your terminal to get the latest Composer version:</p>
+    <pre class="installer">php -r "readfile('https://getcomposer.org/installer');" > composer-setup.php
+php -r "if (hash('SHA384', file_get_contents('composer-setup.php')) === '781c98992e23d4a5ce559daf0170f8a9b3b91331ddc4a3fa9f7d42b6d981513cdc1411730112495fbf9d59cffbf20fb2') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); }"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"</pre>
+
+    <p>This installer script will simply check some php.ini settings, warn you if they are set incorrectly, and then download the latest composer.phar in the current directory. The 4 lines above will, in order:</p>
+
+    <ul>
+        <li>Download the installer to the current directory</li>
+        <li>Verify the installer SHA-384 which you can also <a href="https://composer.github.io/pubkeys.html">cross-check here</a></li>
+        <li>Run the installer</li>
+        <li>Remove the installer</li>
+    </ul>
+
+    <p class="installer-warning">
+        WARNING: Please do not redistribute the install code. It will change with every version of the installer. Instead, please link to this page.
+    </p>
+
+    <h2>Installer Options</h2>
+
+    <h3>--install-dir</h3>
+    <p>You can install composer to a specific directory by using the <code>--install-dir</code> option and providing a target directory. Options must be appended to <code>--</code> so that PHP ignores them, like <code>-- --install-dir=bin</code>, example:</p>
+    <code>php composer-setup.php --install-dir=bin</code>
+
+    <h3>--filename</h3>
+    <p>You can specify the filename (default: composer.phar) using the <code>--filename</code> option. example:</p>
+    <code>php composer-setup.php --filename=composer</code>
+
+    <h3>--version</h3>
+    <p>You can install composer to a specific release by using the <code>--version</code> option and providing a target release. example:</p>
+    <code>php composer-setup.php --version=1.0.0-alpha8</code>
 
     <h2>Manual Download</h2>
     <p>If you prefer to download the phar manually, here are the available versions:</p>
