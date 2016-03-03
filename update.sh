@@ -82,17 +82,18 @@ for version in `git tag`; do
         if [ "tags" != "$1" ]
         then
             echo "$version was found but not built, build should be ran manually to get the correct signature"
+        else
+            mkdir -p "$root/$target/download/$version/"
+            git checkout $version -q && \
+            $composer install -q --no-dev && \
+            php -d phar.readonly=0 $buildscript && \
+            touch --date="`git log -n1 --pretty=%ci $version`" "$buildphar" && \
+            php "$root/bin/sign.php" "$buildphar" "$root/$privkeypath" "$privkeypwd" && \
+            git reset --hard -q $version && \
+            mv "$buildphar.sig" "$root/$target/download/$version/$buildphar.sig" && \
+            mv "$buildphar" "$root/$target/download/$version/$buildphar"
+            echo "$target/download/$version/$buildphar (and .sig) was just built and should be committed to the repo"
         fi
-        mkdir -p "$root/$target/download/$version/"
-        git checkout $version -q && \
-        $composer install -q --no-dev && \
-        php -d phar.readonly=0 $buildscript && \
-        touch --date="`git log -n1 --pretty=%ci $version`" "$buildphar" && \
-        php "$root/bin/sign.php" "$buildphar" "$root/$privkeypath" "$privkeypwd" && \
-        git reset --hard -q $version && \
-        mv "$buildphar.sig" "$root/$target/download/$version/$buildphar.sig" && \
-        mv "$buildphar" "$root/$target/download/$version/$buildphar"
-        echo "$target/download/$version/$buildphar (and .sig) was just built and should be committed to the repo"
     else
         touch --date="`git log -n1 --pretty=%ci $version`" "$root/$target/download/$version/$buildphar"
     fi
