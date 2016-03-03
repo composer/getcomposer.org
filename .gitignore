@@ -4,7 +4,7 @@ composer-src/
 web/composer.phar
 web/composer.phar.sig
 web/version
-web/stable
+web/versions
 web/apidoc
 web/book.pdf
 cache/
