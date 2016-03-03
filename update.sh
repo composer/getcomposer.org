@@ -53,7 +53,7 @@ cd "$root/$build"
 # update master
 git fetch -q origin && \
 git fetch --tags -q origin && \
-git checkout master -q && \
+git checkout master -q --force && \
 git rebase origin/master -q
 
 version=`git log --pretty="%H" -n1 HEAD`
