@@ -629,7 +629,7 @@ class HttpClient {
     {
         $this->disableTls = $disableTls;
         if ($this->disableTls === false) {
-            if (!empty($cafile)) {
+            if (!empty($cafile) && !is_dir($cafile)) {
                 if (!is_readable($cafile) || !validateCaFile(file_get_contents($cafile))) {
                     throw new RuntimeException('The configured cafile (' .$cafile. ') was not valid or could not be read.');
                 }
@@ -884,17 +884,34 @@ class HttpClient {
     */
     public static function getSystemCaRootBundlePath()
     {
-        static $found = null;
-        if ($found !== null) {
-            return $found;
+        static $caPath = null;
+
+        if ($caPath !== null) {
+            return $caPath;
         }
 
         // If SSL_CERT_FILE env variable points to a valid certificate/bundle, use that.
         // This mimics how OpenSSL uses the SSL_CERT_FILE env variable.
         $envCertFile = getenv('SSL_CERT_FILE');
         if ($envCertFile && is_readable($envCertFile) && validateCaFile(file_get_contents($envCertFile))) {
-            // Possibly throw exception instead of ignoring SSL_CERT_FILE if it's invalid?
-            return $envCertFile;
+            return $caPath = $envCertFile;
+        }
+
+        // If SSL_CERT_DIR env variable points to a valid certificate/bundle, use that.
+        // This mimics how OpenSSL uses the SSL_CERT_FILE env variable.
+        $envCertDir = getenv('SSL_CERT_DIR');
+        if ($envCertDir && is_dir($envCertDir) && is_readable($envCertDir)) {
+            return $caPath = $envCertDir;
+        }
+
+        $configured = ini_get('openssl.cafile');
+        if ($configured && strlen($configured) > 0 && is_readable($configured) && validateCaFile(file_get_contents($configured))) {
+            return $caPath = $configured;
+        }
+
+        $configured = ini_get('openssl.capath');
+        if ($configured && is_dir($configured) && is_readable($configured)) {
+            return $caPath = $configured;
         }
 
         $caBundlePaths = array(
@@ -910,32 +927,20 @@ class HttpClient {
             '/usr/local/etc/ssl/cert.pem', // FreeBSD 10.x
         );
 
-        $found = null;
-        $configured = ini_get('openssl.cafile');
-        if ($configured && strlen($configured) > 0 && is_readable($configured) && validateCaFile(file_get_contents($configured))) {
-            $found = true;
-            $caBundle = $configured;
-        } else {
-            foreach ($caBundlePaths as $caBundle) {
-                if (@is_readable($caBundle) && validateCaFile(file_get_contents($caBundle))) {
-                    $found = true;
-                    break;
-                }
-            }
-            if (!$found) {
-                foreach ($caBundlePaths as $caBundle) {
-                    $caBundle = dirname($caBundle);
-                    if (is_dir($caBundle) && glob($caBundle.'/*')) {
-                        $found = true;
-                        break;
-                    }
-                }
+        foreach ($caBundlePaths as $caBundle) {
+            if (@is_readable($caBundle) && validateCaFile(file_get_contents($caBundle))) {
+                return $caPath = $caBundle;
             }
         }
-        if ($found) {
-            $found = $caBundle;
+
+        foreach ($caBundlePaths as $caBundle) {
+            $caBundle = dirname($caBundle);
+            if (is_dir($caBundle) && glob($caBundle.'/*')) {
+                return $caPath = $caBundle;
+            }
         }
-        return $found;
+
+        return $caPath = false;
     }
 
     public static function getPackagedCaFile()
