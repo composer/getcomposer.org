@@ -21,6 +21,7 @@ function process($argv)
     $help       = in_array('--help', $argv);
     $force      = in_array('--force', $argv);
     $quiet      = in_array('--quiet', $argv);
+    $channel    = in_array('--snapshot', $argv) ? 'snapshot' : (in_array('--preview', $argv) ? 'preview' : 'stable');
     $disableTls = in_array('--disable-tls', $argv);
     $installDir = false;
     $version    = false;
@@ -108,7 +109,7 @@ function process($argv)
     }
 
     if ($ok || $force) {
-        installComposer($version, $installDir, $filename, $quiet, $disableTls, $cafile);
+        installComposer($version, $installDir, $filename, $quiet, $disableTls, $cafile, $channel);
         exit(0);
     }
 
@@ -131,6 +132,8 @@ Options
 --no-ansi            disable ANSI color output
 --quiet              do not output unimportant messages
 --install-dir="..."  accepts a target installation directory
+--preview            install the latest version from the preview (alpha/beta/rc) channel instead of stable
+--snapshot           install the latest version from the snapshot (dev builds) channel instead of stable
 --version="..."      accepts a specific version to install instead of the latest
 --filename="..."     accepts a target filename (default: composer.phar)
 --disable-tls        disable SSL/TLS security for file downloads
@@ -374,7 +377,7 @@ function checkPlatform($quiet, $disableTls)
 /**
  * installs composer to the current working directory
  */
-function installComposer($version, $installDir, $filename, $quiet, $disableTls, $cafile)
+function installComposer($version, $installDir, $filename, $quiet, $disableTls, $cafile, $channel)
 {
     $installPath = (is_dir($installDir) ? rtrim($installDir, '/').'/' : '') . $filename;
     $installDir  = realpath($installDir) ? realpath($installDir) : getcwd();
@@ -437,16 +440,32 @@ TAGSPUBKEY
     }
 
     $httpClient = new HttpClient($disableTls, $cafile);
+    $uriScheme = false === $disableTls ? 'https' : 'http';
+
+    if (!$version) {
+        $versions = json_decode($httpClient->get($uriScheme . '://getcomposer.org/versions'), true);
+        foreach ($versions[$channel] as $candidate) {
+            if ($candidate['min-php'] <= PHP_VERSION_ID) {
+                $version = $candidate['version'];
+                $downloadUrl = $candidate['path'];
+                break;
+            }
+        }
+
+        if (!$version) {
+            throw new RuntimeException('There is no version of Composer available for your PHP version ('.PHP_VERSION.')');
+        }
+    } else {
+        $downloadUrl = "/download/{$version}/composer.phar";
+    }
 
     $retries = 3;
     while ($retries--) {
         if (!$quiet) {
-            out("Downloading...", 'info');
+            out("Downloading $version...", 'info');
         }
 
-        $uriScheme = false === $disableTls ? 'https' : 'http';
-        $urlPath   = (false !== $version ? "/download/{$version}" : '') . '/composer.phar';
-        $url       = "{$uriScheme}://getcomposer.org{$urlPath}";
+        $url       = "{$uriScheme}://getcomposer.org{$downloadUrl}";
         $errorHandler = new ErrorHandler();
         set_error_handler(array($errorHandler, 'handleError'));
 
@@ -486,7 +505,7 @@ TAGSPUBKEY
 
             // verify signature
             if (false === $disableTls) {
-                $pubkeyid = openssl_pkey_get_public('file://'.$home.'/' . ($version ? 'keys.tags.pub' : 'keys.dev.pub'));
+                $pubkeyid = openssl_pkey_get_public('file://'.$home.'/' . (preg_match('{^[0-9a-f]{40}$}', $version) ? 'keys.dev.pub' : 'keys.tags.pub'));
                 $algo = defined('OPENSSL_ALGO_SHA384') ? OPENSSL_ALGO_SHA384 : 'SHA384';
                 if (!in_array('SHA384', openssl_get_md_methods())) {
                     out('SHA384 is not supported by your openssl extension, could not verify the phar file integrity', 'error');
