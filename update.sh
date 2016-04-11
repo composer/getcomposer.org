@@ -99,12 +99,12 @@ for version in `git tag`; do
     fi
 done
 
-# TODO once we have stable releases this should ignore -alphas and so on
+lastStableVersion=$(ls "$root/$target/download" | grep -E '^[0-9.]+$' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
 lastVersion=$(ls "$root/$target/download" | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
 lastSnapshot=$(head -c40 "$root/$target/version")
 read -r -d '' versions << EOM
 {
-    "stable": [{"path": "/download/$lastVersion/composer.phar", "version": "$lastVersion", "min-php": 50300}],
+    "stable": [{"path": "/download/$lastStableVersion/composer.phar", "version": "$lastStableVersion", "min-php": 50300}],
     "preview": [{"path": "/download/$lastVersion/composer.phar", "version": "$lastVersion", "min-php": 50300}],
     "snapshot": [{"path": "/composer.phar", "version": "$lastSnapshot", "min-php": 50300}]
 }
