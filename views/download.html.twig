@@ -44,6 +44,9 @@ php -r "unlink('composer-setup.php');"</pre>
     <p>You can install composer to a specific release by using the <code>--version</code> option and providing a target release. example:</p>
     <code>php composer-setup.php --version=1.0.0-alpha8</code>
 
+    <h2>Preview / Snapshot Releases</h2>
+    <p>By default the installer and <code>composer self-update</code> will download stable versions only. If you would like to help test pre-release versions you can use the <code>--preview</code> flag on either installer or self-update. For snapshot builds which are done from the latest Composer commit, you can use the <code>--snapshot</code> flag.</p>
+
     <h2>Manual Download</h2>
     <p>If you prefer to download the phar manually, here are the available versions:</p>
     <p>
