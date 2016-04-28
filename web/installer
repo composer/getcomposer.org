@@ -17,87 +17,30 @@ process(is_array($argv) ? $argv : array());
  */
 function process($argv)
 {
+    // Determine ANSI output from --ansi and --no-ansi flags
+    setUseAnsi($argv);
+
+    if (in_array('--help', $argv)) {
+        displayHelp();
+        exit(0);
+    }
+
     $check      = in_array('--check', $argv);
     $help       = in_array('--help', $argv);
     $force      = in_array('--force', $argv);
     $quiet      = in_array('--quiet', $argv);
     $channel    = in_array('--snapshot', $argv) ? 'snapshot' : (in_array('--preview', $argv) ? 'preview' : 'stable');
     $disableTls = in_array('--disable-tls', $argv);
-    $installDir = false;
-    $version    = false;
-    $filename   = 'composer.phar';
-    $cafile     = false;
+    $installDir = getOptValue('--install-dir', $argv, false);
+    $version    = getOptValue('--version', $argv, false);
+    $filename   = getOptValue('--filename', $argv, 'composer.phar');
+    $cafile     = getOptValue('--cafile', $argv, false);
 
-    // --no-ansi wins over --ansi
-    if (in_array('--no-ansi', $argv)) {
-        define('USE_ANSI', false);
-    } elseif (in_array('--ansi', $argv)) {
-        define('USE_ANSI', true);
-    } else {
-        // On Windows, default to no ANSI, except in ANSICON and ConEmu.
-        // Everywhere else, default to ANSI if stdout is a terminal.
-        define('USE_ANSI',
-            (DIRECTORY_SEPARATOR == '\\')
-                ? (false !== getenv('ANSICON') || 'ON' === getenv('ConEmuANSI'))
-                : (function_exists('posix_isatty') && posix_isatty(1))
-        );
-    }
-
-    foreach ($argv as $key => $val) {
-        if (0 === strpos($val, '--install-dir')) {
-            if (13 === strlen($val) && isset($argv[$key+1])) {
-                $installDir = trim($argv[$key+1]);
-            } else {
-                $installDir = trim(substr($val, 14));
-            }
-        }
-
-        if (0 === strpos($val, '--version')) {
-            if (9 === strlen($val) && isset($argv[$key+1])) {
-                $version = trim($argv[$key+1]);
-            } else {
-                $version = trim(substr($val, 10));
-            }
-        }
-
-        if (0 === strpos($val, '--filename')) {
-            if (10 === strlen($val) && isset($argv[$key+1])) {
-                $filename = trim($argv[$key+1]);
-            } else {
-                $filename = trim(substr($val, 11));
-            }
-        }
-
-        if (0 === strpos($val, '--cafile')) {
-            if (8 === strlen($val) && isset($argv[$key+1])) {
-                $cafile = trim($argv[$key+1]);
-            } else {
-                $cafile = trim(substr($val, 9));
-            }
-        }
-    }
-
-    if ($help) {
-        displayHelp();
-        exit(0);
+    if (!checkParams($installDir, $version, $cafile)) {
+        exit(1);
     }
 
     $ok = checkPlatform($quiet, $disableTls);
-
-    if (false !== $installDir && !is_dir($installDir)) {
-        out("The defined install dir ({$installDir}) does not exist.", 'info');
-        $ok = false;
-    }
-
-    if (false !== $version && 1 !== preg_match('/^\d+\.\d+\.\d+(\-(alpha|beta)\d+)*$/', $version)) {
-        out("The defined install version ({$version}) does not match release pattern.", 'info');
-        $ok = false;
-    }
-
-    if (false !== $cafile && (!file_exists($cafile) || !is_readable($cafile))) {
-        out("The defined Certificate Authority (CA) cert file ({$cafile}) does not exist or is not readable.", 'info');
-        $ok = false;
-    }
 
     if (true === $disableTls) {
         out("You have instructed the Installer not to enforce SSL/TLS security on remote HTTPS requests.", 'info');
@@ -140,6 +83,87 @@ Options
 --cafile="..."       accepts a path to a Certificate Authority (CA) certificate file for SSL/TLS verification
 
 EOF;
+}
+
+/**
+* Sets the USE_ANSI define for colorizing output
+*
+* @param array $argv Command-line arguments
+*/
+function setUseAnsi($argv)
+{
+    // --no-ansi wins over --ansi
+    if (in_array('--no-ansi', $argv)) {
+        define('USE_ANSI', false);
+    } elseif (in_array('--ansi', $argv)) {
+        define('USE_ANSI', true);
+    } else {
+        // On Windows, default to no ANSI, except in ANSICON and ConEmu.
+        // Everywhere else, default to ANSI if stdout is a terminal.
+        define(
+            'USE_ANSI',
+            (DIRECTORY_SEPARATOR == '\\')
+                ? (false !== getenv('ANSICON') || 'ON' === getenv('ConEmuANSI'))
+                : (function_exists('posix_isatty') && posix_isatty(1))
+        );
+    }
+}
+
+/**
+* Returns the value of a command-line option
+*
+* @param string $opt The command-line option to check
+* @param array $argv Command-line arguments
+* @param mixed $default Default value to be returned
+*
+* @return mixed The command-line value or the default
+*/
+function getOptValue($opt, $argv, $default)
+{
+    $optLength = strlen($opt);
+
+    foreach ($argv as $key => $value) {
+        $next = $key + 1;
+        if (0 === strpos($value, $opt)) {
+            if ($optLength === strlen($value) && isset($argv[$next])) {
+                return trim($argv[$next]);
+            } else {
+                return trim(substr($value, $optLength + 1));
+            }
+        }
+    }
+
+    return $default;
+}
+
+/**
+* Checks that user-supplied params are valid
+*
+* @param mixed $installDir The required istallation directory
+* @param mixed $version The required composer version to install
+* @param mixed $cafile Certificate Authority file
+*
+* @return bool True if the supplied params are okay
+*/
+function checkParams($installDir, $version, $cafile)
+{
+    $result = true;
+
+    if (false !== $installDir && !is_dir($installDir)) {
+        out("The defined install dir ({$installDir}) does not exist.", 'info');
+        $result = false;
+    }
+
+    if (false !== $version && 1 !== preg_match('/^\d+\.\d+\.\d+(\-(alpha|beta)\d+)*$/', $version)) {
+        out("The defined install version ({$version}) does not match release pattern.", 'info');
+        $result = false;
+    }
+
+    if (false !== $cafile && (!file_exists($cafile) || !is_readable($cafile))) {
+        out("The defined Certificate Authority (CA) cert file ({$cafile}) does not exist or is not readable.", 'info');
+        $result = false;
+    }
+    return $result;
 }
 
 /**
