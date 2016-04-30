@@ -40,19 +40,21 @@ function process($argv)
         exit(1);
     }
 
-    $ok = checkPlatform($quiet, $disableTls);
-
-    if (true === $disableTls) {
-        out("You have instructed the Installer not to enforce SSL/TLS security on remote HTTPS requests.", 'info');
-        out("This will leave all downloads during installation vulnerable to Man-In-The-Middle (MITM) attacks.", 'info');
-    }
+    $ok = checkPlatform($warnings, $quiet, $disableTls);
 
     if ($check) {
+        // Only show warnings if we haven't output any errors
+        if ($ok) {
+            showWarnings($warnings);
+            showSecurityWarning($disableTls);
+        }
         exit($ok ? 0 : 1);
     }
 
     if ($ok || $force) {
         installComposer($version, $installDir, $filename, $quiet, $disableTls, $cafile, $channel);
+        showWarnings($warnings);
+        showSecurityWarning($disableTls);
         exit(0);
     }
 
@@ -167,82 +169,190 @@ function checkParams($installDir, $version, $cafile)
 }
 
 /**
- * check the platform for possible issues on running composer
- */
-function checkPlatform($quiet, $disableTls)
+* Checks the platform for possible issues running Composer
+*
+* Errors are written to the output, warnings are saved for later display.
+*
+* @param array $warnings Populated by method, to be shown later
+* @param bool $quiet Quiet mode
+* @param bool $disableTls Bypass tls
+*
+* @return bool True if there are no errors
+*/
+function checkPlatform(&$warnings, $quiet, $disableTls)
+{
+    getPlatformIssues($errors, $warnings);
+
+    // Make openssl warning an error if tls has not been specifically disabled
+    if (isset($warnings['openssl']) && !$disableTls) {
+        $errors['openssl'] = $warnings['openssl'];
+        unset($warnings['openssl']);
+    }
+
+    if (!empty($errors)) {
+        out('Some settings on your machine make Composer unable to work properly.', 'error');
+        out('Make sure that you fix the issues listed below and run this script again:', 'error');
+        outputIssues($errors);
+        return false;
+    }
+
+    if (empty($warnings) && !$quiet) {
+        out('All settings correct for using Composer', 'success');
+    }
+    return true;
+}
+
+/**
+* Checks platform configuration for common incompatibility issues
+*
+* @param array $errors Populated by method
+* @param array $warnings Populated by method
+*
+* @return bool If any errors or warnings have been found
+*/
+function getPlatformIssues(&$errors, &$warnings)
 {
     $errors = array();
     $warnings = array();
 
-    $iniPath = php_ini_loaded_file();
-    $displayIniMessage = false;
-    if ($iniPath) {
-        $iniMessage = PHP_EOL.PHP_EOL.'The php.ini used by your command-line PHP is: ' . $iniPath;
+    if ($iniPath = php_ini_loaded_file()) {
+        $iniMessage = PHP_EOL.'The php.ini used by your command-line PHP is: ' . $iniPath;
     } else {
-        $iniMessage = PHP_EOL.PHP_EOL.'A php.ini file does not exist. You will have to create one.';
+        $iniMessage = PHP_EOL.'A php.ini file does not exist. You will have to create one.';
     }
     $iniMessage .= PHP_EOL.'If you can not modify the ini file, you can also run `php -d option=value` to modify ini values on the fly. You can use -d multiple times.';
 
     if (ini_get('detect_unicode')) {
-        $errors['unicode'] = 'On';
+        $errors['unicode'] = array(
+            'The detect_unicode setting must be disabled.',
+            'Add the following to the end of your `php.ini`:',
+            '    detect_unicode = Off',
+            $iniMessage
+        );
     }
 
     if (extension_loaded('suhosin')) {
         $suhosin = ini_get('suhosin.executor.include.whitelist');
         $suhosinBlacklist = ini_get('suhosin.executor.include.blacklist');
         if (false === stripos($suhosin, 'phar') && (!$suhosinBlacklist || false !== stripos($suhosinBlacklist, 'phar'))) {
-            $errors['suhosin'] = $suhosin;
+            $errors['suhosin'] = array(
+                'The suhosin.executor.include.whitelist setting is incorrect.',
+                'Add the following to the end of your `php.ini` or suhosin.ini (Example path [for Debian]: /etc/php5/cli/conf.d/suhosin.ini):',
+                '    suhosin.executor.include.whitelist = phar '.$suhosin,
+                $iniMessage
+            );
         }
     }
 
     if (!function_exists('json_decode')) {
-        $errors['json'] = true;
+        $errors['json'] = array(
+            'The json extension is missing.',
+            'Install it or recompile php without --disable-json'
+        );
     }
 
     if (!extension_loaded('Phar')) {
-        $errors['phar'] = true;
+        $errors['phar'] = array(
+            'The phar extension is missing.',
+            'Install it or recompile php without --disable-phar'
+        );
     }
 
     if (!extension_loaded('filter')) {
-        $errors['filter'] = true;
+        $errors['filter'] = array(
+            'The filter extension is missing.',
+            'Install it or recompile php without --disable-filter'
+        );
     }
 
     if (!extension_loaded('hash')) {
-        $errors['hash'] = true;
+        $errors['hash'] = array(
+            'The hash extension is missing.',
+            'Install it or recompile php without --disable-hash'
+        );
     }
 
     if (!extension_loaded('iconv') && !extension_loaded('mbstring')) {
-        $errors['iconv_mbstring'] = true;
+        $errors['iconv_mbstring'] = array(
+            'The iconv OR mbstring extension is required and both are missing.',
+            'Install either of them or recompile php without --disable-iconv'
+        );
     }
 
     if (!ini_get('allow_url_fopen')) {
-        $errors['allow_url_fopen'] = true;
+        $errors['allow_url_fopen'] = array(
+            'The allow_url_fopen setting is incorrect.',
+            'Add the following to the end of your `php.ini`:',
+            '    allow_url_fopen = On',
+            $iniMessage
+        );
     }
 
     if (extension_loaded('ionCube Loader') && ioncube_loader_iversion() < 40009) {
-        $errors['ioncube'] = ioncube_loader_version();
+        $ioncube = ioncube_loader_version();
+        $errors['ioncube'] = array(
+            'Your ionCube Loader extension ('.$ioncube.') is incompatible with Phar files.',
+            'Upgrade to ionCube 4.0.9 or higher or remove this line (path may be different) from your `php.ini` to disable it:',
+            '    zend_extension = /usr/lib/php5/20090626+lfs/ioncube_loader_lin_5.3.so',
+            $iniMessage
+        );
     }
 
     if (version_compare(PHP_VERSION, '5.3.2', '<')) {
-        $errors['php'] = PHP_VERSION;
+        $errors['php'] = array(
+            'Your PHP ('.PHP_VERSION.') is too old, you must upgrade to PHP 5.3.2 or higher.'
+        );
     }
 
     if (version_compare(PHP_VERSION, '5.3.4', '<')) {
-        $warnings['php'] = PHP_VERSION;
+        $warnings['php'] = array(
+            'Your PHP ('.PHP_VERSION.') is quite old, upgrading to PHP 5.3.4 or higher is recommended.',
+            'Composer works with 5.3.2+ for most people, but there might be edge case issues.'
+        );
     }
 
-    if (!extension_loaded('openssl') && true === $disableTls) {
-        $warnings['openssl'] = true;
-    } elseif (!extension_loaded('openssl')) {
-        $errors['openssl'] = true;
+    if (!extension_loaded('openssl')) {
+        $warnings['openssl'] = array(
+            'The openssl extension is missing, which means that secure HTTPS transfers are impossible.',
+            'If possible you should enable it or recompile php with --with-openssl'
+        );
     }
 
     if (extension_loaded('openssl') && OPENSSL_VERSION_NUMBER < 0x1000100f) {
-        $warnings['openssl_version'] = true;
+        // Attempt to parse version number out, fallback to whole string value.
+        $opensslVersion = trim(strstr(OPENSSL_VERSION_TEXT, ' '));
+        $opensslVersion = substr($opensslVersion, 0, strpos($opensslVersion, ' '));
+        $opensslVersion = $opensslVersion ? $opensslVersion : OPENSSL_VERSION_TEXT;
+
+        $warnings['openssl_version'] = array(
+            'The OpenSSL library ('.$opensslVersion.') used by PHP does not support TLSv1.2 or TLSv1.1.',
+            'If possible you should upgrade OpenSSL to version 1.0.1 or above.'
+        );
     }
 
     if (!defined('HHVM_VERSION') && !extension_loaded('apcu') && ini_get('apc.enable_cli')) {
-        $warnings['apc_cli'] = true;
+        $warnings['apc_cli'] = array(
+            'The apc.enable_cli setting is incorrect.',
+            'Add the following to the end of your `php.ini`:',
+            '    apc.enable_cli = Off',
+            $iniMessage
+        );
+    }
+
+    if (extension_loaded('xdebug')) {
+        $warnings['xdebug_loaded'] = array(
+            'The xdebug extension is loaded, this can slow down Composer a little.',
+            'Disabling it when using Composer is recommended.'
+        );
+
+        if (ini_get('xdebug.profiler_enabled')) {
+            $warnings['xdebug_profile'] = array(
+                'The xdebug.profiler_enabled setting is enabled, this can slow down Composer a lot.',
+                'Add the following to the end of your `php.ini` to disable it:',
+                '    xdebug.profiler_enabled = 0',
+                $iniMessage
+            );
+        }
     }
 
     ob_start();
@@ -252,150 +362,72 @@ function checkPlatform($quiet, $disableTls)
         $configure = $match[1];
 
         if (false !== strpos($configure, '--enable-sigchild')) {
-            $warnings['sigchild'] = true;
+            $warnings['sigchild'] = array(
+                'PHP was compiled with --enable-sigchild which can cause issues on some platforms.',
+                'Recompile it without this flag if possible, see also:',
+                '    https://bugs.php.net/bug.php?id=22999'
+            );
         }
 
         if (false !== strpos($configure, '--with-curlwrappers')) {
-            $warnings['curlwrappers'] = true;
+            $warnings['curlwrappers'] = array(
+                'PHP was compiled with --with-curlwrappers which will cause issues with HTTP authentication and GitHub.',
+                'Recompile it without this flag if possible'
+            );
         }
     }
 
-    if (!empty($errors)) {
-        out("Some settings on your machine make Composer unable to work properly.", 'error');
-
-        out('Make sure that you fix the issues listed below and run this script again:', 'error');
-        foreach ($errors as $error => $current) {
-            switch ($error) {
-                case 'json':
-                    $text = PHP_EOL."The json extension is missing.".PHP_EOL;
-                    $text .= "Install it or recompile php without --disable-json";
-                    break;
-
-                case 'phar':
-                    $text = PHP_EOL."The phar extension is missing.".PHP_EOL;
-                    $text .= "Install it or recompile php without --disable-phar";
-                    break;
-
-                case 'filter':
-                    $text = PHP_EOL."The filter extension is missing.".PHP_EOL;
-                    $text .= "Install it or recompile php without --disable-filter";
-                    break;
-
-                case 'hash':
-                    $text = PHP_EOL."The hash extension is missing.".PHP_EOL;
-                    $text .= "Install it or recompile php without --disable-hash";
-                    break;
-
-                case 'iconv_mbstring':
-                    $text = PHP_EOL."The iconv OR mbstring extension is required and both are missing.".PHP_EOL;
-                    $text .= "Install either of them or recompile php without --disable-iconv";
-                    break;
-
-                case 'unicode':
-                    $text = PHP_EOL."The detect_unicode setting must be disabled.".PHP_EOL;
-                    $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
-                    $text .= "    detect_unicode = Off";
-                    $displayIniMessage = true;
-                    break;
-
-                case 'suhosin':
-                    $text = PHP_EOL."The suhosin.executor.include.whitelist setting is incorrect.".PHP_EOL;
-                    $text .= "Add the following to the end of your `php.ini` or suhosin.ini (Example path [for Debian]: /etc/php5/cli/conf.d/suhosin.ini):".PHP_EOL;
-                    $text .= "    suhosin.executor.include.whitelist = phar ".$current;
-                    $displayIniMessage = true;
-                    break;
-
-                case 'php':
-                    $text = PHP_EOL."Your PHP ({$current}) is too old, you must upgrade to PHP 5.3.2 or higher.";
-                    break;
-
-                case 'allow_url_fopen':
-                    $text = PHP_EOL."The allow_url_fopen setting is incorrect.".PHP_EOL;
-                    $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
-                    $text .= "    allow_url_fopen = On";
-                    $displayIniMessage = true;
-                    break;
-
-                case 'ioncube':
-                    $text = PHP_EOL."Your ionCube Loader extension ($current) is incompatible with Phar files.".PHP_EOL;
-                    $text .= "Upgrade to ionCube 4.0.9 or higher or remove this line (path may be different) from your `php.ini` to disable it:".PHP_EOL;
-                    $text .= "    zend_extension = /usr/lib/php5/20090626+lfs/ioncube_loader_lin_5.3.so";
-                    $displayIniMessage = true;
-                    break;
-
-                case 'openssl':
-                    $text = PHP_EOL."The openssl extension is missing, which means that secure HTTPS transfers are impossible.".PHP_EOL;
-                    $text .= "If possible you should enable it or recompile php with --with-openssl";
-                    break;
-            }
-            if ($displayIniMessage) {
-                $text .= $iniMessage;
-            }
-            out($text, 'info');
-        }
-
-        out('');
-        return false;
+    // Stringify the message arrays
+    foreach ($errors as $key => $value) {
+        $errors[$key] = PHP_EOL.implode(PHP_EOL, $value);
     }
 
+    foreach ($warnings as $key => $value) {
+        $warnings[$key] = PHP_EOL.implode(PHP_EOL, $value);
+    }
+
+    return !empty($errors) || !empty($warnings);
+}
+
+
+/**
+* Outputs an array of issues
+*
+* @param array $issues
+*/
+function outputIssues($issues)
+{
+    foreach ($issues as $issue) {
+        out($issue, 'info');
+    }
+    out('');
+}
+
+/**
+* Outputs any warnings found
+*
+* @param array $warnings
+*/
+function showWarnings($warnings)
+{
     if (!empty($warnings)) {
-        out("Some settings on your machine may cause stability issues with Composer.", 'error');
-
+        out('Some settings on your machine may cause stability issues with Composer.', 'error');
         out('If you encounter issues, try to change the following:', 'error');
-        foreach ($warnings as $warning => $current) {
-            switch ($warning) {
-                case 'apc_cli':
-                    $text = PHP_EOL."The apc.enable_cli setting is incorrect.".PHP_EOL;
-                    $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
-                    $text .= "    apc.enable_cli = Off";
-                    $displayIniMessage = true;
-                    break;
-
-                case 'sigchild':
-                    $text = PHP_EOL."PHP was compiled with --enable-sigchild which can cause issues on some platforms.".PHP_EOL;
-                    $text .= "Recompile it without this flag if possible, see also:".PHP_EOL;
-                    $text .= "    https://bugs.php.net/bug.php?id=22999";
-                    break;
-
-                case 'curlwrappers':
-                    $text = PHP_EOL."PHP was compiled with --with-curlwrappers which will cause issues with HTTP authentication and GitHub.".PHP_EOL;
-                    $text .= "Recompile it without this flag if possible";
-                    break;
-
-                case 'openssl':
-                    $text = PHP_EOL."The openssl extension is missing, which means that secure HTTPS transfers are impossible.".PHP_EOL;
-                    $text .= "If possible you should enable it or recompile php with --with-openssl";
-                    break;
-
-                case 'openssl_version':
-                    // Attempt to parse version number out, fallback to whole string value.
-                    $opensslVersion = trim(strstr(OPENSSL_VERSION_TEXT, ' '));
-                    $opensslVersion = substr($opensslVersion, 0, strpos($opensslVersion, ' '));
-                    $opensslVersion = $opensslVersion ? $opensslVersion : OPENSSL_VERSION_TEXT;
-
-                    $text = PHP_EOL."The OpenSSL library ({$opensslVersion}) used by PHP does not support TLSv1.2 or TLSv1.1.".PHP_EOL;
-                    $text .= "If possible you should upgrade OpenSSL to version 1.0.1 or above.";
-                    break;
-
-                case 'php':
-                    $text = PHP_EOL."Your PHP ({$current}) is quite old, upgrading to PHP 5.3.4 or higher is recommended.".PHP_EOL;
-                    $text .= "Composer works with 5.3.2+ for most people, but there might be edge case issues.";
-                    break;
-            }
-            if ($displayIniMessage) {
-                $text .= $iniMessage;
-            }
-            out($text, 'info');
-        }
-
-        out('');
-        return true;
+        outputIssues($warnings);
     }
+}
 
-    if (!$quiet) {
-        out("All settings correct for using Composer", 'success');
+/**
+* Outputs an end of process warning if tls has been bypassed
+*
+* @param bool $disableTls Bypass tls
+*/
+function showSecurityWarning($disableTls)
+{
+    if ($disableTls) {
+        out('You have instructed the Installer not to enforce SSL/TLS security on remote HTTPS requests.', 'info');
+        out('This will leave all downloads during installation vulnerable to Man-In-The-Middle (MITM) attacks', 'info');
     }
-    return true;
 }
 
 /**
