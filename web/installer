@@ -88,10 +88,10 @@ EOF;
 }
 
 /**
-* Sets the USE_ANSI define for colorizing output
-*
-* @param array $argv Command-line arguments
-*/
+ * Sets the USE_ANSI define for colorizing output
+ *
+ * @param array $argv Command-line arguments
+ */
 function setUseAnsi($argv)
 {
     // --no-ansi wins over --ansi
@@ -112,14 +112,14 @@ function setUseAnsi($argv)
 }
 
 /**
-* Returns the value of a command-line option
-*
-* @param string $opt The command-line option to check
-* @param array $argv Command-line arguments
-* @param mixed $default Default value to be returned
-*
-* @return mixed The command-line value or the default
-*/
+ * Returns the value of a command-line option
+ *
+ * @param string $opt The command-line option to check
+ * @param array $argv Command-line arguments
+ * @param mixed $default Default value to be returned
+ *
+ * @return mixed The command-line value or the default
+ */
 function getOptValue($opt, $argv, $default)
 {
     $optLength = strlen($opt);
@@ -139,14 +139,14 @@ function getOptValue($opt, $argv, $default)
 }
 
 /**
-* Checks that user-supplied params are valid
-*
-* @param mixed $installDir The required istallation directory
-* @param mixed $version The required composer version to install
-* @param mixed $cafile Certificate Authority file
-*
-* @return bool True if the supplied params are okay
-*/
+ * Checks that user-supplied params are valid
+ *
+ * @param mixed $installDir The required istallation directory
+ * @param mixed $version The required composer version to install
+ * @param mixed $cafile Certificate Authority file
+ *
+ * @return bool True if the supplied params are okay
+ */
 function checkParams($installDir, $version, $cafile)
 {
     $result = true;
@@ -169,16 +169,16 @@ function checkParams($installDir, $version, $cafile)
 }
 
 /**
-* Checks the platform for possible issues running Composer
-*
-* Errors are written to the output, warnings are saved for later display.
-*
-* @param array $warnings Populated by method, to be shown later
-* @param bool $quiet Quiet mode
-* @param bool $disableTls Bypass tls
-*
-* @return bool True if there are no errors
-*/
+ * Checks the platform for possible issues running Composer
+ *
+ * Errors are written to the output, warnings are saved for later display.
+ *
+ * @param array $warnings Populated by method, to be shown later
+ * @param bool $quiet Quiet mode
+ * @param bool $disableTls Bypass tls
+ *
+ * @return bool True if there are no errors
+ */
 function checkPlatform(&$warnings, $quiet, $disableTls)
 {
     getPlatformIssues($errors, $warnings);
@@ -203,13 +203,13 @@ function checkPlatform(&$warnings, $quiet, $disableTls)
 }
 
 /**
-* Checks platform configuration for common incompatibility issues
-*
-* @param array $errors Populated by method
-* @param array $warnings Populated by method
-*
-* @return bool If any errors or warnings have been found
-*/
+ * Checks platform configuration for common incompatibility issues
+ *
+ * @param array $errors Populated by method
+ * @param array $warnings Populated by method
+ *
+ * @return bool If any errors or warnings have been found
+ */
 function getPlatformIssues(&$errors, &$warnings)
 {
     $errors = array();
@@ -391,10 +391,10 @@ function getPlatformIssues(&$errors, &$warnings)
 
 
 /**
-* Outputs an array of issues
-*
-* @param array $issues
-*/
+ * Outputs an array of issues
+ *
+ * @param array $issues
+ */
 function outputIssues($issues)
 {
     foreach ($issues as $issue) {
@@ -404,10 +404,10 @@ function outputIssues($issues)
 }
 
 /**
-* Outputs any warnings found
-*
-* @param array $warnings
-*/
+ * Outputs any warnings found
+ *
+ * @param array $warnings
+ */
 function showWarnings($warnings)
 {
     if (!empty($warnings)) {
@@ -418,10 +418,10 @@ function showWarnings($warnings)
 }
 
 /**
-* Outputs an end of process warning if tls has been bypassed
-*
-* @param bool $disableTls Bypass tls
-*/
+ * Outputs an end of process warning if tls has been bypassed
+ *
+ * @param bool $disableTls Bypass tls
+ */
 function showSecurityWarning($disableTls)
 {
     if ($disableTls) {
