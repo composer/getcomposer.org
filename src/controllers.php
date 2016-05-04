@@ -36,6 +36,11 @@ $app->get('/download/{version}/composer.phar', function () {
 })
 ->bind('download_version');
 
+$app->get('/schema.json', function () use ($app) {
+    return new Response(file_get_contents($app['composer.doc_dir'].'/../res/composer-schema.json'), 200, ['content-type' => 'application/json']);
+})
+->bind('schema');
+
 $app->get('/doc/', function () use ($app) {
     $scan = function ($dir, $prefix = '') use ($app) {
         $finder = new Finder();
