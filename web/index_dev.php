@@ -1,15 +1,15 @@
 <?php
 
 use Symfony\Component\ClassLoader\DebugClassLoader;
-use Symfony\Component\HttpKernel\Debug\ErrorHandler;
-use Symfony\Component\HttpKernel\Debug\ExceptionHandler;
+use Symfony\Component\Debug\ExceptionHandler;
+use Symfony\Component\Debug\Debug;
 
 require_once __DIR__.'/../vendor/autoload.php';
 
 ini_set('display_errors', 1);
 error_reporting(-1);
 DebugClassLoader::enable();
-ErrorHandler::register();
+Debug::enable();
 if ('cli' !== php_sapi_name()) {
     ExceptionHandler::register();
 }
