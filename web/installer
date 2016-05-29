@@ -444,6 +444,11 @@ function installComposer($version, $installDir, $filename, $quiet, $disableTls, 
     }
 
     $home = getHomeDir();
+
+    if (!is_dir($home)) {
+        @mkdir($home, 0777, true);
+    }
+
     file_put_contents($home.'/keys.dev.pub', <<<DEVPUBKEY
 -----BEGIN PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAnBDHjZS6e0ZMoK3xTD7f
@@ -643,28 +648,64 @@ function out($text, $color = null, $newLine = true)
     printf($format, $text);
 }
 
+/**
+ * Returns the system-dependent Composer home location, which may not exist
+ *
+ * @return string
+ */
 function getHomeDir()
 {
     $home = getenv('COMPOSER_HOME');
+
     if (!$home) {
+        $userDir = getUserDir();
+
         if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
-            if (!getenv('APPDATA')) {
-                throw new RuntimeException('The APPDATA or COMPOSER_HOME environment variable must be set for composer to install correctly');
-            }
-            $home = strtr(getenv('APPDATA'), '\\', '/') . '/Composer';
+            $home = $userDir.'/Composer';
         } else {
-            if (!getenv('HOME')) {
-                throw new RuntimeException('The HOME or COMPOSER_HOME environment variable must be set for composer to install correctly');
+            $home = $userDir.'/.composer';
+
+            if (!is_dir($home) && useXdg()) {
+                // XDG Base Directory Specifications
+                if (!($xdgConfig = getenv('XDG_CONFIG_HOME'))) {
+                    $xdgConfig = $userDir.'/.config';
+                }
+                $home = $xdgConfig.'/composer';
             }
-            $home = rtrim(getenv('HOME'), '/') . '/.composer';
         }
     }
+    return $home;
+}
 
-    if (!is_dir($home)) {
-        @mkdir($home, 0777, true);
+/**
+ * Returns the location of the user directory from the environment
+ * @throws Runtime Exception If the environment value does not exists
+ *
+ * @return string
+ */
+function getUserDir()
+{
+    $userEnv = defined('PHP_WINDOWS_VERSION_MAJOR') ? 'APPDATA' : 'HOME';
+    $userDir = getenv($userEnv);
+
+    if (!$userDir) {
+        throw new RuntimeException('The '.$userEnv.' or COMPOSER_HOME environment variable must be set for composer to run correctly');
     }
 
-    return $home;
+    return rtrim(strtr($userDir, '\\', '/'), '/');
+}
+
+/**
+ * @return bool
+ */
+function useXdg()
+{
+    foreach (array_keys($_SERVER) as $key) {
+        if (substr($key, 0, 4) === 'XDG_') {
+            return true;
+        }
+    }
+    return false;
 }
 
 function validateCaFile($contents)
