@@ -214,6 +214,7 @@ $app->get('/doc/{page}', function ($page) use ($app) {
 $shortcuts = [
     '/commit-deps' => ['faqs/should-i-commit-the-dependencies-in-my-vendor-directory.md', ''],
     '/xdebug' => ['articles/troubleshooting.md', '#xdebug-impact-on-composer'],
+    '/root' => ['faq/how-to-install-untrusted-packages-safely.md', ''],
 ];
 
 foreach ($shortcuts as $url => $page) {
