@@ -238,5 +238,5 @@ foreach ($shortcuts as $url => $page) {
         );
 
         return new RedirectResponse($url . $page[1]);
-    });
+    })->bind('shortcut_'.trim($url, '/'));
 }
