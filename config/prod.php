@@ -4,6 +4,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+if (class_exists('Tideways\Profiler')) {
+    \Tideways\Profiler::start(array('api_key' => trim(file_get_contents(__DIR__.'/tideways.key'))));
+}
+
 if (!isset($env) || $env !== 'dev') {
     // force ssl
     $app->before(function (Request $request) {
