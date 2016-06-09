@@ -12,7 +12,7 @@ $app->register(new UrlGeneratorServiceProvider());
 $app->register(new ValidatorServiceProvider());
 $app->register(new TwigServiceProvider(), array(
     'twig.path'    => array(__DIR__.'/../views'),
-//    'twig.options' => array('cache' => __DIR__.'/../cache'),
+    'twig.options' => array('cache' => __DIR__.'/../cache/twig'),
 ));
 $app['twig'] = $app->share($app->extend('twig', function($twig, $app) {
     // add custom globals, filters, tags, ...
