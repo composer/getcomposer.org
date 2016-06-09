@@ -1,8 +1,21 @@
 <?php
 
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+
+$app->before(function (Request $req) {
+    if (!class_exists('Tideways\Profiler')) {
+        return;
+    }
+
+    $actionName = $req->get('_route');
+    if (strpos($actionName, '__') === 0) {
+        $actionName = $req->get('_controller');
+    }
+    \Tideways\Profiler::setTransactionName($req->getMethod().' '.$actionName);
+}, 8);
 
 $app->get('/', function () use ($app) {
     $logos = glob(__DIR__.'/../web/img/logo-composer-transparent*.png');
