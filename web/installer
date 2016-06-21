@@ -759,7 +759,7 @@ class HttpClient {
     public function get($url)
     {
         $context = $this->getStreamContext($url);
-        $result = file_get_contents($url, null, $context);
+        $result = file_get_contents($url, false, $context);
 
         if ($result && extension_loaded('zlib')) {
             $decode = false;
