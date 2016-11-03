@@ -355,6 +355,15 @@ function getPlatformIssues(&$errors, &$warnings)
         }
     }
 
+    if (!extension_loaded('zlib')) {
+        $warnings['zlib'] = array(
+            'The zlib extension is not loaded, this can slow down Composer a lot.',
+            'If possible, install it or recompile php with `--with-zlib`',
+            $iniMessage
+        );
+        
+    }
+
     ob_start();
     phpinfo(INFO_GENERAL);
     $phpinfo = ob_get_clean();
