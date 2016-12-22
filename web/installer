@@ -158,7 +158,7 @@ function checkParams($installDir, $version, $cafile)
         $result = false;
     }
 
-    if (false !== $version && 1 !== preg_match('/^\d+\.\d+\.\d+(\-(alpha|beta)\d+)*$/', $version)) {
+    if (false !== $version && 1 !== preg_match('/^\d+\.\d+\.\d+(\-(alpha|beta|RC)\d+)*$/', $version)) {
         out("The defined install version ({$version}) does not match release pattern.", 'info');
         $result = false;
     }
