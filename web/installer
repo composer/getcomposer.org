@@ -40,7 +40,7 @@ function process($argv)
         exit(1);
     }
 
-    $ok = checkPlatform($warnings, $quiet, $disableTls);
+    $ok = checkPlatform($warnings, $quiet, $disableTls, true);
 
     if ($check) {
         // Only show warnings if we haven't output any errors
@@ -178,12 +178,13 @@ function checkParams($installDir, $version, $cafile)
  * @param array $warnings Populated by method, to be shown later
  * @param bool $quiet Quiet mode
  * @param bool $disableTls Bypass tls
+ * @param bool $install If we are installing, rather than diagnosing
  *
  * @return bool True if there are no errors
  */
-function checkPlatform(&$warnings, $quiet, $disableTls)
+function checkPlatform(&$warnings, $quiet, $disableTls, $install)
 {
-    getPlatformIssues($errors, $warnings);
+    getPlatformIssues($errors, $warnings, $install);
 
     // Make openssl warning an error if tls has not been specifically disabled
     if (isset($warnings['openssl']) && !$disableTls) {
@@ -209,10 +210,11 @@ function checkPlatform(&$warnings, $quiet, $disableTls)
  *
  * @param array $errors Populated by method
  * @param array $warnings Populated by method
+ * @param bool $install If we are installing, rather than diagnosing
  *
  * @return bool If any errors or warnings have been found
  */
-function getPlatformIssues(&$errors, &$warnings)
+function getPlatformIssues(&$errors, &$warnings, $install)
 {
     $errors = array();
     $warnings = array();
@@ -341,7 +343,7 @@ function getPlatformIssues(&$errors, &$warnings)
         );
     }
 
-    if (extension_loaded('xdebug')) {
+    if (!$install && extension_loaded('xdebug')) {
         $warnings['xdebug_loaded'] = array(
             'The xdebug extension is loaded, this can slow down Composer a little.',
             'Disabling it when using Composer is recommended.'
