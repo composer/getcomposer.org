@@ -591,6 +591,11 @@ class Installer
             $this->initTls();
             $this->httpClient = new HttpClient($this->disableTls, $this->cafile);
             $result = $this->install($version, $channel);
+
+            if ($result && $channel !== 'stable' && !$version && defined('PHP_BINARY')) {
+                $null = (defined('PHP_WINDOWS_VERSION_MAJOR') ? 'NUL' : '/dev/null');
+                @exec(escapeshellarg(PHP_BINARY) .' '.escapeshellarg($this->target).' self-update --'.$channel.' --set-channel-only -q > '.$null.' 2> '.$null, $output);
+            }
         } catch (Exception $e) {
             $result = false;
         }
