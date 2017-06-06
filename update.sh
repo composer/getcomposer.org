@@ -97,6 +97,7 @@ for version in `git tag`; do
     else
         touch --date="`git log -n1 --pretty=%ci $version`" "$root/$target/download/$version/$buildphar"
     fi
+    gpg --out "$root/$target/download/$version/$buildphar.asc" --sign "$root/$target/download/$version/$buildphar"
 done
 
 lastStableVersion=$(ls "$root/$target/download" | grep -E '^[0-9.]+$' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
