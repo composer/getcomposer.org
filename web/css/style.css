@@ -229,6 +229,19 @@ th, td {
   padding: 0.5em;
 }
 
+#search {
+  text-align: right;
+}
+
+input#docsearch {
+  width: 260px;
+  padding: 4px 4px 2px 4px;
+}
+
+.ds-dropdown-menu {
+  width: 600px;
+}
+
 /* ==|== non-semantic helper classes ======================================== */
 .ir { display: block; border: 0; text-indent: -999em; overflow: hidden; background-color: transparent; background-repeat: no-repeat; text-align: left; direction: ltr; }
 .ir br { display: none; }

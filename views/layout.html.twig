@@ -12,6 +12,8 @@
         <link rel="stylesheet" href="{{ app.request.basePath }}/css/libs/prism.css?v=6">
 
         <script src="{{ app.request.basePath }}/js/libs/modernizr-2.0.6.min.js"></script>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.css">
     </head>
 
     <body>
@@ -45,6 +47,14 @@
             (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
             g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
             s.parentNode.insertBefore(g,s)}(document,'script'));
+        </script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.js"></script>
+        <script type="text/javascript"> docsearch({
+          apiKey: '8f77725b2f2db4166675acc6e8ea3526',
+          indexName: 'getcomposer',
+          inputSelector: '#docsearch',
+          debug: true
+        });
         </script>
     </body>
 </html>
