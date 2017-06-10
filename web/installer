@@ -226,7 +226,24 @@ function getPlatformIssues(&$errors, &$warnings, $install)
     }
     $iniMessage .= PHP_EOL.'If you can not modify the ini file, you can also run `php -d option=value` to modify ini values on the fly. You can use -d multiple times.';
 
-    if (ini_get('detect_unicode')) {
+    if (
+        version_compare(PHP_VERSION, '5.4.0') >= 0
+        &&
+        ini_get('zend.detect_unicode)
+    ) {
+        $errors['unicode'] = array(
+            'The detect_unicode setting must be disabled.',
+            'Add the following to the end of your `php.ini`:',
+            '    zend.detect_unicode = Off',
+            $iniMessage
+        );
+    }
+    
+    if (
+        version_compare(PHP_VERSION, '5.4.0') < 0
+        &&
+        ini_get('detect_unicode')
+    ) {
         $errors['unicode'] = array(
             'The detect_unicode setting must be disabled.',
             'Add the following to the end of your `php.ini`:',
