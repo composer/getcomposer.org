@@ -1,6 +1,11 @@
 {% extends "layout.html.twig" %}
 
 {% block content %}
+
+    <div id="search" class="clearfix">
+        <input id="docsearch" type="text" placeholder="Search documentation">
+    </div>
+
     <h1>Book</h1>
     <ul>
     {% for filename, data in book %}
