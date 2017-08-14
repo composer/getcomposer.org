@@ -56,16 +56,16 @@
           queryHook: function (query) {
             var parts = query.split(' ');
 
-            parts = parts.map(function (part) {
+            parts = parts.map(function (part, index) {
               var word = part.trim();
 
               // quote --foo args so they are not parsed as negations but rather return actual results
               if (word.length >= 2 && word[0] === '-' && word[1] === '-') {
-                word = '"' + word + '"';
+                word = '"' + word + (index === parts.length-1 ? '' : '"');
               }
               // quote -x args
               if (word.length == 2 && word[0] === '-') {
-                word = '"' + word + '"';
+                word = '"' + word + (index === parts.length-1 ? '' : '"');
               }
 
               return word;
