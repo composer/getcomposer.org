@@ -53,7 +53,27 @@
           apiKey: '8f77725b2f2db4166675acc6e8ea3526',
           indexName: 'getcomposer',
           inputSelector: '#docsearch',
-          debug: true
+          queryHook: function (query) {
+            var parts = query.split(' ');
+
+            parts = parts.map(function (part) {
+              var word = part.trim();
+
+              // quote --foo args so they are not parsed as negations but rather return actual results
+              if (word.length >= 2 && word[0] === '-' && word[1] === '-') {
+                word = '"' + word + '"';
+              }
+              // quote -x args
+              if (word.length == 2 && word[0] === '-') {
+                word = '"' + word + '"';
+              }
+
+              return word;
+            });
+
+            return parts.join(' ');
+          },
+          debug: false
         });
         </script>
     </body>
