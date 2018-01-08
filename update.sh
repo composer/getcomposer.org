@@ -59,11 +59,12 @@ git checkout master -q --force && \
 git rebase origin/master -q
 
 version=`git log --pretty="%H" -n1 HEAD`
+touch "$root/$target/version"
 
 # create latest dev build
 if [ "dev" == "$1" ]
 then
-    if [ ! -f "$root/$target/$version" -o ! -f "$root/$target/version" -o "$version" != "`cat \"$root/$target/version\"`" ]
+    if [ ! -f "$root/$target/$version" -o "$version" != "`cat \"$root/$target/version\"`" ]
     then
         $composer install -q --no-dev && \
         php -d phar.readonly=0 $buildscript && \
