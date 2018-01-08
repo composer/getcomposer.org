@@ -1,2 +1,2 @@
 #!/bin/bash
-php vendor/bin/sami.php update -q sami-config.php
+php sami.phar update -q sami-config.php

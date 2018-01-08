@@ -1,5 +1,7 @@
 {% extends "layout.html.twig" %}
 
+{% import _self as macros %}
+
 {% block title %}{% if title is not empty %}{{ title }} - {% endif %}{{ parent() }}{% endblock %}
 
 {% block content %}
@@ -10,7 +12,7 @@
 
     {% if toc|length %}
         <ul class="toc">
-            {{ _self.tocTree(toc|length > 3 ? toc : toc.1) }}
+            {{ macros.tocTree(toc|length > 3 ? toc : toc.1) }}
         </ul>
     {% endif %}
     {{ doc|raw }}
@@ -21,12 +23,14 @@
 {% endblock %}
 
 {% macro tocTree(tree) %}
+    {% import _self as macros %}
+
     {% for key, node in tree if (key not in ['title', 'id', 'desc']) %}
         <li>
             <a href="#{{ node.id }}">{{ node.title }}</a> {{ node.desc }}
             {% if node|length > 3 %}
                 <ul>
-                    {{ _self.tocTree(node) }}
+                    {{ macros.tocTree(node) }}
                 </ul>
             {% endif %}
         </li>
