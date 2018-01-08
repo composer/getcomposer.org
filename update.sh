@@ -41,6 +41,8 @@ then
     fi
 fi
 
+set -euo pipefail
+
 # init
 if [ ! -d "$root/$build" ]
 then
