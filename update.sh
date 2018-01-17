@@ -95,6 +95,7 @@ for version in `git tag`; do
             git reset --hard -q $version && \
             mv "$buildphar.sig" "$root/$target/download/$version/$buildphar.sig" && \
             mv "$buildphar" "$root/$target/download/$version/$buildphar"
+            cd "$root/$target/download/$version" && sha256sum $buildphar > $buildphar.sha256sum && cd -
             echo "$target/download/$version/$buildphar (and .sig) was just built and should be committed to the repo"
         fi
     else

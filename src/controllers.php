@@ -28,7 +28,7 @@ $app->get('/', function () use ($app) {
 $app->get('/download/', function () use ($app) {
     $versions = array();
     foreach (glob(__DIR__.'/../web/download/*', GLOB_ONLYDIR) as $version) {
-        $versions[basename($version)] = new \DateTime('@'.filemtime($version.'/composer.phar'));
+        $versions[basename($version)] = ['date' => new \DateTime('@'.filemtime($version.'/composer.phar')), 'sha256sum' => preg_replace('{^(\S+).*}', '$1', file_get_contents($version.'/composer.phar.sha256sum'))];
     }
 
     uksort($versions, 'version_compare');

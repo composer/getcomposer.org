@@ -29,7 +29,7 @@ php -r "unlink('composer-setup.php');"</pre>
     <p class="installer-warning">
         <strong>WARNING:</strong> Please do not redistribute the install code. It will change with every version of the installer. Instead, please link to this page or check <a href="/doc/faqs/how-to-install-composer-programmatically.md">how to install Composer programmatically</a>.
     </p>
- 
+
     <h2>Installer Options</h2>
 
     <h3>--install-dir</h3>
@@ -51,8 +51,14 @@ php -r "unlink('composer-setup.php');"</pre>
     <p>If you prefer to download the phar manually, here are the available versions:</p>
     <p>
         <a href="{{ app.request.basePath }}/composer.phar">Latest Snapshot</a><br />
-        {% for version, date in versions %}
-            <a href="{{ path('download_version', {version: version}) }}">{{ version }}</a> ({{ date|date('Y-m-d') }})<br />
+        <table>
+        {% for version, meta in versions %}
+            <tr>
+                <td style="width: 100px"><a href="{{ path('download_version', {version: version}) }}">{{ version }}</a></td>
+                <td style="width: 100px">{{ meta.date|date('Y-m-d') }}</td>
+                <td><a href="{{ path('download_version', {version: version}) }}.sha256sum">sha256</a> <code style="font-size: 0.7em; position: relative; top: -2px">{{ meta.sha256sum }}</code></td>
+            </tr>
         {% endfor %}
+        </table>
     </p>
 {% endblock %}
