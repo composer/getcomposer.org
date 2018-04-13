@@ -1,7 +1,7 @@
 {% extends "layout.html.twig" %}
 
 {% block content %}
-    <h1>Download Composer</h1>
+    <h1>Download Composer <span class="latest">Latest: v{{ latestStable }}</span></h1>
 
     {% if windows %}
         <h2>Windows Installer</h2>

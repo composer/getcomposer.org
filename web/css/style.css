@@ -242,6 +242,13 @@ input#docsearch {
   width: 600px;
 }
 
+h1 .latest {
+  font-size: .5em;
+  position: relative;
+  top: -5px;
+  left: 10px;
+}
+
 /* ==|== non-semantic helper classes ======================================== */
 .ir { display: block; border: 0; text-indent: -999em; overflow: hidden; background-color: transparent; background-repeat: no-repeat; text-align: left; direction: ltr; }
 .ir br { display: none; }

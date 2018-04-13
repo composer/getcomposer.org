@@ -21,7 +21,21 @@ $app->get('/', function () use ($app) {
     $logos = glob(__DIR__.'/../web/img/logo-composer-transparent*.png');
     $logo = basename($logos[array_rand($logos)]);
 
-    return $app['twig']->render('index.html.twig', array('logo' => $logo));
+    $versions = array();
+    foreach (glob(__DIR__.'/../web/download/*', GLOB_ONLYDIR) as $version) {
+        $versions[] = basename($version);
+    }
+    usort($versions, 'version_compare');
+    $versions = array_reverse($versions);
+
+    foreach ($versions as $version) {
+        if (strpos($version, '-') === false) {
+            $latestStable = $version;
+            break;
+        }
+    }
+
+    return $app['twig']->render('index.html.twig', array('logo' => $logo, 'latestStable' => $latestStable));
 })
 ->bind('home');
 
@@ -34,9 +48,17 @@ $app->get('/download/', function () use ($app) {
     uksort($versions, 'version_compare');
     $versions = array_reverse($versions);
 
+    foreach ($versions as $version => $versionMeta) {
+        if (strpos($version, '-') === false) {
+            $latestStable = $version;
+            break;
+        }
+    }
+
     $data = array(
         'page' => 'download',
         'versions' => $versions,
+        'latestStable' => $latestStable,
         'windows' => false !== strpos($app['request']->headers->get('User-Agent'), 'Windows'),
     );
 
