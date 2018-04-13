@@ -48,33 +48,36 @@
             g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
             s.parentNode.insertBefore(g,s)}(document,'script'));
         </script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.js"></script>
-        <script type="text/javascript"> docsearch({
-          apiKey: '8f77725b2f2db4166675acc6e8ea3526',
-          indexName: 'getcomposer',
-          inputSelector: '#docsearch',
-          queryHook: function (query) {
-            var parts = query.split(' ');
+        <script src="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.js"></script>
+        <script>
+          if (document.getElementById('docsearch')) {
+            docsearch({
+              apiKey: '8f77725b2f2db4166675acc6e8ea3526',
+              indexName: 'getcomposer',
+              inputSelector: '#docsearch',
+              queryHook: function (query) {
+                var parts = query.split(' ');
 
-            parts = parts.map(function (part, index) {
-              var word = part.trim();
+                parts = parts.map(function (part, index) {
+                  var word = part.trim();
 
-              // quote --foo args so they are not parsed as negations but rather return actual results
-              if (word.length >= 2 && word[0] === '-' && word[1] === '-') {
-                word = '"' + word + (index === parts.length-1 ? '' : '"');
-              }
-              // quote -x args
-              if (word.length == 2 && word[0] === '-') {
-                word = '"' + word + (index === parts.length-1 ? '' : '"');
-              }
+                  // quote --foo args so they are not parsed as negations but rather return actual results
+                  if (word.length >= 2 && word[0] === '-' && word[1] === '-') {
+                    word = '"' + word + (index === parts.length-1 ? '' : '"');
+                  }
+                  // quote -x args
+                  if (word.length == 2 && word[0] === '-') {
+                    word = '"' + word + (index === parts.length-1 ? '' : '"');
+                  }
 
-              return word;
+                  return word;
+                });
+
+                return parts.join(' ');
+              },
+              debug: false
             });
-
-            return parts.join(' ');
-          },
-          debug: false
-        });
+          }
         </script>
     </body>
 </html>
