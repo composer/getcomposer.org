@@ -13,7 +13,7 @@
 
     <p>To quickly install Composer in the current directory, run the following script in your terminal. To automate the installation, use <a href="/doc/faqs/how-to-install-composer-programmatically.md">the guide on installing Composer programmatically</a>.</p>
     <pre class="installer">php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-php -r "if (hash_file('SHA384', 'composer-setup.php') === '544e09ee996cdf60ece3804abc52599c22b1f40f4323403c44d44fdfdd586475ca9813a858088ffbc1f233e9b180f061') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+php -r "if (hash_file('SHA384', 'composer-setup.php') === '6c73fbb92af4ceb8cd91bd3b181baa803de5c87c059f4002c491a432c21bcbf2b69883a819c5de0d18963ee828988fc4') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
 php composer-setup.php
 php -r "unlink('composer-setup.php');"</pre>
 
