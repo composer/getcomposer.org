@@ -1393,6 +1393,7 @@ class HttpClient {
         }
         $options['http']['header'] .= "User-Agent: Composer Installer\r\n";
         $options['http']['protocol_version'] = 1.1;
+        $options['http']['timeout'] = 600;
 
         return stream_context_create($options);
     }
