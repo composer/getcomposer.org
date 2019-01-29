@@ -10,7 +10,16 @@
  * file that was distributed with this source code.
  */
 
+setupEnvironment();
 process(is_array($argv) ? $argv : array());
+
+/**
+ * Ensures the environment is sane
+ */
+function setupEnvironment()
+{
+    ini_set('display_errors', 1);
+}
 
 /**
  * processes the installer
