@@ -72,7 +72,12 @@ $app->get('/download/{version}/composer.phar', function () {
 ->bind('download_version');
 
 $app->get('/schema.json', function () use ($app) {
-    return new Response(file_get_contents($app['composer.doc_dir'].'/../res/composer-schema.json'), 200, ['content-type' => 'application/json']);
+    return new Response(file_get_contents($app['composer.doc_dir'].'/../res/composer-schema.json'), 200, [
+        'content-type' => 'application/json',
+        'Access-Control-Allow-Origin' => '*',
+        'Access-Control-Allow-Methods' => 'GET',
+        'Access-Control-Allow-Headers' => 'X-Requested-With,If-Modified-Since',
+    ]);
 })
 ->bind('schema');
 
