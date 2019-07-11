@@ -1,34 +1,79 @@
 {% extends "layout.html.twig" %}
 
+
 {% block header %}
 {% endblock %}
 
-{% block content %}
-    <div class="logo">
-        <img src="{{ app.request.basePath }}/img/{{ logo }}">
-        <h1 class="slogan">
-            Dependency Manager for PHP
-        </h1>
-        <p class="latest">Latest: v{{ latestStable }}</p>
-    </div>
 
-    <p class="buttons">
-        <a href="{{ path('docs.view', {page: '00-intro.md'}) }}">Getting Started</a>
-        <a href="{{ path('download') }}">Download</a>
-    </p>
-    <p class="buttons">
-        <a href="{{ path('docs') }}">Documentation</a>
-        <a href="https://packagist.org/">Browse Packages</a>
-    </p>
-    <p class="buttons">
-        <a href="https://github.com/composer/composer/issues">Issues</a>
-        <a href="https://github.com/composer/composer">GitHub</a>
-    </p>
+{% block content %}
+
+    <section role="banner">
+        <div class="logo">
+            <figure>
+                <img src="{{ app.request.basePath }}/img/{{ logo }}"
+                     alt="The Composer Official Logo: a male orchestra conductor with both arms in the air and his head tilted down, reading music sheets"/>
+            </figure>
+            <h1 class="slogan" role="definition">
+                A Dependency Manager for PHP
+            </h1>
+            <p class="latest">Latest: <strong>{{ latestStable }}</strong></p>
+        </div>
+    </section>
+
+    <article>
+        <p class="buttons">
+            <a href="{{ path('docs.view', {page: '00-intro.md'}) }}"
+               title="Getting started with Composer" aria-label="Getting started with Composer">Getting Started</a>
+            <a href="{{ path('download') }}"
+               title="How to download Composer" aria-label="How to download Composer">Download</a>
+        </p>
+        <p class="buttons">
+            <a href="{{ path('docs') }}"
+               title="View the Composer documentation"
+               aria-label="View the Composer documentation">Documentation</a>
+            <a href="https://packagist.org/"
+               title="Browse Composer packages on packagist.org (external link)"
+               aria-label="Follow this link to browse Composer packages on packagist.org (external link)">Browse Packages</a>
+        </p>
+        <p class="buttons">
+            <a href="https://github.com/composer/composer/issues"
+               title="View current issues on GitHub (external link)"
+               aria-label="Follow this link to view the current issues on GitHub (external link)">Issues</a>
+            <a href="https://github.com/composer/composer"
+               title="Browse project on GitHub (external link)"
+               aria-label="Follow this link to browse the Composer project on GitHub (external link)">GitHub</a>
+        </p>
+    </article>
+
 {% endblock %}
 
+
 {% block footer %}
-    <p>Authors: <a href="http://naderman.de">Nils Adermann</a>, <a href="http://nelm.io/jordi">Jordi Boggiano</a> and many <a href="https://github.com/composer/composer/graphs/contributors">community contributions</a></p>
+
+    <p>
+        Authors: <a href="http://naderman.de"
+                    title="Go to Nils Andermann's website (external link)"
+                    aria-label="Go to Nils Andermann's website (external link)">Nils Adermann</a>,
+        <a href="http://nelm.io/jordi"
+           title="Go to Jordi Boggiano's website (external link)"
+           aria-label="Go to Jordi Boggiano's website (external link)">Jordi Boggiano</a>
+        and many <a href="https://github.com/composer/composer/graphs/contributors"
+                    title="View all the contributors on GitHub (external link)"
+                    aria-label="View all the contributors on GitHub (external link)">community contributions</a>
+    </p>
     <p>Sponsored by:</p>
-    <p><a href="https://packagist.com"><img style="width:240px" src="{{ app.request.basePath }}/img/privatepackagist.png"></a></p>
-    <p>Logo: <a href="http://wizardcat.com/">WizardCat</a></p>
+    <p>
+        <a href="https://packagist.com"
+           title="Go to packagist.com (external link)"
+           aria-label="Go to packagist.com (external link)">
+            <img style="width:240px" src="{{ app.request.basePath }}/img/privatepackagist.png"
+                 alt="Private Packagist logo, a paper elephant and the text reads: Private Packagist"/>
+        </a>
+    </p>
+    <p>
+        Logo by: <a href="http://wizardcat.com/"
+                    title="Go to WizardCat's website (external link)"
+                    aria-label="Go to WizardCat's website (external link)">WizardCat</a>
+    </p>
+
 {% endblock %}

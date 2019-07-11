@@ -1,64 +1,102 @@
 {% extends "layout.html.twig" %}
 
 {% block content %}
-    <h1>Download Composer <span class="latest">Latest: v{{ latestStable }}</span></h1>
+    <h1 role="heading">Download Composer <span class="latest">Latest: v{{ latestStable }}</span></h1>
 
     {% if windows %}
         <h2>Windows Installer</h2>
-        <p>The installer will download composer for you and set up your PATH environment variable so you can simply call <code>composer</code> from any directory.</p>
-        <p>Download and run <a href="/Composer-Setup.exe">Composer-Setup.exe</a> - it will install the latest composer version whenever it is executed.</p>
+        <p>
+            The installer will download composer for you and set up your PATH environment variable
+            so you can simply call <code>composer</code> from any directory.
+        </p>
+        <p>
+            Download and run
+            <a href="/Composer-Setup.exe"
+               title="Click here to download Composer-Setup installer for Windows"
+               aria-label="Click here to download Composer-Setup installer for Windows">Composer-Setup.exe</a>
+            - it will install the latest composer version whenever it is executed.
+        </p>
 
         <h2>Command-line installation</h2>
     {% endif %}
 
-    <p>To quickly install Composer in the current directory, run the following script in your terminal. To automate the installation, use <a href="/doc/faqs/how-to-install-composer-programmatically.md">the guide on installing Composer programmatically</a>.</p>
+    <p>
+        To quickly install Composer in the current directory, run the following script in your terminal.
+        To automate the installation, use <a href="/doc/faqs/how-to-install-composer-programmatically.md" title="See the instructions on how to install Composer programmatically" aria-label="See the instructions on how to install Composer programmatically">the guide on installing Composer programmatically</a>.
+    </p>
     <pre class="installer">php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 php -r "if (hash_file('sha384', 'composer-setup.php') === '48e3236262b34d30969dca3c37281b3b4bbe3221bda826ac6a9a62d6444cdb0dcd0615698a5cbe587c3f0fe57a54d8f5') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
 php composer-setup.php
 php -r "unlink('composer-setup.php');"</pre>
 
-    <p>This installer script will simply check some php.ini settings, warn you if they are set incorrectly, and then download the latest composer.phar in the current directory. The 4 lines above will, in order:</p>
+    <p>This installer script will simply check some <code>php.ini</code> settings,
+        warn you if they are set incorrectly, and then
+        download the latest <code>composer.phar</code> in the current directory. The 4 lines above will, in order:
+    </p>
 
     <ul>
         <li>Download the installer to the current directory</li>
-        <li>Verify the installer SHA-384 which you can also <a href="https://composer.github.io/pubkeys.html">cross-check here</a></li>
+        <li>Verify the installer SHA-384, which you can also <a href="https://composer.github.io/pubkeys.html" title="Get the SHA-384 key on GitHub (external link)" aria-label="Get the SHA-384 key on GitHub (external link)">cross-check here</a></li>
         <li>Run the installer</li>
         <li>Remove the installer</li>
     </ul>
 
     <p class="installer-warning">
-        <strong>WARNING:</strong> Please do not redistribute the install code. It will change with every version of the installer. Instead, please link to this page or check <a href="/doc/faqs/how-to-install-composer-programmatically.md">how to install Composer programmatically</a>.
+        <strong>WARNING:</strong> Please do not redistribute the install code.
+        It will change with every version of the installer.
+        Instead, please link to this page or check <a href="/doc/faqs/how-to-install-composer-programmatically.md" title="See the instructions on how to install Composer programmatically" aria-label="See the instructions on how to install Composer programmatically">how to install Composer programmatically</a>.
     </p>
 
     <h2>Installer Options</h2>
 
     <h3>--install-dir</h3>
-    <p>You can install composer to a specific directory by using the <code>--install-dir</code> option and providing a target directory. Example:</p>
+    <p>You can install composer to a specific directory by using the <code>--install-dir</code> option and providing
+        a target directory. Example:</p>
     <code>php composer-setup.php --install-dir=bin</code>
 
     <h3>--filename</h3>
-    <p>You can specify the filename (default: composer.phar) using the <code>--filename</code> option. Example:</p>
+    <p>You can specify the filename (default: <code>composer.phar</code>) using the <code>--filename</code> option.
+        Example:</p>
     <code>php composer-setup.php --filename=composer</code>
 
     <h3>--version</h3>
-    <p>You can install composer to a specific release by using the <code>--version</code> option and providing a target release. Example:</p>
+    <p>You can install composer to a specific release by using the <code>--version</code> option and providing a
+        target release. Example:</p>
     <code>php composer-setup.php --version=1.0.0-alpha8</code>
 
     <h2>Preview / Snapshot Releases</h2>
-    <p>By default the installer and <code>composer self-update</code> will download stable versions only. If you would like to help test pre-release versions you can use the <code>--preview</code> flag on either installer or self-update. For snapshot builds which are done from the latest Composer commit, you can use the <code>--snapshot</code> flag.</p>
+    <p>By default the installer and <code>composer self-update</code> will download stable versions only. If you
+        would like to help test pre-release versions you can use the <code>--preview</code> flag on either installer
+        or self-update.
+        For snapshot builds which are done from the latest Composer commit, you can use the <code>--snapshot</code>
+        flag.
+    </p>
 
     <h2>Manual Download</h2>
     <p>If you prefer to download the phar manually, here are the available versions:</p>
     <p>
-        <a href="{{ app.request.basePath }}/composer.phar">Latest Snapshot</a><br />
-        <table>
+        <a href="{{ app.request.basePath }}/composer.phar"
+           title="Get the lastest composer.phar snapshot"
+           aria-label="Get the lastest composer.phar snapshot">Latest Snapshot</a>
+        <br/>
+    </p>
+    <table aria-label="Composer versions history" role="table" aria-describedby="composer-history-caption">
+        <caption id="composer-history-caption">Composer (composer.phar) versions history</caption>
         {% for version, meta in versions %}
-            <tr>
-                <td style="width: 100px"><a href="{{ path('download_version', {version: version}) }}">{{ version }}</a></td>
-                <td style="width: 100px">{{ meta.date|date('Y-m-d') }}</td>
-                <td><a href="{{ path('download_version', {version: version}) }}.sha256sum">sha256</a> <code style="font-size: 0.7em; position: relative; top: -2px">{{ meta.sha256sum }}</code></td>
+            <tr role="row">
+                <td style="width: 100px" role="cell">
+                    <a href="{{ path('download_version', {version: version}) }}"
+                       title="Download version {{ version }}"
+                       aria-label="Download version {{ version }}">{{ version }}</a>
+                </td>
+                <td style="width: 100px" role="cell">{{ meta.date|date('Y-m-d') }}</td>
+                <td role="cell">
+                    <a href="{{ path('download_version', {version: version}) }}.sha256sum"
+                       title="Download the sha256 checksum for version {{ version }}"
+                       aria-label="Download the sha256 checksum for version {{ version }}">sha256</a> <code
+                            style="font-size: 0.7em; position: relative; top: -2px">{{ meta.sha256sum }}</code>
+                </td>
             </tr>
         {% endfor %}
-        </table>
-    </p>
+    </table>
 {% endblock %}
