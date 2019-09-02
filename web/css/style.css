@@ -58,7 +58,6 @@ input:invalid, textarea:invalid { background-color: #f0dddd; }
 table { border-collapse: collapse; border-spacing: 0; }
 td { vertical-align: top; }
 
-
 /* ==|== primary styles =====================================================
    Author:
    ========================================================================== */
@@ -88,9 +87,11 @@ header a {
   display: inline-block;
   border-right: 1px solid #ccc;
 }
+
 header a.last {
   border: 0;
 }
+
 header a.active {
   color: #000;
 }
@@ -127,6 +128,7 @@ h1 .anchor, h2 .anchor, h3 .anchor, h4 .anchor {
   margin: 0;
   padding: 0;
 }
+
 .buttons a {
   font-size: 20px;
   display: inline-block;
@@ -138,9 +140,12 @@ h1 .anchor, h2 .anchor, h3 .anchor, h4 .anchor {
   padding: 10px;
   margin: 10px;
   background: #eee;
+  transition: all 0.20s ease;
 }
+
 .buttons a:hover {
   background: #ffe;
+  box-shadow: 0px 6px 8px -10px #323232;
 }
 
 blockquote {
@@ -152,6 +157,7 @@ blockquote {
   margin: 0 20px;
   padding: 10px;
 }
+
 blockquote p {
   margin: 0;
 }
@@ -162,6 +168,7 @@ blockquote p {
   list-style: decimal outside none;
   color: #000;
 }
+
 .toc ul {
   padding-left: 20px;
 }
@@ -185,6 +192,7 @@ pre.installer {
   padding: 5px;
   border-radius: 3px;
 }
+
 .installer-warning {
   background: #FFECDD;
   border-radius: 4px;
@@ -198,8 +206,8 @@ pre.installer {
 }
 
 li .tagline {
-    display: block;
-    margin-bottom: 5px;
+  display: block;
+  margin-bottom: 5px;
 }
 
 .fork-and-edit {
@@ -236,6 +244,17 @@ th, td {
 input#docsearch {
   width: 260px;
   padding: 4px 4px 2px 4px;
+  box-shadow: 0px 5px 6px -2px #fafafa;
+  border-radius: 3px;
+  border: 1px solid #dedede;
+  padding: 0.4em 0.8em;
+  background-color: #fbfbff;
+  transition: all 0.2s ease;
+}
+
+input#docsearch:focus {
+  box-shadow: 0px 5px 6px -2px #e6e6e6;
+  border-color: #b4b4b4;
 }
 
 .ds-dropdown-menu {
@@ -249,17 +268,71 @@ h1 .latest {
   left: 10px;
 }
 
-/* ==|== non-semantic helper classes ======================================== */
-.ir { display: block; border: 0; text-indent: -999em; overflow: hidden; background-color: transparent; background-repeat: no-repeat; text-align: left; direction: ltr; }
-.ir br { display: none; }
-.hidden { display: none !important; visibility: hidden; }
-.visuallyhidden { border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px; }
-.visuallyhidden.focusable:active, .visuallyhidden.focusable:focus { clip: auto; height: auto; margin: 0; overflow: visible; position: static; width: auto; }
-.invisible { visibility: hidden; }
-.clearfix:before, .clearfix:after { content: ""; display: table; }
-.clearfix:after { clear: both; }
-.clearfix { zoom: 1; }
+.license {
+  background-color: rgba(25, 25, 25, 0.01);
+  padding: 7px 10px;
+  font-style: italic;
+  color: #646464;
+  font-size: 0.85em;
+}
 
+/* ==|== non-semantic helper classes ======================================== */
+.ir {
+  display: block;
+  border: 0;
+  text-indent: -999em;
+  overflow: hidden;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  text-align: left;
+  direction: ltr;
+}
+
+.ir br {
+  display: none;
+}
+
+.hidden {
+  display: none !important;
+  visibility: hidden;
+}
+
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.visuallyhidden.focusable:active, .visuallyhidden.focusable:focus {
+  clip: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  position: static;
+  width: auto;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.clearfix:before, .clearfix:after {
+  content: "";
+  display: table;
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+.clearfix {
+  zoom: 1;
+}
 
 /* ==|== media queries ====================================================== */
 
@@ -273,16 +346,57 @@ h1 .latest {
 /* ==|== print styles ======================================================= */
 
 @media print {
-  * { background: transparent !important; color: black !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; }
-  a, a:visited { text-decoration: underline; }
-  a[href]:after { content: " (" attr(href) ")"; }
-  abbr[title]:after { content: " (" attr(title) ")"; }
-  .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; }
-  pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
-  thead { display: table-header-group; }
-  tr, img { page-break-inside: avoid; }
-  img { max-width: 100% !important; }
-  @page { margin: 0.5cm; }
-  p, h2, h3 { orphans: 3; widows: 3; }
-  h2, h3 { page-break-after: avoid; }
+  * {
+    background: transparent !important;
+    color: black !important;
+    text-shadow: none !important;
+    filter: none !important;
+    -ms-filter: none !important;
+  }
+
+  a, a:visited {
+    text-decoration: underline;
+  }
+
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+
+  abbr[title]:after {
+    content: " (" attr(title) ")";
+  }
+
+  .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {
+    content: "";
+  }
+
+  pre, blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr, img {
+    page-break-inside: avoid;
+  }
+
+  img {
+    max-width: 100% !important;
+  }
+
+  @page {
+    margin: 0.5cm;
+  }
+
+  p, h2, h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  h2, h3 {
+    page-break-after: avoid;
+  }
 }

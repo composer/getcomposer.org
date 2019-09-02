@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
         <title>{% block title %}Composer{% endblock %}</title>
-        <meta name="description" content="Dependency Management for PHP">
+        <meta name="description" content="A Dependency Manager for PHP">
         <meta name="viewport" content="width=device-width,initial-scale=1">
 
         <link rel="stylesheet" href="{{ app.request.basePath }}/css/style.css?v=10">
@@ -20,32 +20,51 @@
         <div id="container">
             <header>
                 {% block header %}
-                {% spaceless %}
-                    <a href="{{ path('home') }}">Home</a>
-                    <a class="{{ page == 'getting-started' ? 'active':'' }}" href="{{ path('docs.view', {page: '00-intro.md'}) }}">Getting Started</a>
-                    <a class="{{ page == 'download' ? 'active':'' }}" href="{{ path('download') }}">Download</a>
-                    <a class="{{ page == 'docs' ? 'active':'' }}" href="{{ path('docs') }}">Documentation</a>
-                    <a class="last" href="https://packagist.org/">Browse Packages</a>
-                {% endspaceless %}
+                    {% spaceless %}
+                        <a href="{{ path('home') }}"
+                           title="Go back to the homepage"
+                           aria-label="Go back to the homepage">🏠 Home</a>
+                        <a class="{{ page == 'getting-started' ? 'active':'' }}"
+                           href="{{ path('docs.view', {page: '00-intro.md'}) }}"
+                           title="Getting started with Composer"
+                           aria-label="Getting started with Composer">Getting Started</a>
+                        <a class="{{ page == 'download' ? 'active':'' }}"
+                           href="{{ path('download') }}"
+                           title="Go the the Download page to see how to download Composer"
+                           aria-label="Go the the Download page to see how to download Composer">Download</a>
+                        <a class="{{ page == 'docs' ? 'active':'' }}"
+                           href="{{ path('docs') }}"
+                           title="View the Composer documentation"
+                           aria-label="View the Composer documentation">Documentation</a>
+                        <a class="last"
+                           href="https://packagist.org/"
+                           title="Browse Composer packages on packagist.org (external link to Packagist.org)"
+                           aria-label="Browse Composer packages on packagist.org (external link to Packagist.org)">Browse
+                            Packages</a>
+                    {% endspaceless %}
                 {% endblock %}
             </header>
-            <div id="main" role="main">
-                {% block content %}
-                {% endblock %}
-            </div>
+            <main role="main">
+                <div id="main">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </main>
             <footer>
                 {% block footer %}
                 {% endblock %}
 
-                <p class="license">Composer and all content on this site are released under the <a href="https://github.com/composer/composer/blob/master/LICENSE">MIT license</a>.</p>
+                <p class="license">
+                    Composer and all content on this site are released under the <a href="https://github.com/composer/composer/blob/master/LICENSE" title="View the MIT license (external link to GitHub.com)" aria-label="View the MIT license (external link to GitHub.com)">MIT license</a>.
+                </p>
             </footer>
         </div>
 
         <script src="{{ app.request.basePath }}/js/libs/prism.js?v=6"></script>
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
             ga('set', 'anonymizeIp', true);
@@ -54,34 +73,34 @@
         </script>
         <script src="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.js"></script>
         <script>
-          if (document.getElementById('docsearch')) {
-            docsearch({
-              apiKey: '8f77725b2f2db4166675acc6e8ea3526',
-              indexName: 'getcomposer',
-              inputSelector: '#docsearch',
-              queryHook: function (query) {
-                var parts = query.split(' ');
+            if (document.getElementById('docsearch')) {
+                docsearch({
+                    apiKey: '8f77725b2f2db4166675acc6e8ea3526',
+                    indexName: 'getcomposer',
+                    inputSelector: '#docsearch',
+                    queryHook: function (query) {
+                        var parts = query.split(' ');
 
-                parts = parts.map(function (part, index) {
-                  var word = part.trim();
+                        parts = parts.map(function (part, index) {
+                            var word = part.trim();
 
-                  // quote --foo args so they are not parsed as negations but rather return actual results
-                  if (word.length >= 2 && word[0] === '-' && word[1] === '-') {
-                    word = '"' + word + (index === parts.length-1 ? '' : '"');
-                  }
-                  // quote -x args
-                  if (word.length == 2 && word[0] === '-') {
-                    word = '"' + word + (index === parts.length-1 ? '' : '"');
-                  }
+                            // quote --foo args so they are not parsed as negations but rather return actual results
+                            if (word.length >= 2 && word[0] === '-' && word[1] === '-') {
+                                word = '"' + word + (index === parts.length - 1 ? '' : '"');
+                            }
+                            // quote -x args
+                            if (word.length == 2 && word[0] === '-') {
+                                word = '"' + word + (index === parts.length - 1 ? '' : '"');
+                            }
 
-                  return word;
+                            return word;
+                        });
+
+                        return parts.join(' ');
+                    },
+                    debug: false
                 });
-
-                return parts.join(' ');
-              },
-              debug: false
-            });
-          }
+            }
         </script>
     </body>
 </html>
