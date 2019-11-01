@@ -33,6 +33,14 @@ then
         stty -echo
         read -r privkeypwd
         stty echo
+
+        if [ "" == "$privkeypwd" ]
+        then
+            echo ''
+            echo 'No pwd pasted in'
+            exit 1
+        fi
+
         echo ''
         echo 'Building versions'
     else
