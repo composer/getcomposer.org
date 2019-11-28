@@ -1183,27 +1183,40 @@ class ErrorHandler
 
 class NoProxyPattern
 {
-    private $noproxy;
+    private $rulePort;
 
-    public function __construct($noproxy)
+    public function __construct($pattern)
     {
-        $this->noproxy = trim($noproxy);
+        $rules = preg_split('{[\s,]+}', $pattern, null, PREG_SPLIT_NO_EMPTY);
+
+        if ($matches = preg_grep('{getcomposer\.org(?::\d+)?}i', $rules)) {
+            if (strpos($matches[0], ':') !== false) {
+                list(, $port) = explode(':', $matches[0]);
+                $this->rulePort = (int) $port;
+            }
+        }
     }
 
     /**
-     * Returns true if getcomposer.org is found in no_proxy.
+     * Returns true if NO_PROXY contains getcomposer.org
      *
-     * @param string $url Ignored
+     * @param string $url http(s)://getcomposer.org
      *
      * @return bool
      */
     public function test($url)
     {
-        if ($this->noproxy === '*') {
+        if (empty($this->rulePort)) {
             return true;
         }
 
-        return (bool) preg_match('{\.getcomposer\.org}i', $this->noproxy);
+        if (strpos($url, 'http://') === 0) {
+            $port = 80;
+        } else {
+            $port = 443;
+        }
+
+        return $this->rulePort === $port;
     }
 }
 
