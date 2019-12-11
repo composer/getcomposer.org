@@ -3,6 +3,8 @@
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 $app->before(function (Request $req) {
@@ -70,6 +72,26 @@ $app->get('/download/{version}/composer.phar', function () {
     return new Response('Version Not Found', 404);
 })
 ->bind('download_version');
+
+$app->get('/composer-stable.phar', function () {
+    $versions = [];
+    foreach (glob(__DIR__.'/../web/download/*', GLOB_ONLYDIR) as $version) {
+        $versions[] = basename($version);
+    }
+
+    uksort($versions, 'version_compare');
+    $versions = array_reverse($versions);
+
+    foreach ($versions as $version) {
+        if (strpos($version, '-') === false) {
+            $latestStable = $version;
+            break;
+        }
+    }
+
+    return new BinaryFileResponse(__DIR__.'/../web/download/'.$latestStable.'/composer.phar', 200, [], false, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
+})
+->bind('download_stable');
 
 $app->get('/schema.json', function () use ($app) {
     return new Response(file_get_contents($app['composer.doc_dir'].'/../res/composer-schema.json'), 200, [
