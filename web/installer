@@ -1546,6 +1546,8 @@ class HttpClient {
             '/usr/share/ssl/certs/ca-bundle.crt', // Really old RedHat?
             '/etc/ssl/cert.pem', // OpenBSD
             '/usr/local/etc/ssl/cert.pem', // FreeBSD 10.x
+            '/usr/local/etc/openssl/cert.pem', // OS X homebrew, openssl package
+            '/usr/local/etc/openssl@1.1/cert.pem', // OS X homebrew, openssl@1.1 package
         );
 
         foreach ($caBundlePaths as $caBundle) {
@@ -1570,7 +1572,7 @@ class HttpClient {
 ##
 ## Bundle of CA Root Certificates
 ##
-## Certificate data from Mozilla as of: Wed Oct 16 03:12:09 2019 GMT
+## Certificate data from Mozilla as of: Wed Nov 27 04:12:10 2019 GMT
 ##
 ## This is a bundle of X.509 certificates of public Certificate Authorities
 ## (CA). These were automatically extracted from Mozilla's root certificates
@@ -1583,7 +1585,7 @@ class HttpClient {
 ## Just configure this file as the SSLCACertificateFile.
 ##
 ## Conversion done with mk-ca-bundle.pl version 1.27.
-## SHA256: c979c6f35714a0fedb17d9e5ba37adecbbc91a8faf4186b4e23d6f9ca44fd6cb
+## SHA256: 607309057d0ec70f8e4e97b03906bafb2fcebb24cd37b5e8293e681ae26ceae0
 ##
 
 
