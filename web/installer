@@ -1183,16 +1183,21 @@ class ErrorHandler
 
 class NoProxyPattern
 {
-    private $rulePort;
+    private $composerInNoProxy = false;
+    private $rulePorts = array();
 
     public function __construct($pattern)
     {
         $rules = preg_split('{[\s,]+}', $pattern, null, PREG_SPLIT_NO_EMPTY);
 
         if ($matches = preg_grep('{getcomposer\.org(?::\d+)?}i', $rules)) {
-            if (strpos($matches[0], ':') !== false) {
-                list(, $port) = explode(':', $matches[0]);
-                $this->rulePort = (int) $port;
+            $this->composerInNoProxy = true;
+
+            foreach ($matches as $match) {
+                if (strpos($match, ':') !== false) {
+                    list(, $port) = explode(':', $match);
+                    $this->rulePorts[] = (int) $port;
+                }
             }
         }
     }
@@ -1206,7 +1211,11 @@ class NoProxyPattern
      */
     public function test($url)
     {
-        if (empty($this->rulePort)) {
+        if (!$this->composerInNoProxy) {
+            return false;
+        }
+
+        if (empty($this->rulePorts)) {
             return true;
         }
 
@@ -1216,7 +1225,7 @@ class NoProxyPattern
             $port = 443;
         }
 
-        return $this->rulePort === $port;
+        return in_array($port, $this->rulePorts);
     }
 }
 
