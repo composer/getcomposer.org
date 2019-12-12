@@ -1186,7 +1186,7 @@ class NoProxyPattern
     /**
      * @var string[][]
      */
-    private $proxyMap = [];
+    private $proxyMap = array();
 
     /**
      * Constructor
@@ -1207,7 +1207,7 @@ class NoProxyPattern
             }
 
             if(! isset($this->proxyMap[$address])) {
-                $this->proxyMap[$address] = [$port];
+                $this->proxyMap[$address] = array($port);
             }  else {
                 $this->proxyMap[$address][] = $port;
             }
@@ -1229,7 +1229,9 @@ class NoProxyPattern
             $port = 443;
         }
 
-        preg_match('/^https?\:\/\/(.*?)(\/|$)/', $url, $matches);
+        if (preg_match('/^https?\:\/\/(.*?)(\/|$)/', $url, $matches) === 0) {
+            throw new RuntimeException('Invalid URL scheme');
+        }
         $domain = $matches[1];
 
         if (! isset($this->proxyMap[$domain])) {
