@@ -1183,40 +1183,60 @@ class ErrorHandler
 
 class NoProxyPattern
 {
-    private $rulePort;
+    /**
+     * @var string[][]
+     */
+    private $proxyMap = [];
 
+    /**
+     * Constructor
+     *
+     * @param string $pattern
+     */
     public function __construct($pattern)
     {
         $rules = preg_split('{[\s,]+}', $pattern, null, PREG_SPLIT_NO_EMPTY);
 
-        if ($matches = preg_grep('{getcomposer\.org(?::\d+)?}i', $rules)) {
-            if (strpos($matches[0], ':') !== false) {
-                list(, $port) = explode(':', $matches[0]);
-                $this->rulePort = (int) $port;
+        foreach ($rules as $rule) {
+            $port = '*';
+
+            if (strpos($rule, ':') !== false) {
+                list($address, $port) = explode(':', $rule);
+            } else {
+                $address = $rule;
+            }
+
+            if(! isset($this->proxyMap[$address])) {
+                $this->proxyMap[$address] = [$port];
+            }  else {
+                $this->proxyMap[$address][] = $port;
             }
         }
     }
 
     /**
-     * Returns true if NO_PROXY contains getcomposer.org
+     * Returns true if NO_PROXY contains url specified domain.
      *
-     * @param string $url http(s)://getcomposer.org
+     * @param string $url
      *
      * @return bool
      */
     public function test($url)
     {
-        if (empty($this->rulePort)) {
-            return true;
-        }
-
         if (strpos($url, 'http://') === 0) {
             $port = 80;
         } else {
             $port = 443;
         }
 
-        return $this->rulePort === $port;
+        preg_match('/^https?\:\/\/(.*?)(\/|$)/', $url, $matches);
+        $domain = $matches[1];
+
+        if (! isset($this->proxyMap[$domain])) {
+            return false;
+        } else {
+            return in_array($port, $this->proxyMap[$domain]);
+        }
     }
 }
 
