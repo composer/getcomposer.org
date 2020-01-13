@@ -14,15 +14,25 @@ setupEnvironment();
 process(is_array($argv) ? $argv : array());
 
 /**
- * Ensures the environment is sane
+ * Initializes various values
  */
 function setupEnvironment()
 {
     ini_set('display_errors', 1);
+
+    $installer = 'Composer Installer';
+
+    if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
+        if ($version = getenv('COMPOSERSETUP')) {
+            $installer = sprintf('Composer-Setup.exe %s', $version);
+        }
+    }
+
+    define('COMPOSER_INSTALLER', $installer);
 }
 
 /**
- * processes the installer
+ * Processes the installer
  */
 function process($argv)
 {
@@ -73,7 +83,7 @@ function process($argv)
 }
 
 /**
- * displays the help
+ * Displays the help
  */
 function displayHelp()
 {
@@ -1473,7 +1483,7 @@ class HttpClient {
         if (extension_loaded('zlib')) {
             $options['http']['header'] .= "Accept-Encoding: gzip\r\n";
         }
-        $options['http']['header'] .= "User-Agent: Composer Installer\r\n";
+        $options['http']['header'] .= "User-Agent: ".COMPOSER_INSTALLER."\r\n";
         $options['http']['protocol_version'] = 1.1;
         $options['http']['timeout'] = 600;
 
