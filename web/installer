@@ -15,10 +15,21 @@ process(is_array($argv) ? $argv : array());
 
 /**
  * Initializes various values
+ *
+ * @throws RuntimeException If uopz extension prevents exit calls
  */
 function setupEnvironment()
 {
     ini_set('display_errors', 1);
+
+    if (extension_loaded('uopz') && !(ini_get('uopz.disable') || ini_get('uopz.exit'))) {
+        // uopz works at opcode level and disables exit calls
+        if (function_exists('uopz_allow_exit')) {
+            @uopz_allow_exit(true);
+        } else {
+            throw new RuntimeException('The uopz extension ignores exit calls and breaks this installer.');
+        }
+    }
 
     $installer = 'Composer Installer';
 
@@ -393,6 +404,13 @@ function getPlatformIssues(&$errors, &$warnings, $install)
         $warnings['onedrive'] = array(
             'The Windows OneDrive folder is not supported on PHP versions below 7.2.23 and 7.3.10.',
             'Upgrade your PHP ('.PHP_VERSION.') to use this location with Composer.'
+        );
+    }
+
+    if (extension_loaded('uopz') && !(ini_get('uopz.disable') || ini_get('uopz.exit'))) {
+        $warnings['uopz'] = array(
+            'The uopz extension ignores exit calls and may not work with all Composer commands.',
+            'Disabling it when using Composer is recommended.'
         );
     }
 
