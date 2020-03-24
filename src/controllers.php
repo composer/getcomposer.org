@@ -79,7 +79,7 @@ $app->get('/composer-stable.phar', function () {
         $versions[] = basename($version);
     }
 
-    uksort($versions, 'version_compare');
+    usort($versions, 'version_compare');
     $versions = array_reverse($versions);
 
     foreach ($versions as $version) {
