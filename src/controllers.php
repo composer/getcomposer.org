@@ -167,7 +167,7 @@ $app->get('/doc/{page}', function ($page) use ($app) {
     $content = str_replace('class="language-ini', 'class="language-clike', $content);
 
     $dom = new DOMDocument();
-    $dom->loadHtml($content);
+    $dom->loadHtml('<?xml encoding="UTF-8">' . $content);
     $xpath = new DOMXPath($dom);
 
     $toc = array();
