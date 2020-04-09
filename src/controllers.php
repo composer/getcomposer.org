@@ -277,10 +277,16 @@ $shortcuts = [
     '/commit-deps' => ['faqs/should-i-commit-the-dependencies-in-my-vendor-directory.md', ''],
     '/xdebug' => ['articles/troubleshooting.md', '#xdebug-impact-on-composer'],
     '/root' => ['faqs/how-to-install-untrusted-packages-safely.md', ''],
+    // TODO enable once 2.0 is stable '/repoprio' => ['articles/repository-priorities.md', ''],
+    '/repoprio' => ['https://github.com/Seldaek/composer/blob/b6bad4eef62f663d32bc6c78ea9ff214b12bdd9c/doc/articles/repository-priorities.md', ''],
 ];
 
 foreach ($shortcuts as $url => $page) {
     $app->get($url, function () use ($app, $page) {
+        if (substr($page[0], 0, 6) === 'https:') {
+            return new RedirectResponse($page[0]);
+        }
+
         $url = $app['url_generator']->generate(
             'docs.view',
             array('page' => $page[0])
