@@ -117,10 +117,10 @@ lastVersion=$(ls "$root/$target/download" | xargs -I@ git log --format=format:"%
 lastSnapshot=$(head -c40 "$root/$target/version")
 if [ "$(ls "$root/$target/download" | grep -E '^2\.[0-9.]+$')" == "" ]
 then
-    lastStableV2Version=$lastSnapshot
-    lastStableV2VersionPath="/composer.phar"
-else
     lastStableV2Version=$(ls "$root/$target/download" | grep -E '^2\.' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
+    lastStableV2VersionPath="/download/$lastStableV2Version/composer.phar"
+else
+    lastStableV2Version=$(ls "$root/$target/download" | grep -E '^2\.[0-9.]+$' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
     lastStableV2VersionPath="/download/$lastStableV2Version/composer.phar"
 fi
 {
