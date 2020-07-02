@@ -648,6 +648,11 @@ class Installer
             $this->httpClient = new HttpClient($this->disableTls, $this->cafile);
             $result = $this->install($version, $channel);
 
+            // in case --1 or --2 is passed, we leave the default channel for next self-update to stable
+            if (is_numeric($channel)) {
+                $channel = 'stable';
+            }
+
             if ($result && $channel !== 'stable' && !$version && defined('PHP_BINARY')) {
                 $null = (defined('PHP_WINDOWS_VERSION_MAJOR') ? 'NUL' : '/dev/null');
                 @exec(escapeshellarg(PHP_BINARY) .' '.escapeshellarg($this->target).' self-update --'.$channel.' --set-channel-only -q > '.$null.' 2> '.$null, $output);
