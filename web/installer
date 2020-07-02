@@ -59,7 +59,16 @@ function process($argv)
     $help       = in_array('--help', $argv);
     $force      = in_array('--force', $argv);
     $quiet      = in_array('--quiet', $argv);
-    $channel    = in_array('--snapshot', $argv) ? 'snapshot' : (in_array('--preview', $argv) ? 'preview' : 'stable');
+    $channel    = 'stable';
+    if (in_array('--snapshot', $argv)) {
+        $channel = 'snapshot';
+    } elseif (in_array('--preview', $argv)) {
+        $channel = 'preview';
+    } elseif (in_array('--1', $argv)) {
+        $channel = '1';
+    } elseif (in_array('--2', $argv)) {
+        $channel = '2';
+    }
     $disableTls = in_array('--disable-tls', $argv);
     $installDir = getOptValue('--install-dir', $argv, false);
     $version    = getOptValue('--version', $argv, false);
