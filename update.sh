@@ -113,7 +113,7 @@ done
 
 lastStableVersion=$(ls "$root/$target/download" | grep -E '^[0-9.]+$' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
 lastStableV1Version=$(ls "$root/$target/download" | grep -E '^1\.[0-9.]+$' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
-lastVersion=$(ls "$root/$target/download" | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
+lastV2Version=$(ls "$root/$target/download" | grep -E '^2\.' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
 lastSnapshot=$(head -c40 "$root/$target/version")
 if [ "$(ls "$root/$target/download" | grep -E '^2\.[0-9.]+$')" == "" ]
 then
@@ -127,7 +127,7 @@ fi
     read -r -d '' versions << EOM
 {
     "stable": [{"path": "/download/$lastStableVersion/composer.phar", "version": "$lastStableVersion", "min-php": 50300}],
-    "preview": [{"path": "/download/$lastVersion/composer.phar", "version": "$lastVersion", "min-php": 50300}],
+    "preview": [{"path": "/download/$lastV2Version/composer.phar", "version": "$lastV2Version", "min-php": 50300}],
     "snapshot": [{"path": "/composer.phar", "version": "$lastSnapshot", "min-php": 50300}],
     "1": [{"path": "/download/$lastStableV1Version/composer.phar", "version": "$lastStableV1Version", "min-php": 50300}],
     "2": [{"path": "$lastStableV2VersionPath", "version": "$lastStableV2Version", "min-php": 50300}]
