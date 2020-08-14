@@ -232,6 +232,7 @@ function checkPlatform(&$warnings, $quiet, $disableTls, $install)
     }
 
     if (!empty($errors)) {
+        // Composer-Setup.exe uses "Some settings" to flag platform errors
         out('Some settings on your machine make Composer unable to work properly.', 'error');
         out('Make sure that you fix the issues listed below and run this script again:', 'error');
         outputIssues($errors);
