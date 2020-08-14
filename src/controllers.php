@@ -265,20 +265,43 @@ $app->get('/doc/{page}', function ($page) use ($app) {
 
 
 $app->get('/changelog/{version}', function ($version) use ($app) {
-    $changelog = strtr(file_get_contents($app['composer.changelog_path']), ["\r\n" => "\n"]);
+    $changelog = strtr(file_get_contents($app['composer.source_dir'].'CHANGELOG.md'), ["\r\n" => "\n"]);
 
     if (!$ret = preg_match('{(?:^|\n)### \['.preg_quote($version).'\] (?P<date>.*)\n\n(?P<changelog>(?:^  \*.*\n)+)}mi', $changelog, $match)) {
         $app->abort(404, 'Requested page was not found.');
     }
 
+    $changelog = $app['markdown']->text($match['changelog']);
+
+    $changelog = str_replace('href="doc/', 'href="../doc/', $changelog);
+    $changelog = str_replace('href="UPGRADE', 'href="../upgrade/UPGRADE', $changelog);
+
     return $app['twig']->render('changelog.html.twig', array(
-        'changelog' => $app['markdown']->text($match['changelog']),
+        'changelog' => $changelog,
         'version' => $version,
         'date' => trim($match['date'], '- '),
         'page' => 'docs',
     ));
 })
 ->bind('changelog');
+
+$app->get('/upgrade/{file}', function ($file) use ($app) {
+    $filename = $app['composer.source_dir'].$file;
+    if (!preg_match('{^UPGRADE[-\d.]+?\.md$}', $file) || !file_exists($filename)) {
+        $app->abort(404, 'Requested page was not found.');
+    }
+
+    $upgrade = file_get_contents($filename);
+    $upgrade = $app['markdown']->text($upgrade);
+    $upgrade = str_replace('href="doc/', 'href="../doc/', $upgrade);
+
+    return $app['twig']->render('upgrade.html.twig', array(
+        'upgrade' => $upgrade,
+        'filename' => $file,
+        'page' => 'docs',
+    ));
+})
+->bind('upgrade');
 
 $shortcuts = [
     '/commit-deps' => ['faqs/should-i-commit-the-dependencies-in-my-vendor-directory.md', ''],

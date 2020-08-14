@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd vendor/composer/composer
-git checkout -q 1.10
+git checkout -q master
 git fetch -q origin
-git rebase -q origin/1.10
+git rebase -q origin/master
 cd ../../..
