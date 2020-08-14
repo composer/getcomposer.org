@@ -307,8 +307,7 @@ $shortcuts = [
     '/commit-deps' => ['faqs/should-i-commit-the-dependencies-in-my-vendor-directory.md', ''],
     '/xdebug' => ['articles/troubleshooting.md', '#xdebug-impact-on-composer'],
     '/root' => ['faqs/how-to-install-untrusted-packages-safely.md', ''],
-    // TODO enable once 2.0 is stable '/repoprio' => ['articles/repository-priorities.md', ''],
-    '/repoprio' => ['https://github.com/composer/composer/blob/master/doc/articles/repository-priorities.md', ''],
+    '/repoprio' => ['articles/repository-priorities.md', ''],
 ];
 
 foreach ($shortcuts as $url => $page) {
