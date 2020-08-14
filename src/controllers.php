@@ -73,25 +73,16 @@ $app->get('/download/{version}/composer.phar', function () {
 })
 ->bind('download_version');
 
-$app->get('/composer-stable.phar', function () {
-    $versions = [];
-    foreach (glob(__DIR__.'/../web/download/*', GLOB_ONLYDIR) as $version) {
-        $versions[] = basename($version);
-    }
+function getPhar(string $channel) {
+    $versions = json_decode(file_get_contents(__DIR__.'/../web/versions'), true);
 
-    usort($versions, 'version_compare');
-    $versions = array_reverse($versions);
+    return new BinaryFileResponse(__DIR__.'/../web'.$versions[$channel][0]['path'], 200, [], false, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
+}
 
-    foreach ($versions as $version) {
-        if (strpos($version, '-') === false) {
-            $latestStable = $version;
-            break;
-        }
-    }
-
-    return new BinaryFileResponse(__DIR__.'/../web/download/'.$latestStable.'/composer.phar', 200, [], false, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
-})
-->bind('download_stable');
+$app->get('/composer-stable.phar', function () { return getPhar('stable'); })->bind('download_stable');
+$app->get('/composer-preview.phar', function () { return getPhar('preview'); })->bind('download_preview');
+$app->get('/composer-1.phar', function () { return getPhar('1'); })->bind('download_1x');
+$app->get('/composer-2.phar', function () { return getPhar('2'); })->bind('download_2x');
 
 $app->get('/schema.json', function () use ($app) {
     return new Response(file_get_contents($app['composer.doc_dir'].'/../res/composer-schema.json'), 200, [
