@@ -23,21 +23,20 @@ $app->get('/', function () use ($app) {
     $logos = glob(__DIR__.'/../web/img/logo-composer-transparent*.png');
     $logo = basename($logos[array_rand($logos)]);
 
-    $versions = array();
-    foreach (glob(__DIR__.'/../web/download/*', GLOB_ONLYDIR) as $version) {
-        $versions[] = basename($version);
-    }
-    usort($versions, 'version_compare');
-    $versions = array_reverse($versions);
+    $versions = json_decode(file_get_contents(__DIR__.'/../web/versions'), true);
 
-    foreach ($versions as $version) {
-        if (strpos($version, '-') === false) {
-            $latestStable = $version;
-            break;
-        }
-    }
+    $latestStable = $versions['stable'][0]['version'];
+    $latestPreview = $versions['preview'][0]['version'];
+    $majorPreviewAvailable = (int) $latestPreview !== (int) $latestStable;
+    $previewAvailable = $latestPreview !== $latestStable;
 
-    return $app['twig']->render('index.html.twig', array('logo' => $logo, 'latestStable' => $latestStable));
+    return $app['twig']->render('index.html.twig', [
+        'logo' => $logo,
+        'latestStable' => $latestStable,
+        'latestPreview' => $latestPreview,
+        'majorPreviewAvailable' => $majorPreviewAvailable,
+        'previewAvailable' => $previewAvailable,
+    ]);
 })
 ->bind('home');
 
@@ -263,6 +262,23 @@ $app->get('/doc/{page}', function ($page) use ($app) {
 })
 ->assert('page', '[a-z0-9/\'-]+\.md')
 ->bind('docs.view');
+
+
+$app->get('/changelog/{version}', function ($version) use ($app) {
+    $changelog = strtr(file_get_contents($app['composer.changelog_path']), ["\r\n" => "\n"]);
+
+    if (!$ret = preg_match('{(?:^|\n)### \['.preg_quote($version).'\] (?P<date>.*)\n\n(?P<changelog>(?:^  \*.*\n)+)}mi', $changelog, $match)) {
+        $app->abort(404, 'Requested page was not found.');
+    }
+
+    return $app['twig']->render('changelog.html.twig', array(
+        'changelog' => $app['markdown']->text($match['changelog']),
+        'version' => $version,
+        'date' => trim($match['date'], '- '),
+        'page' => 'docs',
+    ));
+})
+->bind('changelog');
 
 $shortcuts = [
     '/commit-deps' => ['faqs/should-i-commit-the-dependencies-in-my-vendor-directory.md', ''],

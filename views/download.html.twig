@@ -106,11 +106,16 @@ php -r "unlink('composer-setup.php');"</pre>
                        aria-label="Download version {{ version }}">{{ version }}</a>
                 </td>
                 <td style="width: 100px" role="cell">{{ meta.date|date('Y-m-d') }}</td>
-                <td role="cell">
+                <td role="cell" style="width: 500px">
                     <a href="{{ path('download_version', {version: version}) }}.sha256sum"
                        title="Download the sha256 checksum for version {{ version }}"
                        aria-label="Download the sha256 checksum for version {{ version }}">sha256</a> <code
                             style="font-size: 0.7em; position: relative; top: -2px">{{ meta.sha256sum }}</code>
+                </td>
+                <td role="cell">
+                    <a href="{{ path('changelog', {version: version}) }}"
+                       title="Changelog for version {{ version }}"
+                       aria-label="Changelog for version {{ version }}">changelog</a>
                 </td>
             </tr>
         {% endfor %}
