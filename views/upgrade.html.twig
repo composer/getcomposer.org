@@ -1,0 +1,12 @@
+{% extends "layout.html.twig" %}
+
+{% import _self as macros %}
+
+{% block content %}
+    <div id="searchbar" class="clearfix">
+        <input id="docsearch" type="search" placeholder="Type here to search documentation..."
+               title="Enter text here and submit to search the documentation" aria-label="Search box: enter text here and submit to search the Composer documentation"/>
+    </div>
+
+    {{ upgrade|raw }}
+{% endblock %}
