@@ -1031,7 +1031,10 @@ class Installer
                 $this->algo
             );
 
-            openssl_free_key($pubkeyid);
+            // PHP 8 automatically frees the key instance and deprecates the function
+            if (PHP_VERSION_ID < 80000) {
+                openssl_free_key($pubkeyid);
+            }
         }
 
         return $result;
