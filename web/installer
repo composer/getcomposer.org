@@ -576,7 +576,7 @@ function getUserDir()
 function useXdg()
 {
     foreach (array_keys($_SERVER) as $key) {
-        if (substr($key, 0, 4) === 'XDG_') {
+        if (strpos($key, 'XDG_') === 0) {
             return true;
         }
     }
@@ -1425,7 +1425,7 @@ class HttpClient {
     }
 
     /**
-     * function copied from Composer\Util\StreamContextFactory::getContext
+     * function copied from Composer\Util\StreamContextFactory::initOptions
      *
      * Any changes should be applied there as well, or backported here.
      *
@@ -1466,9 +1466,9 @@ class HttpClient {
 
             if (isset($proxy['port'])) {
                 $proxyURL .= ":" . $proxy['port'];
-            } elseif ('http://' == substr($proxyURL, 0, 7)) {
+            } elseif (strpos($proxyURL, 'http://') === 0) {
                 $proxyURL .= ":80";
-            } elseif ('https://' == substr($proxyURL, 0, 8)) {
+            } elseif (strpos($proxyURL, 'https://') === 0) {
                 $proxyURL .= ":443";
             }
 
