@@ -603,7 +603,7 @@ class Installer
     private $quiet;
     private $disableTls;
     private $cafile;
-    private $installPath;
+    private $displayPath;
     private $target;
     private $tmpFile;
     private $baseUrl;
@@ -684,8 +684,8 @@ class Installer
      */
     protected function initTargets($installDir, $filename)
     {
-        $this->installPath = (is_dir($installDir) ? rtrim($installDir, '/').'/' : '').$filename;
-        $installDir = realpath($installDir) ? realpath($installDir) : getcwd();
+        $this->displayPath = ($installDir ? rtrim($installDir, '/').'/' : '').$filename;
+        $installDir = $installDir ? realpath($installDir) : getcwd();
 
         if (!is_writeable($installDir)) {
             throw new RuntimeException('The installation directory "'.$installDir.'" is not writable');
@@ -827,7 +827,7 @@ class Installer
         if (!$this->quiet) {
             if ($result) {
                 out(PHP_EOL."Composer (version {$version}) successfully installed to: {$this->target}", 'success');
-                out("Use it: php {$this->installPath}", 'info');
+                out("Use it: php {$this->displayPath}", 'info');
                 out('');
             } else {
                 out('The download failed repeatedly, aborting.', 'error');
