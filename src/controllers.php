@@ -147,6 +147,14 @@ $app->get('/doc/{page}', function ($page) use ($app) {
     $filename = $app['composer.doc_dir'].'/'.$page;
 
     if (!file_exists($filename)) {
+        if ($page === 'articles/handling-private-packages-with-satis.md') {
+            return new RedirectResponse('/doc/articles/handling-private-packages.md', 301);
+        }
+
+        if ($page === 'articles/http-basic-authentication.md ') {
+            return new RedirectResponse('/doc/articles/authentication-for-private-packages.md#http-basic', 301);
+        }
+
         $app->abort(404, 'Requested page was not found.');
     }
 
