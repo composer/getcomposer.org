@@ -151,7 +151,7 @@ $app->get('/doc/{page}', function ($page) use ($app) {
             return new RedirectResponse('/doc/articles/handling-private-packages.md', 301);
         }
 
-        if ($page === 'articles/http-basic-authentication.md ') {
+        if ($page === 'articles/http-basic-authentication.md') {
             return new RedirectResponse('/doc/articles/authentication-for-private-packages.md#http-basic', 301);
         }
 
