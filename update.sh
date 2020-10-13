@@ -61,10 +61,10 @@ fi
 cd "$root/$build"
 
 # update master
-git fetch -q origin && \
-git fetch --tags -q origin && \
-git checkout master -q --force && \
-git rebase origin/master -q
+git fetch -q origin
+git fetch --tags -q origin
+git checkout master -q --force
+git rebase -q origin/master
 
 version=`git log --pretty="%H" -n1 HEAD`
 touch "$root/$target/version"
