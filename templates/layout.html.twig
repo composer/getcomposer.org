@@ -20,7 +20,7 @@
         <div id="container">
             <header>
                 {% block header %}
-                    {% spaceless %}
+                    {% apply spaceless %}
                         <a href="{{ path('home') }}"
                            title="Go back to the homepage"
                            aria-label="Go back to the homepage">🏠 Home</a>
@@ -41,7 +41,7 @@
                            title="Browse Composer packages on packagist.org (external link to Packagist.org)"
                            aria-label="Browse Composer packages on packagist.org (external link to Packagist.org)">Browse
                             Packages</a>
-                    {% endspaceless %}
+                    {% endapply %}
                 {% endblock %}
             </header>
             <main role="main">

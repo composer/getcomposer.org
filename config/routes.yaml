@@ -1,0 +1,30 @@
+shortcut_commit_deps:
+    path: /commit-deps
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        route: 'docs.view'
+        page: faqs/should-i-commit-the-dependencies-in-my-vendor-directory.md
+        permanent: true
+
+shortcut_xdebug:
+    path: /xdebug
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        path: '/doc/articles/troubleshooting.md#xdebug-impact-on-composer'
+        permanent: true
+
+shortcut_root:
+    path: /root
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        route: 'docs.view'
+        page: faqs/how-to-install-untrusted-packages-safely.md
+        permanent: true
+
+shortcut_repoprio:
+    path: /repoprio
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        route: 'docs.view'
+        page: articles/repository-priorities.md
+        permanent: true

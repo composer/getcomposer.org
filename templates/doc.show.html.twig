@@ -30,14 +30,16 @@
 {% macro tocTree(tree) %}
     {% import _self as macros %}
 
-    {% for key, node in tree if (key not in ['title', 'id', 'desc']) %}
-        <li>
-            <a href="#{{ node.id }}">{{ node.title }}</a> {{ node.desc }}
-            {% if node|length > 3 %}
-                <ul>
-                    {{ macros.tocTree(node) }}
-                </ul>
-            {% endif %}
-        </li>
+    {% for key, node in tree %}
+        {% if (key not in ['title', 'id', 'desc']) %}
+            <li>
+                <a href="#{{ node.id }}">{{ node.title }}</a> {{ node.desc }}
+                {% if node|length > 3 %}
+                    <ul>
+                        {{ macros.tocTree(node) }}
+                    </ul>
+                {% endif %}
+            </li>
+        {% endif %}
     {% endfor %}
 {% endmacro %}

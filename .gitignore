@@ -1,10 +1,16 @@
-vendor
-silex.phar
-composer-src/
-web/composer.phar
-web/composer.phar.sig
-web/version
-web/versions
-web/book.pdf
-cache/
-silex.log
+/composer-src/
+/web/composer.phar
+/web/composer.phar.sig
+/web/version
+/web/versions
+/bin/
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/web/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
