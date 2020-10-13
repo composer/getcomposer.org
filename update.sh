@@ -64,7 +64,7 @@ cd "$root/$build"
 git fetch -q origin
 git fetch --tags -q origin
 git checkout master -q --force
-git rebase -q origin/master
+git rebase -q origin/master > /dev/null
 
 version=`git log --pretty="%H" -n1 HEAD`
 touch "$root/$target/version"
