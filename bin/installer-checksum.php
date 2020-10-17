@@ -15,7 +15,7 @@ $oldChecksum = file_get_contents(__DIR__.'/../../composer.github.io/installer.si
 echo 'Updating checksum from '.$oldChecksum.' to '.$newChecksum.PHP_EOL;
 
 $files = [
-    __DIR__.'/../views/download.html.twig',
+    __DIR__.'/../templates/download.html.twig',
     __DIR__.'/../../composer.github.io/installer.sig',
     __DIR__.'/../../composer.github.io/installer.sha384sum',
     __DIR__.'/../../composer.github.io/pubkeys.html',
