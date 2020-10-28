@@ -120,6 +120,8 @@ Options
 --install-dir="..."  accepts a target installation directory
 --preview            install the latest version from the preview (alpha/beta/rc) channel instead of stable
 --snapshot           install the latest version from the snapshot (dev builds) channel instead of stable
+--1                  install the latest stable Composer 1 version
+--2                  install the latest stable Composer 2 version
 --version="..."      accepts a specific version to install instead of the latest
 --filename="..."     accepts a target filename (default: composer.phar)
 --disable-tls        disable SSL/TLS security for file downloads
