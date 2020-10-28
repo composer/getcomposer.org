@@ -627,6 +627,7 @@ class Installer
     private $displayPath;
     private $target;
     private $tmpFile;
+    private $tmpCafile;
     private $baseUrl;
     private $algo;
     private $errHandler;
@@ -742,7 +743,7 @@ class Installer
         );
 
         if (empty($this->cafile) && !HttpClient::getSystemCaRootBundlePath()) {
-            $this->cafile = $this->installKey(HttpClient::getPackagedCaFile(), $home, 'cacert.pem');
+            $this->cafile = $this->tmpCafile = $this->installKey(HttpClient::getPackagedCaFile(), $home, 'cacert-temp.pem');
         }
     }
 
@@ -1121,6 +1122,8 @@ class Installer
             }
             // Clean up stuff we created
             $this->uninstall();
+        } elseif ($this->tmpCafile) {
+            @unlink($this->tmpCafile);
         }
     }
 
