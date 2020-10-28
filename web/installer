@@ -531,25 +531,39 @@ function out($text, $color = null, $newLine = true)
 function getHomeDir()
 {
     $home = getenv('COMPOSER_HOME');
+    if ($home) {
+        return $home;
+    }
 
-    if (!$home) {
-        $userDir = getUserDir();
+    $userDir = getUserDir();
 
-        if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
-            $home = $userDir.'/Composer';
-        } else {
-            $home = $userDir.'/.composer';
+    if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
+        return $userDir.'/Composer';
+    }
 
-            if (!is_dir($home) && useXdg()) {
-                // XDG Base Directory Specifications
-                if (!($xdgConfig = getenv('XDG_CONFIG_HOME'))) {
-                    $xdgConfig = $userDir.'/.config';
-                }
-                $home = $xdgConfig.'/composer';
-            }
+    $dirs = array();
+
+    if (useXdg()) {
+        // XDG Base Directory Specifications
+        $xdgConfig = getenv('XDG_CONFIG_HOME');
+        if (!$xdgConfig) {
+            $xdgConfig = $userDir . '/.config';
+        }
+
+        $dirs[] = $xdgConfig . '/composer';
+    }
+
+    $dirs[] = $userDir . '/.composer';
+
+    // select first dir which exists of: $XDG_CONFIG_HOME/composer or ~/.composer
+    foreach ($dirs as $dir) {
+        if (is_dir($dir)) {
+            return $dir;
         }
     }
-    return $home;
+
+    // if none exists, we default to first defined one (XDG one if system uses it, or ~/.composer otherwise)
+    return $dirs[0];
 }
 
 /**
@@ -580,6 +594,11 @@ function useXdg()
             return true;
         }
     }
+
+    if (is_dir('/etc/xdg')) {
+        return true;
+    }
+
     return false;
 }
 
