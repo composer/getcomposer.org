@@ -1491,31 +1491,26 @@ class HttpClient {
                 $proxyURL .= ":443";
             }
 
+            // check for a secure proxy
+            if (strpos($proxyURL, 'https://') === 0) {
+                if (!extension_loaded('openssl')) {
+                    throw new RuntimeException('You must enable the openssl extension to use a secure proxy.');
+                }
+                if (strpos($url, 'https://') === 0) {
+                    throw new RuntimeException('PHP does not support https requests through a secure proxy.');
+                }
+            }
+
             // http(s):// is not supported in proxy
             $proxyURL = str_replace(array('http://', 'https://'), array('tcp://', 'ssl://'), $proxyURL);
-
-            if (0 === strpos($proxyURL, 'ssl:') && !extension_loaded('openssl')) {
-                throw new RuntimeException('You must enable the openssl extension to use a proxy over https');
-            }
 
             $options['http'] = array(
                 'proxy' => $proxyURL,
             );
 
-            // set request_fulluri, depending on default requirements and the environment
-            switch (parse_url($url, PHP_URL_SCHEME)) {
-                case 'http': // default is true for HTTP, check if explicitly disabled
-                    $reqFullUriEnv = getenv('HTTP_PROXY_REQUEST_FULLURI');
-                    if ($reqFullUriEnv === false || $reqFullUriEnv === '' || (strtolower($reqFullUriEnv) !== 'false' && (bool) $reqFullUriEnv)) {
-                        $options['http']['request_fulluri'] = true;
-                    }
-                    break;
-                case 'https': // default is false for HTTPS, check if explicitly enabled
-                    $reqFullUriEnv = getenv('HTTPS_PROXY_REQUEST_FULLURI');
-                    if (strtolower($reqFullUriEnv) !== 'false' && (bool) $reqFullUriEnv) {
-                        $options['http']['request_fulluri'] = true;
-                    }
-                    break;
+            // add request_fulluri for http requests
+            if ('http' === parse_url($url, PHP_URL_SCHEME)) {
+                $options['http']['request_fulluri'] = true;
             }
 
             // handle proxy auth if present
