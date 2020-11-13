@@ -68,13 +68,17 @@ php -r "unlink('composer-setup.php');"</pre>
     <p>The installer provides more options for specific environments, use the
         <code>--help</code> option to see all of them.</p>
 
-    <h2>Preview / Snapshot Releases</h2>
-    <p>By default the installer and <code>composer self-update</code> will download stable versions only. If you
-        would like to help test pre-release versions you can use the <code>--preview</code> flag on either installer
-        or self-update.
-        For snapshot builds which are done from the latest Composer commit, you can use the <code>--snapshot</code>
-        flag.
-    </p>
+    <h2>Download channels</h2>
+    <p>By default the installer and <code>composer self-update</code> will
+        download the latest stable version only. You may select a different
+        download channel though.<br>
+        If you would like to help test pre-release versions you can use the
+        <code>--preview</code> flag on either the installer or self-update.<br>
+        For snapshot builds, which are done from the latest Composer commit,
+        you can use the <code>--snapshot</code> flag.<br>
+        To programmatically install specific major versions you can use the
+        <code>--1</code> or <code>--2</code> flag. Example:</p>
+    <code>php composer-setup.php --preview</code>
 
     <h2>Manual Download</h2>
     <p>If you prefer to download the phar manually, here are the available versions:</p>
