@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f38176e9415e235997f1e0d3fdc42d3b",
+    "content-hash": "b14e42ab9c2617f21d3667a164797820",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -84,16 +84,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "dev-master",
+            "version": "2.0.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "1955f989374b88be6ee9b38feef097c0b2dc6066"
+                "reference": "e3af4ee606023079d8af222da82a5b6f36ca879f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/1955f989374b88be6ee9b38feef097c0b2dc6066",
-                "reference": "1955f989374b88be6ee9b38feef097c0b2dc6066",
+                "url": "https://api.github.com/repos/composer/composer/zipball/e3af4ee606023079d8af222da82a5b6f36ca879f",
+                "reference": "e3af4ee606023079d8af222da82a5b6f36ca879f",
                 "shasum": ""
             },
             "require": {
@@ -121,14 +121,13 @@
                 "ext-zip": "Enabling the zip extension allows you to unzip archives",
                 "ext-zlib": "Allow gzip compression of HTTP requests"
             },
-            "default-branch": true,
             "bin": [
                 "bin/composer"
             ],
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1-dev"
+                    "dev-master": "2.0-dev"
                 }
             },
             "autoload": {
@@ -162,7 +161,7 @@
             "support": {
                 "irc": "irc://irc.freenode.org/composer",
                 "issues": "https://github.com/composer/composer/issues",
-                "source": "https://github.com/composer/composer/tree/master"
+                "source": "https://github.com/composer/composer/tree/2.0"
             },
             "funding": [
                 {
@@ -178,7 +177,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-02-23T15:21:43+00:00"
+            "time": "2021-02-24T14:47:06+00:00"
         },
         {
             "name": "composer/semver",
