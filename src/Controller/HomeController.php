@@ -90,6 +90,22 @@ class HomeController extends AbstractController
     }
 
     /**
+     * @Route("/composer-stable.phar.sha256sum", name="download_sha256_stable")
+     * @Route("/composer-preview.phar.sha256sum", name="download_sha256_preview")
+     * @Route("/composer-1.phar.sha256sum", name="download_sha256_1x")
+     * @Route("/composer-2.phar.sha256sum", name="download_sha256_2x")
+     */
+    public function downloadSha256Version(string $projectDir, Request $req): Response
+    {
+        $channel = str_replace('download_sha256_', '', $req->attributes->get('_route'));
+        $channel = preg_replace('{^(\d+)x$}', '$1', $channel);
+
+        $versions = json_decode(file_get_contents($projectDir.'/web/versions'), true);
+
+        return new BinaryFileResponse($projectDir.'/web'.$versions[$channel][0]['path'].'.sha256sum', 200, [], false, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
+    }
+
+    /**
      * @Route("/schema.json", name="schema")
      */
     public function schema(string $docDir): Response

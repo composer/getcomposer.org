@@ -78,8 +78,10 @@ then
         php -d phar.readonly=0 $buildscript && \
         touch --date="`git log -n1 --pretty=%ci HEAD`" "$buildphar" && \
         php "$root/bin/sign.php" "$buildphar" "$root/$privkeypath" "$privkeypwd" && \
+        sha256sum "$buildphar" > "$buildphar.sha256sum" && \
         git reset --hard -q $version && \
         mv "$buildphar.sig" "$root/$target/$buildphar.sig" && \
+        mv "$buildphar.sha256sum" "$root/$target/$buildphar.sha256sum" && \
         mv "$buildphar" "$root/$target/$buildphar" && \
         echo $version > "$root/$target/version_new" && \
         mv "$root/$target/version_new" "$root/$target/version"
@@ -103,7 +105,7 @@ for version in `git tag`; do
             git reset --hard -q $version && \
             mv "$buildphar.sig" "$root/$target/download/$version/$buildphar.sig" && \
             mv "$buildphar" "$root/$target/download/$version/$buildphar"
-            cd "$root/$target/download/$version" && sha256sum $buildphar > $buildphar.sha256sum && cd -
+            cd "$root/$target/download/$version" && sha256sum "$buildphar" > "$buildphar.sha256sum" && cd -
             echo "$target/download/$version/$buildphar (and .sig) was just built and should be committed to the repo"
         fi
     else
