@@ -102,7 +102,12 @@ class HomeController extends AbstractController
 
         $versions = json_decode(file_get_contents($projectDir.'/web/versions'), true);
 
-        return new BinaryFileResponse($projectDir.'/web'.$versions[$channel][0]['path'].'.sha256sum', 200, [], false, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
+        $file_content = file_get_contents($projectDir.'/web'.$versions[$channel][0]['path'].'.sha256sum');
+
+        // only return checksum without the filename
+        return new Response(substr($file_content, 0, strpos($file_content, ' ')), 200, [
+            'content-type' => 'text/plain'
+        ]);
     }
 
     /**
