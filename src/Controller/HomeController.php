@@ -90,19 +90,48 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/composer-stable.phar.sha256sum", name="download_sha256_stable")
-     * @Route("/composer-preview.phar.sha256sum", name="download_sha256_preview")
-     * @Route("/composer-1.phar.sha256sum", name="download_sha256_1x")
-     * @Route("/composer-2.phar.sha256sum", name="download_sha256_2x")
+     * @Route("/composer.phar.sha256", name="download_sha256_snapshot")
+     * @Route("/composer-stable.phar.sha256", name="download_sha256_stable")
+     * @Route("/composer-preview.phar.sha256", name="download_sha256_preview")
+     * @Route("/composer-1.phar.sha256", name="download_sha256_1x")
+     * @Route("/composer-2.phar.sha256", name="download_sha256_2x")
      */
-    public function downloadSha256Version(string $projectDir, Request $req): Response
+    public function downloadSha256(string $projectDir, Request $req): Response
     {
         $channel = str_replace('download_sha256_', '', $req->attributes->get('_route'));
         $channel = preg_replace('{^(\d+)x$}', '$1', $channel);
 
+        if ($channel === 'snapshot') {
+            $file = $projectDir . '/web/composer.phar.sha256sum';
+        } else {
+            $versions = json_decode(file_get_contents($projectDir.'/web/versions'), true);
+            $file = $projectDir.'/web'.$versions[$channel][0]['path'].'.sha256sum';
+        }
+
+        $content = file_get_contents($file);
+
+        // only return checksum without the filename
+        return new Response(substr($content, 0, strpos($content, ' ')), 200, [
+            'Content-Type' => 'text/plain',
+        ]);
+    }
+
+    /**
+     * @Route("/composer-stable.phar.sha256sum", name="download_sha256sum_stable")
+     * @Route("/composer-preview.phar.sha256sum", name="download_sha256sum_preview")
+     * @Route("/composer-1.phar.sha256sum", name="download_sha256sum_1x")
+     * @Route("/composer-2.phar.sha256sum", name="download_sha256sum_2x")
+     */
+    public function downloadSha256Sum(string $projectDir, Request $req): Response
+    {
+        $channel = str_replace('download_sha256sum_', '', $req->attributes->get('_route'));
+        $channel = preg_replace('{^(\d+)x$}', '$1', $channel);
+
         $versions = json_decode(file_get_contents($projectDir.'/web/versions'), true);
 
-        return new BinaryFileResponse($projectDir.'/web'.$versions[$channel][0]['path'].'.sha256sum', 200, [], false, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
+        return new Response(file_get_contents($projectDir.'/web'.$versions[$channel][0]['path'].'.sha256sum'), 200, [
+            'Content-Type' => 'text/plain',
+        ]);
     }
 
     /**
