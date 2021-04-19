@@ -85,7 +85,7 @@ class DocsController extends AbstractController
 
         $contents = file_get_contents($filename);
         $content = $parsedown->text($contents);
-        $content = str_replace(array('class="language-json', 'class="language-js'), 'class="language-javascript', $content);
+        $content = str_replace(array('class="language-jsonc', 'class="language-json', 'class="language-js'), 'class="language-javascript', $content);
         $content = str_replace('class="language-sh', 'class="language-bash', $content);
         $content = str_replace('class="language-ini', 'class="language-clike', $content);
 
