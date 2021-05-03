@@ -78,7 +78,7 @@ class HomeController extends AbstractController
      */
     public function downloadVersion(string $projectDir, Request $req): Response
     {
-        $channel = str_replace('download_', '', $req->attributes->get('_route'));
+        $channel = str_replace(array('download_', '_bc'), '', $req->attributes->get('_route'));
         $channel = preg_replace('{^(\d+)x$}', '$1', $channel);
 
         $versions = json_decode(file_get_contents($projectDir.'/web/versions'), true);
@@ -99,7 +99,7 @@ class HomeController extends AbstractController
      */
     public function downloadSha256(string $projectDir, Request $req): Response
     {
-        $channel = str_replace('download_sha256_', '', $req->attributes->get('_route'));
+        $channel = str_replace(array('download_sha256_', '_bc'), '', $req->attributes->get('_route'));
         $channel = preg_replace('{^(\d+)x$}', '$1', $channel);
 
         if ($channel === 'snapshot') {
