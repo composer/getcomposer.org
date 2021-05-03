@@ -66,18 +66,15 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/download/{version}/composer.phar", name="download_version")
-     */
-    public function downloadNotFound(): Response
-    {
-        return new Response('Version Not Found', 404);
-    }
-
-    /**
-     * @Route("/composer-stable.phar", name="download_stable")
-     * @Route("/composer-preview.phar", name="download_preview")
-     * @Route("/composer-1.phar", name="download_1x")
-     * @Route("/composer-2.phar", name="download_2x")
+     * @Route("/composer.phar", name="download_snapshot")
+     * @Route("/download/latest-stable/composer.phar", name="download_stable")
+     * @Route("/download/latest-preview/composer.phar", name="download_preview")
+     * @Route("/download/latest-1.x/composer.phar", name="download_1x")
+     * @Route("/download/latest-2.x/composer.phar", name="download_2x")
+     * @Route("/composer-stable.phar", name="download_stable_bc")
+     * @Route("/composer-preview.phar", name="download_preview_bc")
+     * @Route("/composer-1.phar", name="download_1x_bc")
+     * @Route("/composer-2.phar", name="download_2x_bc")
      */
     public function downloadVersion(string $projectDir, Request $req): Response
     {
@@ -91,10 +88,14 @@ class HomeController extends AbstractController
 
     /**
      * @Route("/composer.phar.sha256", name="download_sha256_snapshot")
-     * @Route("/composer-stable.phar.sha256", name="download_sha256_stable")
-     * @Route("/composer-preview.phar.sha256", name="download_sha256_preview")
-     * @Route("/composer-1.phar.sha256", name="download_sha256_1x")
-     * @Route("/composer-2.phar.sha256", name="download_sha256_2x")
+     * @Route("/download/latest-stable/composer.phar.sha256", name="download_sha256_stable")
+     * @Route("/download/latest-preview/composer.phar.sha256", name="download_sha256_preview")
+     * @Route("/download/latest-1.x/composer.phar.sha256", name="download_sha256_1x")
+     * @Route("/download/latest-2.x/composer.phar.sha256", name="download_sha256_2x")
+     * @Route("/composer-stable.phar.sha256", name="download_sha256_stable_bc")
+     * @Route("/composer-preview.phar.sha256", name="download_sha256_preview_bc")
+     * @Route("/composer-1.phar.sha256", name="download_sha256_1x_bc")
+     * @Route("/composer-2.phar.sha256", name="download_sha256_2x_bc")
      */
     public function downloadSha256(string $projectDir, Request $req): Response
     {
@@ -117,10 +118,15 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/composer-stable.phar.sha256sum", name="download_sha256sum_stable")
-     * @Route("/composer-preview.phar.sha256sum", name="download_sha256sum_preview")
-     * @Route("/composer-1.phar.sha256sum", name="download_sha256sum_1x")
-     * @Route("/composer-2.phar.sha256sum", name="download_sha256sum_2x")
+     * @Route("/composer.phar.sha256sum", name="download_sha256sum_snapshot")
+     * @Route("/download/latest-stable/composer.phar.sha256sum", name="download_sha256sum_stable")
+     * @Route("/download/latest-preview/composer.phar.sha256sum", name="download_sha256sum_preview")
+     * @Route("/download/latest-1.x/composer.phar.sha256sum", name="download_sha256sum_1x")
+     * @Route("/download/latest-2.x/composer.phar.sha256sum", name="download_sha256sum_2x")
+     * @Route("/composer-stable.phar.sha256sum", name="download_sha256sum_stable_bc")
+     * @Route("/composer-preview.phar.sha256sum", name="download_sha256sum_preview_bc")
+     * @Route("/composer-1.phar.sha256sum", name="download_sha256sum_1x_bc")
+     * @Route("/composer-2.phar.sha256sum", name="download_sha256sum_2x_bc")
      */
     public function downloadSha256Sum(string $projectDir, Request $req): Response
     {
@@ -132,6 +138,16 @@ class HomeController extends AbstractController
         return new Response(file_get_contents($projectDir.'/web'.$versions[$channel][0]['path'].'.sha256sum'), 200, [
             'Content-Type' => 'text/plain',
         ]);
+    }
+
+    /**
+     * @Route("/download/{version}/composer.phar", name="download_version")
+     * @Route("/download/{version}/composer.phar.sha256sum", name="download_version_sha256sum")
+     * @Route("/download/{version}/composer.phar.sha256", name="download_version_sha256")
+     */
+    public function downloadNotFound(): Response
+    {
+        return new Response('Version Not Found', 404);
     }
 
     /**
