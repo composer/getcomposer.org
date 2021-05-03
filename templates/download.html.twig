@@ -107,7 +107,7 @@ php -r "unlink('composer-setup.php');"</pre>
            title="Get the lastest composer snapshot"
            aria-label="Get the lastest composer snapshot">Latest Snapshot</a>
         (<a href="{{ path('download_sha256_snapshot') }}"
-            title="Get the lastest composer snapshot's SHA256 summ"
+            title="Get the lastest composer snapshot's SHA256 sum"
             aria-label="Get the lastest composer snapshot's SHA256 sum">sha256</a> /
         <a href="{{ path('download_sha256sum_snapshot') }}"
             title="Get the lastest composer snapshot's SHA256 sum in sha256sum format"
@@ -117,7 +117,7 @@ php -r "unlink('composer-setup.php');"</pre>
            title="Get the lastest composer 1.x stable release"
            aria-label="Get the lastest composer 1.x stable release">Latest 1.x</a>
         (<a href="{{ path('download_sha256_1x') }}"
-            title="Get the lastest composer 1.x stable release's sumHA256 sum"
+            title="Get the lastest composer 1.x stable release's SHA256 sum"
             aria-label="Get the lastest composer 1.x stable release's SHA256 sum">sha256</a> /
         <a href="{{ path('download_sha256sum_1x') }}"
             title="Get the lastest composer 1.x stable release's SHA256 sum in sha256sum format"
@@ -127,7 +127,7 @@ php -r "unlink('composer-setup.php');"</pre>
            title="Get the lastest composer 2.x stable release"
            aria-label="Get the lastest composer 2.x stable release">Latest 2.x</a>
         (<a href="{{ path('download_sha256_2x') }}"
-            title="Get the lastest composer 2.x stable release's sumHA256 sum"
+            title="Get the lastest composer 2.x stable release's SHA256 sum"
             aria-label="Get the lastest composer 2.x stable release's SHA256 sum">sha256</a> /
         <a href="{{ path('download_sha256sum_2x') }}"
             title="Get the lastest composer 2.x stable release's SHA256 sum in sha256sum format"
@@ -146,8 +146,8 @@ php -r "unlink('composer-setup.php');"</pre>
                 <td style="width: 100px" role="cell">{{ meta.date|date('Y-m-d') }}</td>
                 <td role="cell" style="width: 500px">
                     <a href="{{ path('download_version', {version: version}) }}.sha256sum"
-                       title="Download the sha256 checksum for version {{ version }}"
-                       aria-label="Download the sha256 checksum for version {{ version }}">sha256</a> <code
+                       title="Download the SHA256 checksum for version {{ version }} in sha256sum format"
+                       aria-label="Download the SHA256 checksum for version {{ version }} in sha256sum format">sha256sum</a> <code
                             style="font-size: 0.7em; position: relative; top: -2px">{{ meta.sha256sum }}</code>
                 </td>
                 <td role="cell">
