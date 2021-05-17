@@ -2,7 +2,7 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.0",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "composer/composer": "2.0.*@dev",
@@ -29,7 +29,7 @@
         },
         "sort-packages": true,
         "platform": {
-            "php": "7.4.11"
+            "php": "8.0.5"
         }
     },
     "autoload": {
