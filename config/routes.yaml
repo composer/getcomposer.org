@@ -2,8 +2,7 @@ shortcut_commit_deps:
     path: /commit-deps
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
     defaults:
-        route: 'docs.view'
-        page: faqs/should-i-commit-the-dependencies-in-my-vendor-directory.md
+        path: /doc/faqs/should-i-commit-the-dependencies-in-my-vendor-directory.md
         permanent: true
 
 shortcut_xdebug:
@@ -17,32 +16,28 @@ shortcut_root:
     path: /root
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
     defaults:
-        route: 'docs.view'
-        page: faqs/how-to-install-untrusted-packages-safely.md
+        path: /doc/faqs/how-to-install-untrusted-packages-safely.md
         permanent: true
 
 shortcut_repoprio:
     path: /repoprio
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
     defaults:
-        route: 'docs.view'
-        page: articles/repository-priorities.md
+        path: /doc/articles/repository-priorities.md
         permanent: true
 
 shortcut_cyclic_deps:
     path: /cyclic-deps
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
     defaults:
-        route: 'docs.view'
-        page: articles/troubleshooting.md#cyclic--circular-dependencies-involving-the-root-package
+        path: /doc/articles/troubleshooting.md#cyclic--circular-dependencies-involving-the-root-package
         permanent: true
 
 shortcut_install:
     path: /install
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
     defaults:
-        route: 'docs.view'
-        page: 01-basic-usage.md#installing-dependencies
+        path: /doc/01-basic-usage.md#installing-dependencies
         permanent: true
 
 shortcut_v2:
