@@ -29,6 +29,14 @@ shortcut_repoprio:
         page: articles/repository-priorities.md
         permanent: true
 
+shortcut_cyclic_deps:
+    path: /cyclic-deps
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        route: 'docs.view'
+        page: articles/troubleshooting.md#cyclic--circular-dependencies
+        permanent: true
+
 shortcut_v2:
     path: /2
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
