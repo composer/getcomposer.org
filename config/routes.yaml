@@ -26,11 +26,11 @@ shortcut_repoprio:
         path: /doc/articles/repository-priorities.md
         permanent: true
 
-shortcut_cyclic_deps:
-    path: /cyclic-deps
+shortcut_dep_on_root:
+    path: /dep-on-root
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
     defaults:
-        path: /doc/articles/troubleshooting.md#cyclic--circular-dependencies-involving-the-root-package
+        path: /doc/articles/troubleshooting.md#dependencies-on-the-root-package
         permanent: true
 
 shortcut_install:
