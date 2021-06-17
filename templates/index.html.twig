@@ -17,7 +17,6 @@
                 A Dependency Manager for PHP
             </h1>
             <p class="latest">Latest: <strong>{{ latestStable }}</strong> (<a href="{{ path('changelog', {version: latestStable}) }}" title="Changelog for version {{ latestStable }}" aria-label="Changelog for version {{ latestStable }}">changelog</a>)</p>
-            <p class="latest"><strong>Composer 2.0 is now available!</strong> <a href="https://getcomposer.org/2" title="Release notes for Composer 2.0" aria-label="Release notes for Composer 2.0">Read our announcement!</a></p>
             {% if previewAvailable %}
               <p class="preview">A preview release for our next {% if majorPreviewAvailable %}major{% else %}minor{% endif %} version is available!<br />Try out <strong>{{ latestPreview }}</strong> (<a href="{{ path('changelog', {version: latestPreview}) }}" title="Changelog for version {{ latestPreview }}" aria-label="Changelog for version {{ latestPreview }}">changelog</a>) now using <em>composer self-update --preview</em></p>
             {% endif %}
