@@ -12,6 +12,13 @@ shortcut_xdebug:
         path: '/doc/articles/troubleshooting.md#xdebug-impact-on-composer'
         permanent: true
 
+shortcut_basic_usage:
+    path: /basic-usage
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        path: '/doc/01-basic-usage.md'
+        permanent: true
+
 shortcut_root:
     path: /root
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
