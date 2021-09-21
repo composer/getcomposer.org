@@ -143,15 +143,44 @@ function setUseAnsi($argv)
     } elseif (in_array('--ansi', $argv)) {
         define('USE_ANSI', true);
     } else {
-        // On Windows, default to no ANSI, except in ANSICON and ConEmu.
-        // Everywhere else, default to ANSI if stdout is a terminal.
-        define(
-            'USE_ANSI',
-            (DIRECTORY_SEPARATOR == '\\')
-                ? (false !== getenv('ANSICON') || 'ON' === getenv('ConEmuANSI'))
-                : (function_exists('posix_isatty') && posix_isatty(1))
-        );
+        define('USE_ANSI', outputSupportsColor());
     }
+}
+
+/**
+ * Returns whether color output is supported
+ *
+ * @return bool
+ */
+function outputSupportsColor()
+{
+    if (false !== getenv('NO_COLOR') || !defined('STDOUT')) {
+        return false;
+    }
+
+    if ('Hyper' === getenv('TERM_PROGRAM')) {
+        return true;
+    }
+
+    if (defined('PHP_WINDOWS_VERSION_BUILD')) {
+        return (function_exists('sapi_windows_vt100_support')
+            && sapi_windows_vt100_support(STDOUT))
+            || false !== getenv('ANSICON')
+            || 'ON' === getenv('ConEmuANSI')
+            || 'xterm' === getenv('TERM');
+    }
+
+    if (function_exists('stream_isatty')) {
+        return stream_isatty(STDOUT);
+    }
+
+    if (function_exists('posix_isatty')) {
+        return posix_isatty(STDOUT);
+    }
+
+    $stat = fstat(STDOUT);
+    // Check if formatted mode is S_IFCHR
+    return $stat ? 0020000 === ($stat['mode'] & 0170000) : false;
 }
 
 /**
