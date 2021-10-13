@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class HomeController extends AbstractController
 {
@@ -138,6 +139,24 @@ class HomeController extends AbstractController
         return new Response(file_get_contents($projectDir.'/web'.$versions[$channel][0]['path'].'.sha256sum'), 200, [
             'Content-Type' => 'text/plain',
         ]);
+    }
+
+    /**
+     * @Route("/download/latest-stable/composer.phar.asc", name="download_asc_stable")
+     * @Route("/download/latest-preview/composer.phar.asc", name="download_asc_preview")
+     * @Route("/download/latest-2.x/composer.phar.asc", name="download_asc_2x")
+     * @Route("/download/{version}/composer.phar.asc", name="download_asc_specific")
+     */
+    public function downloadPGPSignature(string $projectDir, Request $req, string $version = null): Response
+    {
+        $channel = str_replace('download_asc_', '', $req->attributes->get('_route'));
+        if ($channel !== 'specific') {
+            $channel = preg_replace('{^(\d+)x$}', '$1', $channel);
+            $versions = json_decode(file_get_contents($projectDir.'/web/versions'), true);
+            $version = $versions[$channel][0]['version'];
+        }
+
+        return new RedirectResponse('https://github.com/composer/composer/releases/download/'.$version.'/composer.phar.asc');
     }
 
     /**

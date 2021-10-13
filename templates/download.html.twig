@@ -98,7 +98,10 @@ php -r "unlink('composer-setup.php');"</pre>
             aria-label="Get the lastest composer stable release's SHA256 sum">sha256</a> /
         <a href="{{ path('download_sha256sum_stable') }}"
             title="Get the lastest composer stable release's SHA256 sum in sha256sum format"
-            aria-label="Get the lastest composer stable release's SHA256 sum in sha256sum format">sha256sum</a>)
+            aria-label="Get the lastest composer stable release's SHA256 sum in sha256sum format">sha256sum</a> /
+        <a href="{{ path('download_asc_stable') }}"
+            title="Get the lastest composer stable release's PGP signature"
+            aria-label="Get the lastest composer stable release's PGP signature">asc</a>)
         <br/>
         <a href="{{ path('download_preview') }}"
            title="Get the lastest composer preview release"
@@ -108,7 +111,10 @@ php -r "unlink('composer-setup.php');"</pre>
             aria-label="Get the lastest composer preview release's SHA256 sum">sha256</a> /
         <a href="{{ path('download_sha256sum_preview') }}"
             title="Get the lastest composer preview release's SHA256 sum in sha256sum format"
-            aria-label="Get the lastest composer preview release's SHA256 sum in sha256sum format">sha256sum</a>)
+            aria-label="Get the lastest composer preview release's SHA256 sum in sha256sum format">sha256sum</a> /
+        <a href="{{ path('download_asc_preview') }}"
+            title="Get the lastest composer preview release's PGP signature"
+            aria-label="Get the lastest composer preview release's PGP signature">asc</a>)
         <br/>
         <a href="{{ path('download_snapshot') }}"
            title="Get the lastest composer snapshot"
@@ -138,7 +144,10 @@ php -r "unlink('composer-setup.php');"</pre>
             aria-label="Get the lastest composer 2.x stable release's SHA256 sum">sha256</a> /
         <a href="{{ path('download_sha256sum_2x') }}"
             title="Get the lastest composer 2.x stable release's SHA256 sum in sha256sum format"
-            aria-label="Get the lastest composer 2.x stable release's SHA256 sum in sha256sum format">sha256sum</a>)
+            aria-label="Get the lastest composer 2.x stable release's SHA256 sum in sha256sum format">sha256sum</a> /
+        <a href="{{ path('download_asc_2x') }}"
+            title="Get the lastest composer 2.x release's PGP signature"
+            aria-label="Get the lastest composer 2.x release's PGP signature">asc</a>)
         <br/>
     </p>
     <table aria-label="Composer versions history" role="table" aria-describedby="composer-history-caption">
@@ -151,11 +160,16 @@ php -r "unlink('composer-setup.php');"</pre>
                        aria-label="Download version {{ version }}">{{ version }}</a>
                 </td>
                 <td style="width: 100px" role="cell">{{ meta.date|date('Y-m-d') }}</td>
-                <td role="cell" style="width: 500px">
+                <td role="cell" style="width: 530px">
                     <a href="{{ path('download_version', {version: version}) }}.sha256sum"
                        title="Download the SHA256 checksum for version {{ version }} in sha256sum format"
-                       aria-label="Download the SHA256 checksum for version {{ version }} in sha256sum format">sha256sum</a> <code
-                            style="font-size: 0.7em; position: relative; top: -2px">{{ meta.sha256sum }}</code>
+                       aria-label="Download the SHA256 checksum for version {{ version }} in sha256sum format">sha256sum</a>
+                    <code style="font-size: 0.7em; position: relative; top: -2px" aria-label="sha256 checksum" title="sha256 checksum">{{ meta.sha256sum }}</code>
+                    {% if version >= '2.0.3' or version >= '2.0.10' and version != '2.0.2' %}
+                    <a href="{{ path('download_asc_specific', {version: version}) }}"
+                       title="Get the PGP signature for version {{ version }}"
+                       aria-label="Get the PGP signature for version {{ version }}">asc</a>
+                    {% endif %}
                 </td>
                 <td role="cell">
                     <a href="{{ path('changelog', {version: version}) }}"
