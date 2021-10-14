@@ -60,11 +60,11 @@ fi
 
 cd "$root/$build"
 
-# update master
+# update main
 git fetch -q origin
 git fetch --tags -q origin
-git checkout master -q --force
-git rebase -q origin/master > /dev/null
+git checkout main -q --force
+git rebase -q origin/main > /dev/null
 
 version=`git log --pretty="%H" -n1 HEAD`
 touch "$root/$target/version"
@@ -113,7 +113,7 @@ for version in `git tag`; do
     fi
 done
 
-git checkout master -q --force
+git checkout main -q --force
 
 lastStableVersion=$(ls "$root/$target/download" | grep -E '^2\.[0-9.]+$' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
 lastStableV1Version=$(ls "$root/$target/download" | grep -E '^1\.[0-9.]+$' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
