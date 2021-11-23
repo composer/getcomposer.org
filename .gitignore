@@ -1,8 +1,11 @@
+/.parcel-cache/
+/node_modules/
 /composer-src/
 /web/composer.phar
 /web/composer.phar.sig
 /web/version
 /web/versions
+/web/build/*.map
 /bin/
 
 ###> symfony/framework-bundle ###

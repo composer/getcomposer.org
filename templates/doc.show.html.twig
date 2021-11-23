@@ -5,10 +5,8 @@
 {% block title %}{% if title is not empty %}{{ title }} - {% endif %}{{ parent() }}{% endblock %}
 
 {% block content %}
-
     <div id="searchbar" class="clearfix">
-        <input id="docsearch" type="text" placeholder="Type here to search documentation..."
-               title="Enter text here and submit to search the documentation"/>
+        <div id="docsearch"></div>
     </div>
 
     {% if toc|length %}

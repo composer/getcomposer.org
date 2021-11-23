@@ -1,0 +1,16 @@
+{
+    "name": "getcomposer",
+    "dependencies": {
+        "@docsearch/js": "^3.0.0-alpha.41",
+        "plausible-tracker": "^0.3",
+        "prismjs": "^1.25.0"
+    },
+    "devDependencies": {
+        "esbuild": "^0.13.15"
+    },
+    "scripts": {
+        "dev": "esbuild js/app.js --bundle --outdir=web/build --sourcemap --loader:.gif=file --target=chrome58,firefox57,safari11,edge16 --watch",
+        "build": "esbuild js/app.js --bundle --outdir=web/build  --minify --loader:.gif=file --target=chrome58,firefox57,safari11,edge16",
+        "analyze": "esbuild js/app.js --bundle --outdir=web/build  --minify --loader:.gif=file --target=chrome58,firefox57,safari11,edge16 --analyze"
+    }
+}
