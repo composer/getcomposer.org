@@ -132,7 +132,7 @@ fi
 {
     "stable": [{"path": "/download/$lastStableVersion/composer.phar", "version": "$lastStableVersion", "min-php": 50300}],
     "preview": [{"path": "/download/$lastV2Version/composer.phar", "version": "$lastV2Version", "min-php": 50300}],
-    "snapshot": [{"path": "/composer.phar", "version": "$lastSnapshot", "min-php": 50300}],
+    "snapshot": [{"path": "/composer.phar", "version": "$lastSnapshot", "min-php": 70205},{"path": "/download/$lastStableVersion/composer.phar", "version": "$lastStableVersion", "min-php": 50300}],
     "1": [{"path": "/download/$lastStableV1Version/composer.phar", "version": "$lastStableV1Version", "min-php": 50300}],
     "2": [{"path": "$lastStableV2VersionPath", "version": "$lastStableV2Version", "min-php": 50300}]
 }
