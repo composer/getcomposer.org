@@ -30,6 +30,9 @@
         "sort-packages": true,
         "platform": {
             "php": "8.0.5"
+        },
+        "allow-plugins": {
+            "symfony/flex": true
         }
     },
     "autoload": {
