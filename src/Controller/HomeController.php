@@ -72,6 +72,7 @@ class HomeController extends AbstractController
      * @Route("/download/latest-preview/composer.phar", name="download_preview")
      * @Route("/download/latest-1.x/composer.phar", name="download_1x")
      * @Route("/download/latest-2.x/composer.phar", name="download_2x")
+     * @Route("/download/latest-2.2.x/composer.phar", name="download_2.2_lts")
      * @Route("/composer-stable.phar", name="download_stable_bc")
      * @Route("/composer-preview.phar", name="download_preview_bc")
      * @Route("/composer-1.phar", name="download_1x_bc")
@@ -80,11 +81,9 @@ class HomeController extends AbstractController
     public function downloadVersion(string $projectDir, Request $req): Response
     {
         $channel = str_replace(array('download_', '_bc'), '', $req->attributes->get('_route'));
-        $channel = preg_replace('{^(\d+)x$}', '$1', $channel);
-
-        $versions = json_decode(file_get_contents($projectDir.'/web/versions'), true);
-
-        return new BinaryFileResponse($projectDir.'/web'.$versions[$channel][0]['path'], 200, [], false, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
+        $path = $this->getVersionInfo($projectDir, $channel)['path'];
+var_dump($path, $this->getVersionInfo($projectDir, $channel));die;
+        return new BinaryFileResponse($projectDir.'/web'.$path, 200, [], false, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
     }
 
     /**
@@ -93,6 +92,7 @@ class HomeController extends AbstractController
      * @Route("/download/latest-preview/composer.phar.sha256", name="download_sha256_preview")
      * @Route("/download/latest-1.x/composer.phar.sha256", name="download_sha256_1x")
      * @Route("/download/latest-2.x/composer.phar.sha256", name="download_sha256_2x")
+     * @Route("/download/latest-2.2.x/composer.phar.sha256", name="download_sha256_2.2_lts")
      * @Route("/composer-stable.phar.sha256", name="download_sha256_stable_bc")
      * @Route("/composer-preview.phar.sha256", name="download_sha256_preview_bc")
      * @Route("/composer-1.phar.sha256", name="download_sha256_1x_bc")
@@ -101,13 +101,12 @@ class HomeController extends AbstractController
     public function downloadSha256(string $projectDir, Request $req): Response
     {
         $channel = str_replace(array('download_sha256_', '_bc'), '', $req->attributes->get('_route'));
-        $channel = preg_replace('{^(\d+)x$}', '$1', $channel);
 
         if ($channel === 'snapshot') {
             $file = $projectDir . '/web/composer.phar.sha256sum';
         } else {
-            $versions = json_decode(file_get_contents($projectDir.'/web/versions'), true);
-            $file = $projectDir.'/web'.$versions[$channel][0]['path'].'.sha256sum';
+            $path = $this->getVersionInfo($projectDir, $channel)['path'];
+            $file = $projectDir.'/web'.$path.'.sha256sum';
         }
 
         $content = file_get_contents($file);
@@ -124,6 +123,7 @@ class HomeController extends AbstractController
      * @Route("/download/latest-preview/composer.phar.sha256sum", name="download_sha256sum_preview")
      * @Route("/download/latest-1.x/composer.phar.sha256sum", name="download_sha256sum_1x")
      * @Route("/download/latest-2.x/composer.phar.sha256sum", name="download_sha256sum_2x")
+     * @Route("/download/latest-2.2.x/composer.phar.sha256sum", name="download_sha256sum_2.2_lts")
      * @Route("/composer-stable.phar.sha256sum", name="download_sha256sum_stable_bc")
      * @Route("/composer-preview.phar.sha256sum", name="download_sha256sum_preview_bc")
      * @Route("/composer-1.phar.sha256sum", name="download_sha256sum_1x_bc")
@@ -132,11 +132,9 @@ class HomeController extends AbstractController
     public function downloadSha256Sum(string $projectDir, Request $req): Response
     {
         $channel = str_replace('download_sha256sum_', '', $req->attributes->get('_route'));
-        $channel = preg_replace('{^(\d+)x$}', '$1', $channel);
+        $path = $this->getVersionInfo($projectDir, $channel)['path'];
 
-        $versions = json_decode(file_get_contents($projectDir.'/web/versions'), true);
-
-        return new Response(file_get_contents($projectDir.'/web'.$versions[$channel][0]['path'].'.sha256sum'), 200, [
+        return new Response(file_get_contents($projectDir.'/web'.$path.'.sha256sum'), 200, [
             'Content-Type' => 'text/plain',
         ]);
     }
@@ -145,15 +143,14 @@ class HomeController extends AbstractController
      * @Route("/download/latest-stable/composer.phar.asc", name="download_asc_stable")
      * @Route("/download/latest-preview/composer.phar.asc", name="download_asc_preview")
      * @Route("/download/latest-2.x/composer.phar.asc", name="download_asc_2x")
+     * @Route("/download/latest-2.2.x/composer.phar.asc", name="download_asc_2.2_lts")
      * @Route("/download/{version}/composer.phar.asc", name="download_asc_specific")
      */
     public function downloadPGPSignature(string $projectDir, Request $req, string $version = null): Response
     {
         $channel = str_replace('download_asc_', '', $req->attributes->get('_route'));
         if ($channel !== 'specific') {
-            $channel = preg_replace('{^(\d+)x$}', '$1', $channel);
-            $versions = json_decode(file_get_contents($projectDir.'/web/versions'), true);
-            $version = $versions[$channel][0]['version'];
+            $version = $this->getVersionInfo($projectDir, $channel)['version'];
         }
 
         return new RedirectResponse('https://github.com/composer/composer/releases/download/'.$version.'/composer.phar.asc');
@@ -180,5 +177,24 @@ class HomeController extends AbstractController
             'Access-Control-Allow-Methods' => 'GET',
             'Access-Control-Allow-Headers' => 'X-Requested-With,If-Modified-Since',
         ]);
+    }
+
+    private function getVersionInfo(string $projectDir, string $channel): array
+    {
+        $channel = preg_replace('{^(\d+)x$}', '$1', $channel);
+        $versions = json_decode(file_get_contents($projectDir.'/web/versions'), true);
+
+        if (str_ends_with($channel, 'lts')) {
+            list($prefix) = explode('_', $channel);
+            foreach ($versions['stable'] as $version) {
+                if (str_starts_with($version['version'], $prefix)) {
+                    return $version;
+                }
+            }
+
+            throw new \LogicException('No lts version found with prefix '.$prefix);
+        }
+
+        return $versions[$channel][0];
     }
 }
