@@ -82,7 +82,7 @@ class HomeController extends AbstractController
     {
         $channel = str_replace(array('download_', '_bc'), '', $req->attributes->get('_route'));
         $path = $this->getVersionInfo($projectDir, $channel)['path'];
-var_dump($path, $this->getVersionInfo($projectDir, $channel));die;
+
         return new BinaryFileResponse($projectDir.'/web'.$path, 200, [], false, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
     }
 
