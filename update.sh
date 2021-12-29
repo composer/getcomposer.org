@@ -117,6 +117,7 @@ git checkout main -q --force
 
 lastStableVersion=$(ls "$root/$target/download" | grep -E '^2\.[0-9.]+$' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
 lastStableV1Version=$(ls "$root/$target/download" | grep -E '^1\.[0-9.]+$' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
+lastStableV22Version=$(ls "$root/$target/download" | grep -E '^2\.2\.[0-9.]+$' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
 lastV2Version=$(ls "$root/$target/download" | grep -E '^2\.' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
 lastSnapshot=$(head -c40 "$root/$target/version")
 if [ "$(ls "$root/$target/download" | grep -E '^2\.[0-9.]+$')" == "" ]
@@ -130,11 +131,11 @@ fi
 {
     read -r -d '' versions << EOM
 {
-    "stable": [{"path": "/download/$lastStableVersion/composer.phar", "version": "$lastStableVersion", "min-php": 50300}],
-    "preview": [{"path": "/download/$lastV2Version/composer.phar", "version": "$lastV2Version", "min-php": 50300}],
-    "snapshot": [{"path": "/composer.phar", "version": "$lastSnapshot", "min-php": 70205},{"path": "/download/$lastStableVersion/composer.phar", "version": "$lastStableVersion", "min-php": 50300}],
+    "stable": [{"path": "/download/$lastStableVersion/composer.phar", "version": "$lastStableVersion", "min-php": 70205},{"path": "/download/$lastStableV22Version/composer.phar", "version": "$lastStableV22Version", "min-php": 50300}],
+    "preview": [{"path": "/download/$lastV2Version/composer.phar", "version": "$lastV2Version", "min-php": 70205},{"path": "/download/$lastStableV22Version/composer.phar", "version": "$lastStableV22Version", "min-php": 50300}],
+    "snapshot": [{"path": "/composer.phar", "version": "$lastSnapshot", "min-php": 70205},{"path": "/download/$lastStableV22Version/composer.phar", "version": "$lastStableV22Version", "min-php": 50300}],
     "1": [{"path": "/download/$lastStableV1Version/composer.phar", "version": "$lastStableV1Version", "min-php": 50300}],
-    "2": [{"path": "$lastStableV2VersionPath", "version": "$lastStableV2Version", "min-php": 50300}]
+    "2": [{"path": "$lastStableV2VersionPath", "version": "$lastStableV2Version", "min-php": 70205},{"path": "/download/$lastStableV22Version/composer.phar", "version": "$lastStableV22Version", "min-php": 50300}]
 }
 EOM
 } || true
