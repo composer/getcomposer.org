@@ -10,14 +10,11 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
 class RequestSubscriber implements EventSubscriberInterface
 {
-    private $environment;
-
-    public function __construct(string $environment)
+    public function __construct(private string $environment)
     {
-        $this->environment = $environment;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         // return the subscribed events, their methods and priorities
         return [
@@ -30,9 +27,9 @@ class RequestSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function forceTls(RequestEvent $event)
+    public function forceTls(RequestEvent $event): void
     {
-        if (!$event->isMasterRequest() || $this->environment === 'dev') {
+        if (!$event->isMainRequest() || $this->environment === 'dev') {
             return;
         }
 
@@ -45,9 +42,9 @@ class RequestSubscriber implements EventSubscriberInterface
         $event->setResponse(new RedirectResponse('https://'.substr($req->getUri(), 7)));
     }
 
-    public function setHsts(ResponseEvent $event)
+    public function setHsts(ResponseEvent $event): void
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
