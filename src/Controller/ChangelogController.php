@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
+use Composer\Pcre\Preg;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -14,9 +14,11 @@ class ChangelogController extends AbstractController
      */
     public function changelog(string $version, \Parsedown $parsedown, string $docDir): Response
     {
-        $changelog = strtr(file_get_contents($docDir.'/../CHANGELOG.md'), ["\r\n" => "\n"]);
+        $changelog = file_get_contents($docDir.'/../CHANGELOG.md');
+        assert(is_string($changelog));
+        $changelog = strtr($changelog, ["\r\n" => "\n"]);
 
-        if (!$ret = preg_match('{(?:^|\n)### \['.preg_quote($version).'\] (?P<date>.*)\n\n(?P<changelog>(?:^  \*.*\n)+)}mi', $changelog, $match)) {
+        if (!Preg::isMatch('{(?:^|\n)### \['.preg_quote($version).'\] (?P<date>.*)\n\n(?P<changelog>(?:^  \*.*\n)+)}mi', $changelog, $match)) {
             throw $this->createNotFoundException('Requested page was not found.');
         }
 
@@ -39,7 +41,7 @@ class ChangelogController extends AbstractController
     public function upgrade(string $file, \Parsedown $parsedown, string $docDir): Response
     {
         $filename = $docDir.'/../'.$file;
-        if (!preg_match('{^UPGRADE[-\d.]+?\.md$}', $file) || !file_exists($filename)) {
+        if (!Preg::isMatch('{^UPGRADE[-\d.]+?\.md$}', $file) || !file_exists($filename)) {
             throw $this->createNotFoundException('Requested page was not found.');
         }
 

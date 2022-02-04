@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Composer\Pcre\Preg;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,17 +35,19 @@ class DocsController extends AbstractController
 
                 $metadata = null;
                 $contents = file_get_contents($file->getPathname());
-                if (preg_match('{^<!--(.*)-->}s', $contents, $match)) {
-                    preg_match_all('{^ *(?P<keyword>\w+): *(?P<value>.*)}m', $match[1], $matches, PREG_SET_ORDER);
-                    foreach ($matches as $match) {
-                        $metadata[$match['keyword']] = $match['value'];
+                assert(is_string($contents));
+                if (Preg::isMatch('{^<!--(.*)-->}s', $contents, $match)) {
+                    Preg::matchAll('{^ *(?P<keyword>\w+): *(?P<value>.*)}m', $match[1], $matches);
+                    $metadata = [];
+                    foreach ($matches['keyword'] as $key => $keyword) {
+                        $metadata[$keyword] = $matches['value'][$key];
                     }
                 }
 
-                if (preg_match('{^(<!--.+?-->\n+)?# (.+?)\n}s', $contents, $match)) {
+                if (Preg::isMatch('{^(<!--.+?-->\n+)?# (.+?)\n}s', $contents, $match)) {
                     $displayName = $match[2];
                 } else {
-                    $displayName = preg_replace('{^\d{2} }', '', ucwords(str_replace('-', ' ', $filename)));
+                    $displayName = Preg::replace('{^\d{2} }', '', ucwords(str_replace('-', ' ', $filename)));
                 }
                 $filenames[$displayName] = array('link' => $url, 'metadata' => $metadata);
             }
@@ -84,6 +87,7 @@ class DocsController extends AbstractController
         }
 
         $contents = file_get_contents($filename);
+        /** @var string $content */
         $content = $parsedown->text($contents);
         $content = str_replace(array('class="language-jsonc', 'class="language-json', 'class="language-js'), 'class="language-javascript', $content);
         $content = str_replace('class="language-sh', 'class="language-bash', $content);
@@ -108,8 +112,8 @@ class DocsController extends AbstractController
                     $node->removeChild($node->lastChild);
                 }
 
-                $id = preg_replace('{[^a-z0-9]}i', '-', strtolower(trim($node->nodeValue)));
-                $id = preg_replace('{-+}', '-', $id);
+                $id = Preg::replace('{[^a-z0-9]}i', '-', strtolower(trim($node->nodeValue)));
+                $id = Preg::replace('{-+}', '-', $id);
                 if ($count) {
                     $id .= '-'.($count+1);
                 }
@@ -140,6 +144,9 @@ class DocsController extends AbstractController
         $firstTitle = null;
         $h1 = $h2 = $h3 = $h4 = 0;
         $nodes = $xpath->query('//*[self::h1 or self::h2 or self::h3 or self::h4]');
+        if (false === $nodes) {
+            throw new \RuntimeException('Failed finding any h1/h2/h3/h4 node');
+        }
         foreach ($nodes as $node) {
             // set id and add anchor link
             $id = $genId($node);
@@ -180,10 +187,13 @@ class DocsController extends AbstractController
 
         // save new content with IDs
         $content = $dom->saveHtml();
-        $content = preg_replace('{.*<body>(.*)</body>.*}is', '$1', $content);
+        if (false === $content) {
+            throw new \RuntimeException('Failed saving HTML');
+        }
+        $content = Preg::replace('{.*<body>(.*)</body>.*}is', '$1', $content);
 
         // add class to footer nav
-        $content = preg_replace('{<p>(&larr;.+?|.+?&rarr;)</p>}', '<p class="prev-next">$1</p>', $content);
+        $content = Preg::replace('{<p>(&larr;.+?|.+?&rarr;)</p>}', '<p class="prev-next">$1</p>', $content);
 
         return $this->render('doc.show.html.twig', array(
             'doc' => $content,

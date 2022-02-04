@@ -6,7 +6,9 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "composer/composer": "2.1.*@dev",
+        "composer/pcre": "^1.0",
         "erusev/parsedown": "^1.0",
+        "phpstan/phpstan-symfony": "^1.1",
         "sensio/framework-extra-bundle": "^6.1",
         "symfony/console": "^5.2",
         "symfony/dotenv": "^5.2",
@@ -67,7 +69,8 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "phpstan": "phpstan"
     },
     "conflict": {
         "symfony/symfony": "*"
@@ -78,5 +81,8 @@
             "require": "5.4.*"
         },
         "public-dir": "web"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.4"
     }
 }

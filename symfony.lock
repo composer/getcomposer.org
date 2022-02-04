@@ -44,6 +44,12 @@
     "monolog/monolog": {
         "version": "2.3.5"
     },
+    "phpstan/phpstan": {
+        "version": "1.4.5"
+    },
+    "phpstan/phpstan-symfony": {
+        "version": "1.1.4"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },

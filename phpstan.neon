@@ -1,0 +1,10 @@
+includes:
+    - phpstan-baseline.neon
+    - vendor/phpstan/phpstan-symfony/extension.neon
+
+parameters:
+    level: 8
+    checkExplicitMixed: true
+
+    paths:
+        - src/

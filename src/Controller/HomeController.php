@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Composer\Pcre\Preg;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,9 +19,14 @@ class HomeController extends AbstractController
     public function index(string $projectDir): Response
     {
         $logos = glob($projectDir.'/web/img/logo-composer-transparent*.png');
+        if (false === $logos) {
+            throw new \RuntimeException('Logos not found');
+        }
         $logo = basename($logos[array_rand($logos)]);
 
-        $versions = json_decode(file_get_contents($projectDir.'/web/versions'), true);
+        $versionData = file_get_contents($projectDir.'/web/versions');
+        assert(is_string($versionData));
+        $versions = json_decode($versionData, true);
 
         $latestStable = $versions['stable'][0]['version'];
         $latestPreview = $versions['preview'][0]['version'];
@@ -43,12 +49,18 @@ class HomeController extends AbstractController
     {
         $versions = array();
         foreach (glob($projectDir.'/web/download/*', GLOB_ONLYDIR) as $version) {
-            $versions[basename($version)] = ['date' => new \DateTime('@'.filemtime($version.'/composer.phar')), 'sha256sum' => preg_replace('{^(\S+).*}', '$1', file_get_contents($version.'/composer.phar.sha256sum'))];
+            $sha256sum = file_get_contents($version.'/composer.phar.sha256sum');
+            assert(is_string($sha256sum));
+            $versions[basename($version)] = [
+                'date' => new \DateTime('@'.filemtime($version.'/composer.phar')),
+                'sha256sum' => Preg::replace('{^(\S+).*}', '$1', $sha256sum),
+            ];
         }
 
         uksort($versions, 'version_compare');
         $versions = array_reverse($versions);
 
+        $latestStable = '?';
         foreach ($versions as $version => $versionMeta) {
             if (strpos($version, '-') === false) {
                 $latestStable = $version;
@@ -60,7 +72,7 @@ class HomeController extends AbstractController
             'page' => 'download',
             'versions' => $versions,
             'latestStable' => $latestStable,
-            'windows' => false !== strpos($req->headers->get('User-Agent'), 'Windows'),
+            'windows' => str_contains($req->headers->get('User-Agent', ''), 'Windows'),
         );
 
         return $this->render('download.html.twig', $data);
@@ -78,9 +90,9 @@ class HomeController extends AbstractController
      * @Route("/composer-1.phar", name="download_1x_bc")
      * @Route("/composer-2.phar", name="download_2x_bc")
      */
-    public function downloadVersion(string $projectDir, Request $req): Response
+    public function downloadVersion(string $projectDir, string $_route): Response
     {
-        $channel = str_replace(array('download_', '_bc'), '', $req->attributes->get('_route'));
+        $channel = str_replace(array('download_', '_bc'), '', $_route);
         $path = $this->getVersionInfo($projectDir, $channel)['path'];
 
         return new BinaryFileResponse($projectDir.'/web'.$path, 200, [], false, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
@@ -98,9 +110,9 @@ class HomeController extends AbstractController
      * @Route("/composer-1.phar.sha256", name="download_sha256_1x_bc")
      * @Route("/composer-2.phar.sha256", name="download_sha256_2x_bc")
      */
-    public function downloadSha256(string $projectDir, Request $req): Response
+    public function downloadSha256(string $projectDir, string $_route): Response
     {
-        $channel = str_replace(array('download_sha256_', '_bc'), '', $req->attributes->get('_route'));
+        $channel = str_replace(array('download_sha256_', '_bc'), '', $_route);
 
         if ($channel === 'snapshot') {
             $file = $projectDir . '/web/composer.phar.sha256sum';
@@ -110,6 +122,7 @@ class HomeController extends AbstractController
         }
 
         $content = file_get_contents($file);
+        assert(is_string($content));
 
         // only return checksum without the filename
         return new Response(substr($content, 0, strpos($content, ' ')), 200, [
@@ -129,12 +142,12 @@ class HomeController extends AbstractController
      * @Route("/composer-1.phar.sha256sum", name="download_sha256sum_1x_bc")
      * @Route("/composer-2.phar.sha256sum", name="download_sha256sum_2x_bc")
      */
-    public function downloadSha256Sum(string $projectDir, Request $req): Response
+    public function downloadSha256Sum(string $projectDir, string $_route): Response
     {
-        $channel = str_replace('download_sha256sum_', '', $req->attributes->get('_route'));
+        $channel = str_replace('download_sha256sum_', '', $_route);
         $path = $this->getVersionInfo($projectDir, $channel)['path'];
 
-        return new Response(file_get_contents($projectDir.'/web'.$path.'.sha256sum'), 200, [
+        return new BinaryFileResponse($projectDir.'/web'.$path.'.sha256sum', 200, [
             'Content-Type' => 'text/plain',
         ]);
     }
@@ -146,9 +159,9 @@ class HomeController extends AbstractController
      * @Route("/download/latest-2.2.x/composer.phar.asc", name="download_asc_2.2_lts")
      * @Route("/download/{version}/composer.phar.asc", name="download_asc_specific")
      */
-    public function downloadPGPSignature(string $projectDir, Request $req, string $version = null): Response
+    public function downloadPGPSignature(string $projectDir, string $_route, string $version = null): Response
     {
-        $channel = str_replace('download_asc_', '', $req->attributes->get('_route'));
+        $channel = str_replace('download_asc_', '', $_route);
         if ($channel !== 'specific') {
             $version = $this->getVersionInfo($projectDir, $channel)['version'];
         }
@@ -171,18 +184,23 @@ class HomeController extends AbstractController
      */
     public function schema(string $docDir): Response
     {
-        return new Response(file_get_contents($docDir.'/../res/composer-schema.json'), 200, [
-            'content-type' => 'application/json',
+        return new BinaryFileResponse($docDir.'/../res/composer-schema.json', 200, [
+            'Content-Type' => 'application/json',
             'Access-Control-Allow-Origin' => '*',
             'Access-Control-Allow-Methods' => 'GET',
             'Access-Control-Allow-Headers' => 'X-Requested-With,If-Modified-Since',
         ]);
     }
 
+    /**
+     * @return array{path: string, version: string, min-php: int}
+     */
     private function getVersionInfo(string $projectDir, string $channel): array
     {
-        $channel = preg_replace('{^(\d+)x$}', '$1', $channel);
-        $versions = json_decode(file_get_contents($projectDir.'/web/versions'), true);
+        $channel = Preg::replace('{^(\d+)x$}', '$1', $channel);
+        $versions = file_get_contents($projectDir.'/web/versions');
+        assert(is_string($versions));
+        $versions = json_decode($versions, true);
 
         if (str_ends_with($channel, 'lts')) {
             list($prefix) = explode('_', $channel);
