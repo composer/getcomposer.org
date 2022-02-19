@@ -83,6 +83,10 @@ class DocsController extends AbstractController
                 return new RedirectResponse('/doc/articles/authentication-for-private-packages.md#http-basic', 301);
             }
 
+            if ($page === 'faqs/why-can\'t-composer-load-repositories-recursively.md') {
+                return new RedirectResponse('/doc/faqs/why-cant-composer-load-repositories-recursively.md', 301);
+            }
+
             throw $this->createNotFoundException('Requested page was not found.');
         }
 
