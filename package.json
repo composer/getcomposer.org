@@ -3,7 +3,7 @@
     "dependencies": {
         "@docsearch/js": "^3.0.0-alpha.41",
         "plausible-tracker": "^0.3",
-        "prismjs": "^1.25.0"
+        "prismjs": "^1.27.0"
     },
     "devDependencies": {
         "esbuild": "^0.13.15"
