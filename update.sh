@@ -118,7 +118,7 @@ git checkout main -q --force
 lastStableVersion=$(ls "$root/$target/download" | grep -E '^2\.[0-9.]+$' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
 lastStableV1Version=$(ls "$root/$target/download" | grep -E '^1\.[0-9.]+$' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
 lastStableV22Version=$(ls "$root/$target/download" | grep -E '^2\.2\.[0-9.]+$' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
-lastV2Version=$(ls "$root/$target/download" | grep -E '^2\.' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
+lastV2Version=$(ls "$root/$target/download" | grep -E '^2\.([3-9]|[0-9]{2})' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
 lastSnapshot=$(head -c40 "$root/$target/version")
 if [ "$(ls "$root/$target/download" | grep -E '^2\.[0-9.]+$')" == "" ]
 then
