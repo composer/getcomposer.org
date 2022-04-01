@@ -135,7 +135,8 @@ fi
     "preview": [{"path": "/download/$lastV2Version/composer.phar", "version": "$lastV2Version", "min-php": 70205},{"path": "/download/$lastStableV22Version/composer.phar", "version": "$lastStableV22Version", "min-php": 50300}],
     "snapshot": [{"path": "/composer.phar", "version": "$lastSnapshot", "min-php": 70205},{"path": "/download/$lastStableV22Version/composer.phar", "version": "$lastStableV22Version", "min-php": 50300}],
     "1": [{"path": "/download/$lastStableV1Version/composer.phar", "version": "$lastStableV1Version", "min-php": 50300}],
-    "2": [{"path": "$lastStableV2VersionPath", "version": "$lastStableV2Version", "min-php": 70205},{"path": "/download/$lastStableV22Version/composer.phar", "version": "$lastStableV22Version", "min-php": 50300}]
+    "2": [{"path": "$lastStableV2VersionPath", "version": "$lastStableV2Version", "min-php": 70205},{"path": "/download/$lastStableV22Version/composer.phar", "version": "$lastStableV22Version", "min-php": 50300}],
+    "2.2": [{"path": "/download/$lastStableV22Version/composer.phar", "version": "$lastStableV22Version", "min-php": 50300}]
 }
 EOM
 } || true
