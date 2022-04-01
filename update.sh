@@ -129,6 +129,7 @@ else
     lastStableV2VersionPath="/download/$lastStableV2Version/composer.phar"
 fi
 {
+    # TODO add "eol":true to a version to mark eol releases and warn users
     read -r -d '' versions << EOM
 {
     "stable": [{"path": "/download/$lastStableVersion/composer.phar", "version": "$lastStableVersion", "min-php": 70205},{"path": "/download/$lastStableV22Version/composer.phar", "version": "$lastStableV22Version", "min-php": 50300}],
