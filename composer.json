@@ -5,7 +5,7 @@
         "php": ">=8.0",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "composer/composer": "2.1.*@dev",
+        "composer/composer": "2.2.*@dev",
         "composer/pcre": "^1.0",
         "erusev/parsedown": "^1.0",
         "phpstan/phpstan-symfony": "^1.1",
