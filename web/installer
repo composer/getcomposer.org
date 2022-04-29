@@ -50,13 +50,14 @@ function process($argv)
     // Determine ANSI output from --ansi and --no-ansi flags
     setUseAnsi($argv);
 
-    if (in_array('--help', $argv)) {
+    $help = in_array('--help', $argv);
+    $help = $help || in_array('-h', $argv);
+    if ($help) {
         displayHelp();
         exit(0);
     }
 
     $check      = in_array('--check', $argv);
-    $help       = in_array('--help', $argv);
     $force      = in_array('--force', $argv);
     $quiet      = in_array('--quiet', $argv);
     $channel    = 'stable';
