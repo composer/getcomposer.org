@@ -159,9 +159,6 @@
             "src/Kernel.php"
         ]
     },
-    "symfony/http-client-contracts": {
-        "version": "v2.2.0"
-    },
     "symfony/http-foundation": {
         "version": "v5.1.7"
     },
@@ -250,9 +247,6 @@
             "config/packages/twig.yaml",
             "templates/base.html.twig"
         ]
-    },
-    "symfony/twig-pack": {
-        "version": "v1.0.0"
     },
     "symfony/var-dumper": {
         "version": "v5.1.7"
