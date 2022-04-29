@@ -152,6 +152,10 @@ class DocsController extends AbstractController
             throw new \RuntimeException('Failed finding any h1/h2/h3/h4 node');
         }
         foreach ($nodes as $node) {
+            if (!$node instanceof \DOMElement) {
+                continue;
+            }
+
             // set id and add anchor link
             $id = $genId($node);
             $title = $getTitle($node);
