@@ -96,10 +96,15 @@ for version in `git tag`; do
         then
             echo "$version was found but not built, build should be ran manually to get the correct signature"
         else
+            if [[ "$version" == 2.2* ]]; then
+                php="php8.0"
+            else
+                php="php"
+            fi
             mkdir -p "$root/$target/download/$version/"
             git checkout $version -q && \
             $composer install -q --no-dev && \
-            php -d phar.readonly=0 $buildscript && \
+            $php -d phar.readonly=0 $buildscript && \
             touch --date="`git log -n1 --pretty=%ci $version`" "$buildphar" && \
             php "$root/bin/sign.php" "$buildphar" "$root/$privkeypath" "$privkeypwd" && \
             git reset --hard -q $version && \
