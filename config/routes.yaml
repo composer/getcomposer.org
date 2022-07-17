@@ -60,3 +60,10 @@ shortcut_allow_plugins:
     defaults:
         path: /doc/06-config.md#allow-plugins
         permanent: true
+
+shortcut_constraints:
+    path: /constraints
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        path: /doc/articles/versions.md#writing-version-constraints
+        permanent: true
