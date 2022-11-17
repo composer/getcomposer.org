@@ -22,14 +22,18 @@ class ChangelogController extends AbstractController
         if (!Preg::isMatchStrictGroups('{(?:^|\n)### \['.preg_quote($version).'\] (?P<date>.*)\n\n(?P<changelog>(?:^  \*.*\n)+)}mi', $changelog, $match)) {
             $resp = $client->request('GET', 'https://api.github.com/repos/composer/composer/releases/tags/' . $version);
             if ($resp->getStatusCode() >= 300) {
+                if ($resp->getHeaders(false)['x-ratelimit-remaining'][0] === '0') {
+                    return $this->redirect('https://github.com/composer/composer/releases/tag/' . $version);
+                }
                 throw $this->createNotFoundException('Requested page was not found.');
             }
 
             $data = json_decode($resp->getContent(false), true, flags: JSON_THROW_ON_ERROR);
-            if (!is_array($data) || !isset($data['body']) || !is_string($data['body'])) {
+            if (!is_array($data) || !isset($data['body'], $data['created_at']) || !is_string($data['body']) || !is_string($data['created_at'])) {
                 throw $this->createNotFoundException('Requested page was not found.');
             }
-            $match = ['changelog' => $data['body']];
+
+            $match = ['changelog' => $data['body'], 'date' => substr($data['created_at'], 0, 10)];
         }
 
         $changelog = $parsedown->text($match['changelog']);
