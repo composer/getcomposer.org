@@ -36,8 +36,8 @@ class DocsController extends AbstractController
                 $metadata = null;
                 $contents = file_get_contents($file->getPathname());
                 assert(is_string($contents));
-                if (Preg::isMatch('{^<!--(.*)-->}s', $contents, $match)) {
-                    Preg::matchAll('{^ *(?P<keyword>\w+): *(?P<value>.*)}m', $match[1], $matches);
+                if (Preg::isMatchStrictGroups('{^<!--(.*)-->}s', $contents, $match)) {
+                    Preg::matchAllStrictGroups('{^ *(?P<keyword>\w+): *(?P<value>.*)}m', $match[1], $matches);
                     $metadata = [];
                     foreach ($matches['keyword'] as $key => $keyword) {
                         $metadata[$keyword] = $matches['value'][$key];

@@ -6,20 +6,30 @@ use Composer\Pcre\Preg;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ChangelogController extends AbstractController
 {
     /**
      * @Route("/changelog/{version}", name="changelog")
      */
-    public function changelog(string $version, \Parsedown $parsedown, string $docDir): Response
+    public function changelog(string $version, \Parsedown $parsedown, string $docDir, HttpClientInterface $client): Response
     {
         $changelog = file_get_contents($docDir.'/../CHANGELOG.md');
         assert(is_string($changelog));
         $changelog = strtr($changelog, ["\r\n" => "\n"]);
 
-        if (!Preg::isMatch('{(?:^|\n)### \['.preg_quote($version).'\] (?P<date>.*)\n\n(?P<changelog>(?:^  \*.*\n)+)}mi', $changelog, $match)) {
-            throw $this->createNotFoundException('Requested page was not found.');
+        if (!Preg::isMatchStrictGroups('{(?:^|\n)### \['.preg_quote($version).'\] (?P<date>.*)\n\n(?P<changelog>(?:^  \*.*\n)+)}mi', $changelog, $match)) {
+            $resp = $client->request('GET', 'https://api.github.com/repos/composer/composer/releases/tags/' . $version);
+            if ($resp->getStatusCode() >= 300) {
+                throw $this->createNotFoundException('Requested page was not found.');
+            }
+
+            $data = json_decode($resp->getContent(false), true, flags: JSON_THROW_ON_ERROR);
+            if (!is_array($data) || !isset($data['body']) || !is_string($data['body'])) {
+                throw $this->createNotFoundException('Requested page was not found.');
+            }
+            $match = ['changelog' => $data['body']];
         }
 
         $changelog = $parsedown->text($match['changelog']);
