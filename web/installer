@@ -1194,7 +1194,7 @@ class Installer
             }
         }
 
-        if (file_exists($this->tmpFile)) {
+        if ($this->tmpFile !== null && file_exists($this->tmpFile)) {
             @unlink($this->tmpFile);
         }
     }
