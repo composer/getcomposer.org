@@ -202,6 +202,7 @@ class HomeController extends AbstractController
         $channel = Preg::replace('{^(\d+)x$}', '$1', $channel);
         $versions = file_get_contents($projectDir.'/web/versions');
         assert(is_string($versions));
+        /** @var array<string, array<int, array{path: string, version: string, min-php: int}>> $versions */
         $versions = json_decode($versions, true);
 
         if (str_ends_with($channel, 'lts')) {
