@@ -24,9 +24,7 @@ class HomeController extends AbstractController
         }
         $logo = basename($logos[array_rand($logos)]);
 
-        $versionData = file_get_contents($projectDir.'/web/versions');
-        assert(is_string($versionData));
-        $versions = json_decode($versionData, true);
+        $versions = $this->getVersionData($projectDir);
 
         $latestStable = $versions['stable'][0]['version'];
         $latestPreview = $versions['preview'][0]['version'];
@@ -48,7 +46,11 @@ class HomeController extends AbstractController
     public function download(string $projectDir, Request $req): Response
     {
         $versions = array();
-        foreach (glob($projectDir.'/web/download/*', GLOB_ONLYDIR) as $version) {
+        $paths = glob($projectDir.'/web/download/*', GLOB_ONLYDIR);
+        if ($paths === false) {
+            throw new \RuntimeException('Glob failed');
+        }
+        foreach ($paths as $version) {
             $sha256sum = file_get_contents($version.'/composer.phar.sha256sum');
             assert(is_string($sha256sum));
             $versions[basename($version)] = [
@@ -57,7 +59,7 @@ class HomeController extends AbstractController
             ];
         }
 
-        uksort($versions, 'version_compare');
+        uksort($versions, fn ($a, $b) => version_compare($a, $b));
         $versions = array_reverse($versions);
 
         $latestStable = '?';
@@ -125,7 +127,7 @@ class HomeController extends AbstractController
         assert(is_string($content));
 
         // only return checksum without the filename
-        return new Response(substr($content, 0, strpos($content, ' ')), 200, [
+        return new Response(substr($content, 0, (int) strpos($content, ' ')), 200, [
             'Content-Type' => 'text/plain',
         ]);
     }
@@ -200,10 +202,7 @@ class HomeController extends AbstractController
         $origChannel = $channel;
 
         $channel = Preg::replace('{^(\d+)x$}', '$1', $channel);
-        $versions = file_get_contents($projectDir.'/web/versions');
-        assert(is_string($versions));
-        /** @var array<string, array<int, array{path: string, version: string, min-php: int}>> $versions */
-        $versions = json_decode($versions, true);
+        $versions = $this->getVersionData($projectDir);
 
         if (str_ends_with($channel, 'lts')) {
             list($prefix) = explode('_', $channel);
@@ -221,5 +220,16 @@ class HomeController extends AbstractController
         }
 
         return $versions[$channel][0];
+    }
+
+    /**
+     * @return array<string, array<int, array{path: string, version: string, min-php: int}>>
+     */
+    private function getVersionData(string $projectDir): array
+    {
+        $versionData = file_get_contents($projectDir.'/web/versions');
+        assert(is_string($versionData));
+        /** @var array<string, array<int, array{path: string, version: string, min-php: int}>> */
+        return json_decode($versionData, true);
     }
 }
