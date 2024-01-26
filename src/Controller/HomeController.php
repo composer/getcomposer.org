@@ -197,6 +197,8 @@ class HomeController extends AbstractController
      */
     private function getVersionInfo(string $projectDir, string $channel): array
     {
+        $origChannel = $channel;
+
         $channel = Preg::replace('{^(\d+)x$}', '$1', $channel);
         $versions = file_get_contents($projectDir.'/web/versions');
         assert(is_string($versions));
@@ -210,7 +212,11 @@ class HomeController extends AbstractController
                 }
             }
 
-            throw new \LogicException('No lts version found with prefix '.$prefix);
+            throw new \LogicException('No lts version found with prefix '.$prefix.' (passed in as '.$origChannel.')');
+        }
+
+        if (!isset($versions[$channel])) {
+            throw new \LogicException('Unknown channel '.$channel.' (passed in as '.$origChannel.')');
         }
 
         return $versions[$channel][0];
