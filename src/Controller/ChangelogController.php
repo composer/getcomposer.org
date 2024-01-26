@@ -10,9 +10,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ChangelogController extends AbstractController
 {
-    /**
-     * @Route("/changelog/{version}", name="changelog")
-     */
+    #[Route("/changelog/{version}", name: "changelog")]
     public function changelog(string $version, \Parsedown $parsedown, string $docDir, HttpClientInterface $client): Response
     {
         $changelog = file_get_contents($docDir.'/../CHANGELOG.md');
@@ -49,9 +47,7 @@ class ChangelogController extends AbstractController
         ));
     }
 
-    /**
-     * @Route("/upgrade/{file}", name="upgrade")
-     */
+    #[Route("/upgrade/{file}", name: "upgrade")]
     public function upgrade(string $file, \Parsedown $parsedown, string $docDir): Response
     {
         $filename = $docDir.'/../'.$file;

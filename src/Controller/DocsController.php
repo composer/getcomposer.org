@@ -12,9 +12,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class DocsController extends AbstractController
 {
-    /**
-     * @Route("/doc/", name="docs")
-     */
+    #[Route("/doc/", name: "docs")]
     public function index(string $docDir): Response
     {
         $scan = function ($dir, $prefix = '') {
@@ -67,9 +65,7 @@ class DocsController extends AbstractController
         ));
     }
 
-    /**
-     * @Route("/doc/{page}", name="docs.view", requirements={"page":"[a-z0-9/\'-]+\.md"})
-     */
+    #[Route("/doc/{page}", name: "docs.view", requirements: ["page" => "[a-z0-9/\'-]+\.md"])]
     public function viewPage(string $page, string $docDir, \Parsedown $parsedown): Response
     {
         $filename = $docDir.'/'.$page;

@@ -1,0 +1,7 @@
+controllers:
+    resource: ../../src/Controller/
+    type: attributes
+
+kernel:
+    resource: App\Kernel
+    type: attribute

@@ -13,9 +13,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @Route("/", name="home")
-     */
+    #[Route("/", name: "home")]
     public function index(string $projectDir): Response
     {
         $logos = glob($projectDir.'/web/img/logo-composer-transparent*.png');
@@ -40,9 +38,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/download/", name="download")
-     */
+    #[Route("/download/", name: "download")]
     public function download(string $projectDir, Request $req): Response
     {
         $versions = array();
@@ -80,18 +76,16 @@ class HomeController extends AbstractController
         return $this->render('download.html.twig', $data);
     }
 
-    /**
-     * @Route("/composer.phar", name="download_snapshot")
-     * @Route("/download/latest-stable/composer.phar", name="download_stable")
-     * @Route("/download/latest-preview/composer.phar", name="download_preview")
-     * @Route("/download/latest-1.x/composer.phar", name="download_1x")
-     * @Route("/download/latest-2.x/composer.phar", name="download_2x")
-     * @Route("/download/latest-2.2.x/composer.phar", name="download_2.2_lts")
-     * @Route("/composer-stable.phar", name="download_stable_bc")
-     * @Route("/composer-preview.phar", name="download_preview_bc")
-     * @Route("/composer-1.phar", name="download_1x_bc")
-     * @Route("/composer-2.phar", name="download_2x_bc")
-     */
+    #[Route("/composer.phar", name: "download_snapshot")]
+    #[Route("/download/latest-stable/composer.phar", name: "download_stable")]
+    #[Route("/download/latest-preview/composer.phar", name: "download_preview")]
+    #[Route("/download/latest-1.x/composer.phar", name: "download_1x")]
+    #[Route("/download/latest-2.x/composer.phar", name: "download_2x")]
+    #[Route("/download/latest-2.2.x/composer.phar", name: "download_2.2_lts")]
+    #[Route("/composer-stable.phar", name: "download_stable_bc")]
+    #[Route("/composer-preview.phar", name: "download_preview_bc")]
+    #[Route("/composer-1.phar", name: "download_1x_bc")]
+    #[Route("/composer-2.phar", name: "download_2x_bc")]
     public function downloadVersion(string $projectDir, string $_route): Response
     {
         $channel = str_replace(array('download_', '_bc'), '', $_route);
@@ -100,18 +94,16 @@ class HomeController extends AbstractController
         return new BinaryFileResponse($projectDir.'/web'.$path, 200, [], false, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
     }
 
-    /**
-     * @Route("/composer.phar.sha256", name="download_sha256_snapshot")
-     * @Route("/download/latest-stable/composer.phar.sha256", name="download_sha256_stable")
-     * @Route("/download/latest-preview/composer.phar.sha256", name="download_sha256_preview")
-     * @Route("/download/latest-1.x/composer.phar.sha256", name="download_sha256_1x")
-     * @Route("/download/latest-2.x/composer.phar.sha256", name="download_sha256_2x")
-     * @Route("/download/latest-2.2.x/composer.phar.sha256", name="download_sha256_2.2_lts")
-     * @Route("/composer-stable.phar.sha256", name="download_sha256_stable_bc")
-     * @Route("/composer-preview.phar.sha256", name="download_sha256_preview_bc")
-     * @Route("/composer-1.phar.sha256", name="download_sha256_1x_bc")
-     * @Route("/composer-2.phar.sha256", name="download_sha256_2x_bc")
-     */
+    #[Route("/composer.phar.sha256", name: "download_sha256_snapshot")]
+    #[Route("/download/latest-stable/composer.phar.sha256", name: "download_sha256_stable")]
+    #[Route("/download/latest-preview/composer.phar.sha256", name: "download_sha256_preview")]
+    #[Route("/download/latest-1.x/composer.phar.sha256", name: "download_sha256_1x")]
+    #[Route("/download/latest-2.x/composer.phar.sha256", name: "download_sha256_2x")]
+    #[Route("/download/latest-2.2.x/composer.phar.sha256", name: "download_sha256_2.2_lts")]
+    #[Route("/composer-stable.phar.sha256", name: "download_sha256_stable_bc")]
+    #[Route("/composer-preview.phar.sha256", name: "download_sha256_preview_bc")]
+    #[Route("/composer-1.phar.sha256", name: "download_sha256_1x_bc")]
+    #[Route("/composer-2.phar.sha256", name: "download_sha256_2x_bc")]
     public function downloadSha256(string $projectDir, string $_route): Response
     {
         $channel = str_replace(array('download_sha256_', '_bc'), '', $_route);
@@ -132,18 +124,16 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/composer.phar.sha256sum", name="download_sha256sum_snapshot")
-     * @Route("/download/latest-stable/composer.phar.sha256sum", name="download_sha256sum_stable")
-     * @Route("/download/latest-preview/composer.phar.sha256sum", name="download_sha256sum_preview")
-     * @Route("/download/latest-1.x/composer.phar.sha256sum", name="download_sha256sum_1x")
-     * @Route("/download/latest-2.x/composer.phar.sha256sum", name="download_sha256sum_2x")
-     * @Route("/download/latest-2.2.x/composer.phar.sha256sum", name="download_sha256sum_2.2_lts")
-     * @Route("/composer-stable.phar.sha256sum", name="download_sha256sum_stable_bc")
-     * @Route("/composer-preview.phar.sha256sum", name="download_sha256sum_preview_bc")
-     * @Route("/composer-1.phar.sha256sum", name="download_sha256sum_1x_bc")
-     * @Route("/composer-2.phar.sha256sum", name="download_sha256sum_2x_bc")
-     */
+    #[Route("/composer.phar.sha256sum", name: "download_sha256sum_snapshot")]
+    #[Route("/download/latest-stable/composer.phar.sha256sum", name: "download_sha256sum_stable")]
+    #[Route("/download/latest-preview/composer.phar.sha256sum", name: "download_sha256sum_preview")]
+    #[Route("/download/latest-1.x/composer.phar.sha256sum", name: "download_sha256sum_1x")]
+    #[Route("/download/latest-2.x/composer.phar.sha256sum", name: "download_sha256sum_2x")]
+    #[Route("/download/latest-2.2.x/composer.phar.sha256sum", name: "download_sha256sum_2.2_lts")]
+    #[Route("/composer-stable.phar.sha256sum", name: "download_sha256sum_stable_bc")]
+    #[Route("/composer-preview.phar.sha256sum", name: "download_sha256sum_preview_bc")]
+    #[Route("/composer-1.phar.sha256sum", name: "download_sha256sum_1x_bc")]
+    #[Route("/composer-2.phar.sha256sum", name: "download_sha256sum_2x_bc")]
     public function downloadSha256Sum(string $projectDir, string $_route): Response
     {
         $channel = str_replace('download_sha256sum_', '', $_route);
@@ -154,13 +144,11 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/download/latest-stable/composer.phar.asc", name="download_asc_stable")
-     * @Route("/download/latest-preview/composer.phar.asc", name="download_asc_preview")
-     * @Route("/download/latest-2.x/composer.phar.asc", name="download_asc_2x")
-     * @Route("/download/latest-2.2.x/composer.phar.asc", name="download_asc_2.2_lts")
-     * @Route("/download/{version}/composer.phar.asc", name="download_asc_specific")
-     */
+    #[Route("/download/latest-stable/composer.phar.asc", name: "download_asc_stable")]
+    #[Route("/download/latest-preview/composer.phar.asc", name: "download_asc_preview")]
+    #[Route("/download/latest-2.x/composer.phar.asc", name: "download_asc_2x")]
+    #[Route("/download/latest-2.2.x/composer.phar.asc", name: "download_asc_2.2_lts")]
+    #[Route("/download/{version}/composer.phar.asc", name: "download_asc_specific")]
     public function downloadPGPSignature(string $projectDir, string $_route, string $version = null): Response
     {
         $channel = str_replace('download_asc_', '', $_route);
@@ -171,19 +159,15 @@ class HomeController extends AbstractController
         return new RedirectResponse('https://github.com/composer/composer/releases/download/'.$version.'/composer.phar.asc');
     }
 
-    /**
-     * @Route("/download/{version}/composer.phar", name="download_version")
-     * @Route("/download/{version}/composer.phar.sha256sum", name="download_version_sha256sum")
-     * @Route("/download/{version}/composer.phar.sha256", name="download_version_sha256")
-     */
+    #[Route("/download/{version}/composer.phar", name: "download_version")]
+    #[Route("/download/{version}/composer.phar.sha256sum", name: "download_version_sha256sum")]
+    #[Route("/download/{version}/composer.phar.sha256", name: "download_version_sha256")]
     public function downloadNotFound(): Response
     {
         return new Response('Version Not Found', 404);
     }
 
-    /**
-     * @Route("/schema.json", name="schema")
-     */
+    #[Route("/schema.json", name: "schema")]
     public function schema(string $docDir): Response
     {
         return new BinaryFileResponse($docDir.'/../res/composer-schema.json', 200, [
