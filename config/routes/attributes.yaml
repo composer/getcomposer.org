@@ -1,6 +1,6 @@
 controllers:
     resource: ../../src/Controller/
-    type: attributes
+    type: attribute
 
 kernel:
     resource: App\Kernel
