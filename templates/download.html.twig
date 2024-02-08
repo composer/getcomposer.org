@@ -25,7 +25,7 @@
         To automate the installation, use <a href="/doc/faqs/how-to-install-composer-programmatically.md" title="See the instructions on how to install Composer programmatically" aria-label="See the instructions on how to install Composer programmatically">the guide on installing Composer programmatically</a>.
     </p>
     <pre class="installer">php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-php -r "if (hash_file('sha384', 'composer-setup.php') === 'e21205b207c3ff031906575712edab6f13eb0b361f2085f1f1237b7126d785e826a450292b6cfd1d64d92e6563bbde02') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+php -r "if (hash_file('sha384', 'composer-setup.php') === '534b38ba7a0fb38161b76e8e8b1324ab24d7b7a13e5b8efc6ccd4ade79706bc932257cd69f4dfcc69413c975ff088c2f') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
 php composer-setup.php
 php -r "unlink('composer-setup.php');"</pre>
 
