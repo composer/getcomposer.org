@@ -5,6 +5,27 @@ ini_set('error_reporting', -1);
 ini_set('display_errors', 1);
 ini_set('date.timezone', 'UTC');
 
+exec('php -l '.__DIR__.'/../web/installer 2>/dev/null', $output, $result);
+if ($result !== 0) {
+    throw new \RuntimeException('Installer lint failed: '.implode("\n", $output));
+}
+unset($output);
+echo 'Installer lint ✅'.PHP_EOL;
+
+if (file_exists('composer.phar.test')) {
+    unlink('composer.phar.test');
+}
+exec('php '.__DIR__.'/../web/installer -- --filename composer.phar.test', $output, $result);
+if ($result !== 0) {
+    throw new \RuntimeException('Installer test failed: '.implode("\n", $output));
+}
+if (!file_exists('composer.phar.test')) {
+    throw new \RuntimeException('Installer somehow failed, composer.phar.test cannot be found'.PHP_EOL.implode("\n", $output));
+}
+unlink('composer.phar.test');
+unset($output);
+echo 'Installer test ✅'.PHP_EOL;
+
 if (!file_exists(__DIR__.'/../../composer.github.io/installer.sig')) {
     throw new \RuntimeException('Make sure that a clone of https://github.com/composer/composer.github.io exists as '.dirname(__DIR__).'/composer.github.io');
 }
