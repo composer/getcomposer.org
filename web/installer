@@ -1338,7 +1338,7 @@ class NoProxyPattern
 class HttpClient {
 
     /** @var null|string */
-    private static self::$caPath;
+    private static $caPath;
 
     private $options = array('http' => array());
     private $disableTls = false;
