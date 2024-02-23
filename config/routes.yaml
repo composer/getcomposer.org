@@ -40,6 +40,13 @@ shortcut_dep_on_root:
         path: /doc/articles/troubleshooting.md#dependencies-on-the-root-package
         permanent: true
 
+shortcut_root_version:
+    path: /root-version
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        path: /doc/articles/troubleshooting.md#root-package-version-detection
+        permanent: true
+
 shortcut_install:
     path: /install
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
