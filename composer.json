@@ -2,23 +2,23 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.3",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "composer/composer": "^2.3",
         "composer/pcre": "^3.0",
         "erusev/parsedown": "^1.0",
         "phpstan/phpstan-symfony": "^1.1",
-        "symfony/console": "^6",
-        "symfony/dotenv": "^6",
+        "symfony/console": "^7",
+        "symfony/dotenv": "^7",
         "symfony/flex": "^2",
-        "symfony/framework-bundle": "^6",
-        "symfony/http-client": "^6",
-        "symfony/mime": "^6",
+        "symfony/framework-bundle": "^7",
+        "symfony/http-client": "^7",
+        "symfony/mime": "^7",
         "symfony/monolog-bundle": "^3.7",
-        "symfony/runtime": "^6",
-        "symfony/twig-bundle": "^6",
-        "symfony/yaml": "^6",
+        "symfony/runtime": "^7",
+        "symfony/twig-bundle": "^7",
+        "symfony/yaml": "^7",
         "twig/extra-bundle": "^3",
         "twig/twig": "^3"
     },
@@ -34,7 +34,7 @@
         },
         "sort-packages": true,
         "platform": {
-            "php": "8.1.27"
+            "php": "8.3.3"
         },
         "allow-plugins": {
             "symfony/flex": true,
