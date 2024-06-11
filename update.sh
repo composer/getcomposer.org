@@ -74,6 +74,7 @@ if [ "dev" == "$1" ]
 then
     if [ ! -f "$root/$target/$version" -o "$version" != "`cat \"$root/$target/version\"`" ]
     then
+        rm -rf vendor && \
         $composer install -q --no-dev && \
         php -d phar.readonly=0 $buildscript && \
         touch --date="`git log -n1 --pretty=%ci HEAD`" "$buildphar" && \
@@ -103,6 +104,7 @@ for version in `git tag`; do
             fi
             mkdir -p "$root/$target/download/$version/"
             git checkout $version -q && \
+            rm -rf vendor && \
             $composer install -q --no-dev && \
             $php -d phar.readonly=0 $buildscript && \
             touch --date="`git log -n1 --pretty=%ci $version`" "$buildphar" && \
