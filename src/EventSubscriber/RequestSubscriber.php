@@ -39,7 +39,7 @@ class RequestSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $event->setResponse(new RedirectResponse('https://'.substr($req->getUri(), 7)));
+        $event->setResponse(new RedirectResponse('https://'.substr($req->getUri(), 7), RedirectResponse::HTTP_MOVED_PERMANENTLY));
     }
 
     public function setHsts(ResponseEvent $event): void
@@ -51,7 +51,7 @@ class RequestSubscriber implements EventSubscriberInterface
         $resp = $event->getResponse();
 
         if (!$resp->headers->has('Strict-Transport-Security')) {
-            $resp->headers->set('Strict-Transport-Security', 'max-age=31104000');
+            $resp->headers->set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
         }
     }
 }
