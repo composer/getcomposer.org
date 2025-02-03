@@ -47,6 +47,13 @@ shortcut_root_version:
         path: /doc/articles/troubleshooting.md#root-package-version-detection
         permanent: true
 
+shortcut_ssl_local_cert:
+    path: /local-issuer
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        path: /doc/articles/troubleshooting.md#ssl-certificate-problem-unable-to-get-local-issuer-certificate
+        permanent: true
+
 shortcut_install:
     path: /install
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
