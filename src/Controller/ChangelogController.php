@@ -17,7 +17,7 @@ class ChangelogController extends AbstractController
         assert(is_string($changelog));
         $changelog = strtr($changelog, ["\r\n" => "\n"]);
 
-        if (!Preg::isMatchStrictGroups('{(?:^|\n)### \['.preg_quote($version).'\] (?P<date>.*)\n\n(?P<changelog>(?:^  (?:\*|  -).*\n)+)}mi', $changelog, $match)) {
+        if (!Preg::isMatchStrictGroups('{(?:^|\n)### \['.preg_quote($version).'\] (?P<date>.*)\n\n(?P<changelog>(?:^  (?:\*|  -).*\n|^\n|^      .*\n)+)}mi', $changelog, $match)) {
             $resp = $client->request('GET', 'https://api.github.com/repos/composer/composer/releases/tags/' . $version);
             if ($resp->getStatusCode() >= 300) {
                 if ($resp->getHeaders(false)['x-ratelimit-remaining'][0] === '0') {
