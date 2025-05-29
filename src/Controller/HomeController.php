@@ -212,7 +212,7 @@ class HomeController extends AbstractController
     private function getVersionData(string $projectDir): array
     {
         $versionData = file_get_contents($projectDir.'/web/versions');
-        assert(is_string($versionData));
+        assert(is_string($versionData), new \RuntimeException("Version file not found in $projectDir/web"));
         /** @var array<string, array<int, array{path: string, version: string, min-php: int}>> */
         return json_decode($versionData, true);
     }
