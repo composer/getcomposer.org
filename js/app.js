@@ -42,8 +42,8 @@ if (document.getElementById('docsearch')) {
           return {
             ...searchClient,
             search: (spec) => {
-                let f = spec[0].query;
-                spec[0].query = processQuery(spec[0].query);
+                let f = spec.requests[0].query;
+                spec.requests[0].query = processQuery(spec.requests[0].query);
 
                 return searchClient.search(spec);
             }

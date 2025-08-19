@@ -249,6 +249,20 @@ h1 .latest {
   font-size: 0.85em;
 }
 
+.private-packagist-banner {
+  float: right;
+  background: #f4f2f0;
+}
+.private-packagist-banner img {
+  width: 240px;
+}
+.private-packagist-banner span {
+  display: block;
+  padding: 0 12px 12px 12px;
+  margin-top: -3px;
+  color: black;
+}
+
 /* ==|== non-semantic helper classes ======================================== */
 .ir {
   display: block;

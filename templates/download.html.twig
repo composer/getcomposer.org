@@ -1,6 +1,16 @@
 {% extends "layout.html.twig" %}
 
 {% block content %}
+    <div class="private-packagist-banner">
+        <a href="https://packagist.com"
+           title="Go to packagist.com (external link)"
+           aria-label="Go to packagist.com (external link)">
+            <img src="{{ app.request.basePath }}/img/private-packagist-logo-horizontal-2025.svg"
+                 alt="Private Packagist logo, a paper elephant and the text reads: Private Packagist"/>
+            <span>Secure &amp; reliable package repository</span>
+        </a>
+    </div>
+
     <h1 role="heading">Download Composer <span class="latest">Latest: v{{ latestStable }}</span></h1>
 
     {% if windows %}
