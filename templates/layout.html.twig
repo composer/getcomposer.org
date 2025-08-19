@@ -14,28 +14,25 @@
         <div id="container">
             <header>
                 {% block header %}
-                    {% apply spaceless %}
-                        <a href="{{ path('home') }}"
-                           title="Go back to the homepage"
-                           aria-label="Go back to the homepage">🏠 Home</a>
-                        <a class="{{ page == 'getting-started' ? 'active':'' }}"
-                           href="{{ path('docs.view', {page: '00-intro.md'}) }}"
-                           title="Getting started with Composer"
-                           aria-label="Getting started with Composer">Getting Started</a>
-                        <a class="{{ page == 'download' ? 'active':'' }}"
-                           href="{{ path('download') }}"
-                           title="Go the the Download page to see how to download Composer"
-                           aria-label="Go the the Download page to see how to download Composer">Download</a>
-                        <a class="{{ page == 'docs' ? 'active':'' }}"
-                           href="{{ path('docs') }}"
-                           title="View the Composer documentation"
-                           aria-label="View the Composer documentation">Documentation</a>
-                        <a class="last"
-                           href="https://packagist.org/"
-                           title="Browse Composer packages on packagist.org (external link to Packagist.org)"
-                           aria-label="Browse Composer packages on packagist.org (external link to Packagist.org)">Browse
-                            Packages</a>
-                    {% endapply %}
+                    <a href="{{ path('home') }}"
+                       title="Go back to the homepage"
+                       aria-label="Go back to the homepage"><img src="{{ app.request.basePath }}/img/logo-composer-transparent.png" style="width:30px; margin-right: 10px" />Home</a>{#--#}
+                    <a class="{{ page == 'getting-started' ? 'active':'' }}"
+                       href="{{ path('docs.view', {page: '00-intro.md'}) }}"
+                       title="Getting started with Composer"
+                       aria-label="Getting started with Composer">Getting Started</a>{#--#}
+                    <a class="{{ page == 'download' ? 'active':'' }}"
+                       href="{{ path('download') }}"
+                       title="Go the the Download page to see how to download Composer"
+                       aria-label="Go the the Download page to see how to download Composer">Download</a>{#--#}
+                    <a class="{{ page == 'docs' ? 'active':'' }}"
+                       href="{{ path('docs') }}"
+                       title="View the Composer documentation"
+                       aria-label="View the Composer documentation">Documentation</a>{#--#}
+                    <a class="last"
+                       href="https://packagist.org/"
+                       title="Browse Composer packages on packagist.org (external link to Packagist.org)"
+                       aria-label="Browse Composer packages on packagist.org (external link to Packagist.org)">Browse Packages</a>{#--#}
                 {% endblock %}
             </header>
             <main role="main">
