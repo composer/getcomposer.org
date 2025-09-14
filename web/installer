@@ -1179,14 +1179,19 @@ class Installer
      */
     protected function cleanUp($result)
     {
+        if ($this->quiet) {
+            // Ensure output buffers are emptied
+            $errors = explode(PHP_EOL, (string) ob_get_clean());
+        }
+
         if (!$result) {
             // Output buffered errors
             if ($this->quiet) {
-                $this->outputErrors();
+                $this->outputErrors($errors);
             }
             // Clean up stuff we created
             $this->uninstall();
-        } elseif ($this->tmpCafile) {
+        } elseif ($this->tmpCafile !== null) {
             @unlink($this->tmpCafile);
         }
     }
@@ -1195,9 +1200,8 @@ class Installer
      * Outputs unique errors when in quiet mode
      *
      */
-    protected function outputErrors()
+    protected function outputErrors(array $errors)
     {
-        $errors = explode(PHP_EOL, ob_get_clean());
         $shown = array();
 
         foreach ($errors as $error) {
