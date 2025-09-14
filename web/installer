@@ -297,11 +297,7 @@ function getPlatformIssues(&$errors, &$warnings, $install)
     $errors = array();
     $warnings = array();
 
-    if ($iniPath = php_ini_loaded_file()) {
-        $iniMessage = PHP_EOL.'The php.ini used by your command-line PHP is: ' . $iniPath;
-    } else {
-        $iniMessage = PHP_EOL.'A php.ini file does not exist. You will have to create one.';
-    }
+    $iniMessage = PHP_EOL.getIniMessage();
     $iniMessage .= PHP_EOL.'If you can not modify the ini file, you can also run `php -d option=value` to modify ini values on the fly. You can use -d multiple times.';
 
     if (ini_get('detect_unicode')) {
@@ -464,7 +460,7 @@ function getPlatformIssues(&$errors, &$warnings, $install)
 
     ob_start();
     phpinfo(INFO_GENERAL);
-    $phpinfo = ob_get_clean();
+    $phpinfo = (string) ob_get_clean();
     if (preg_match('{Configure Command(?: *</td><td class="v">| *=> *)(.*?)(?:</td>|$)}m', $phpinfo, $match)) {
         $configure = $match[1];
 
@@ -628,7 +624,7 @@ function getUserDir()
 function useXdg()
 {
     foreach (array_keys($_SERVER) as $key) {
-        if (strpos($key, 'XDG_') === 0) {
+        if (strpos((string) $key, 'XDG_') === 0) {
             return true;
         }
     }
@@ -653,6 +649,38 @@ function validateCaFile($contents)
     }
 
     return (bool) openssl_x509_parse($contents);
+}
+
+/**
+ * Returns php.ini location information
+ *
+ * @return string
+ */
+function getIniMessage()
+{
+    $paths = array((string) php_ini_loaded_file());
+    $scanned = php_ini_scanned_files();
+
+    if ($scanned !== false) {
+        $paths = array_merge($paths, array_map('trim', explode(',', $scanned)));
+    }
+
+    // We will have at least one value, which may be empty
+    if ($paths[0] === '') {
+        array_shift($paths);
+    }
+
+    $ini = array_shift($paths);
+
+    if ($ini === null) {
+        return 'A php.ini file does not exist. You will have to create one.';
+    }
+
+    if (count($paths) > 1) {
+        return 'Your command-line PHP is using multiple ini files. Run `php --ini` to show them.';
+    }
+
+    return 'The php.ini used by your command-line PHP is: '.$ini;
 }
 
 class Installer
