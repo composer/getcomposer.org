@@ -297,11 +297,7 @@ function getPlatformIssues(&$errors, &$warnings, $install)
     $errors = array();
     $warnings = array();
 
-    if ($iniPath = php_ini_loaded_file()) {
-        $iniMessage = PHP_EOL.'The php.ini used by your command-line PHP is: ' . $iniPath;
-    } else {
-        $iniMessage = PHP_EOL.'A php.ini file does not exist. You will have to create one.';
-    }
+    $iniMessage = PHP_EOL.getIniMessage();
     $iniMessage .= PHP_EOL.'If you can not modify the ini file, you can also run `php -d option=value` to modify ini values on the fly. You can use -d multiple times.';
 
     if (ini_get('detect_unicode')) {
@@ -464,7 +460,7 @@ function getPlatformIssues(&$errors, &$warnings, $install)
 
     ob_start();
     phpinfo(INFO_GENERAL);
-    $phpinfo = ob_get_clean();
+    $phpinfo = (string) ob_get_clean();
     if (preg_match('{Configure Command(?: *</td><td class="v">| *=> *)(.*?)(?:</td>|$)}m', $phpinfo, $match)) {
         $configure = $match[1];
 
@@ -628,7 +624,7 @@ function getUserDir()
 function useXdg()
 {
     foreach (array_keys($_SERVER) as $key) {
-        if (strpos($key, 'XDG_') === 0) {
+        if (strpos((string) $key, 'XDG_') === 0) {
             return true;
         }
     }
@@ -653,6 +649,38 @@ function validateCaFile($contents)
     }
 
     return (bool) openssl_x509_parse($contents);
+}
+
+/**
+ * Returns php.ini location information
+ *
+ * @return string
+ */
+function getIniMessage()
+{
+    $paths = array((string) php_ini_loaded_file());
+    $scanned = php_ini_scanned_files();
+
+    if ($scanned !== false) {
+        $paths = array_merge($paths, array_map('trim', explode(',', $scanned)));
+    }
+
+    // We will have at least one value, which may be empty
+    if ($paths[0] === '') {
+        array_shift($paths);
+    }
+
+    $ini = array_shift($paths);
+
+    if ($ini === null) {
+        return 'A php.ini file does not exist. You will have to create one.';
+    }
+
+    if (count($paths) > 1) {
+        return 'Your command-line PHP is using multiple ini files. Run `php --ini` to show them.';
+    }
+
+    return 'The php.ini used by your command-line PHP is: '.$ini;
 }
 
 class Installer
@@ -1151,14 +1179,19 @@ class Installer
      */
     protected function cleanUp($result)
     {
+        if ($this->quiet) {
+            // Ensure output buffers are emptied
+            $errors = explode(PHP_EOL, (string) ob_get_clean());
+        }
+
         if (!$result) {
             // Output buffered errors
             if ($this->quiet) {
-                $this->outputErrors();
+                $this->outputErrors($errors);
             }
             // Clean up stuff we created
             $this->uninstall();
-        } elseif ($this->tmpCafile) {
+        } elseif ($this->tmpCafile !== null) {
             @unlink($this->tmpCafile);
         }
     }
@@ -1167,9 +1200,8 @@ class Installer
      * Outputs unique errors when in quiet mode
      *
      */
-    protected function outputErrors()
+    protected function outputErrors(array $errors)
     {
-        $errors = explode(PHP_EOL, ob_get_clean());
         $shown = array();
 
         foreach ($errors as $error) {
@@ -1363,8 +1395,9 @@ class HttpClient {
         $result = file_get_contents($url, false, $context);
 
         if ($result && extension_loaded('zlib')) {
+            $headers = PHP_VERSION_ID >= 80400 ? http_get_last_response_headers() : $http_response_header;
             $decode = false;
-            foreach ($http_response_header as $header) {
+            foreach ($headers as $header) {
                 if (preg_match('{^content-encoding: *gzip *$}i', $header)) {
                     $decode = true;
                     continue;
