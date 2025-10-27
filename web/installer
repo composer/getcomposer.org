@@ -1391,11 +1391,18 @@ class HttpClient {
 
     public function get($url)
     {
+        if (function_exists('http_clear_last_response_headers')) {
+           $http_response_header = http_clear_last_response_headers();
+        }
+
         $context = $this->getStreamContext($url);
         $result = file_get_contents($url, false, $context);
 
         if ($result && extension_loaded('zlib')) {
-            $headers = PHP_VERSION_ID >= 80400 ? http_get_last_response_headers() : $http_response_header;
+            if (function_exists('http_get_last_response_headers')) {
+               $http_response_header = http_get_last_response_headers();
+            }
+            $headers = $http_response_header;
             $decode = false;
             foreach ($headers as $header) {
                 if (preg_match('{^content-encoding: *gzip *$}i', $header)) {
