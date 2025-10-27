@@ -546,7 +546,7 @@ function out($text, $color = null, $newLine = true)
 
     $format = '%s';
 
-    if (isset($styles[$color]) && USE_ANSI) {
+    if (is_string($color) && isset($styles[$color]) && USE_ANSI) {
         $format = $styles[$color];
     }
 
