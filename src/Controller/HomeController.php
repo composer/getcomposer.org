@@ -38,6 +38,12 @@ class HomeController extends AbstractController
         ]);
     }
 
+    #[Route("/sponsor/", name: "sponsor")]
+    public function sponsor(): Response
+    {
+        return $this->render('sponsor.html.twig', ['page' => 'sponsor']);
+    }
+
     #[Route("/download/", name: "download")]
     public function download(string $projectDir, Request $req): Response
     {
