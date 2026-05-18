@@ -115,7 +115,7 @@ class DocsController extends AbstractController
                 $id = Preg::replace('{[^a-z0-9]}i', '-', strtolower(trim($node->nodeValue)));
                 $id = Preg::replace('{-+}', '-', $id);
                 if ($count) {
-                    $id .= '-'.($count+1);
+                    $id .= '-'.$count;
                 }
                 $count++;
             } while (isset($ids[$id]));
