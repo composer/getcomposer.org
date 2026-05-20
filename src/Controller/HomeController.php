@@ -155,7 +155,7 @@ class HomeController extends AbstractController
     #[Route("/download/latest-2.x/composer.phar.asc", name: "download_asc_2x")]
     #[Route("/download/latest-2.2.x/composer.phar.asc", name: "download_asc_2.2_lts")]
     #[Route("/download/{version}/composer.phar.asc", name: "download_asc_specific")]
-    public function downloadPGPSignature(string $projectDir, string $_route, string $version = null): Response
+    public function downloadPGPSignature(string $projectDir, string $_route, ?string $version = null): Response
     {
         $channel = str_replace('download_asc_', '', $_route);
         if ($channel !== 'specific') {
