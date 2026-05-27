@@ -100,19 +100,20 @@ class DocsController extends AbstractController
         $toc = array();
         $ids = array();
 
-        $isSpan = function ($node) {
-            return XML_ELEMENT_NODE === $node->nodeType && 'span' === $node->tagName;
+        $isSpan = function (\DOMNode $node) {
+            return XML_ELEMENT_NODE === $node->nodeType && $node instanceof \DOMElement && 'span' === $node->tagName;
         };
 
-        $genId = function ($node) use (&$ids, $isSpan) {
+        $genId = function (\DOMNode $node) use (&$ids, $isSpan): string {
             $count = 0;
             do {
-                if ($isSpan($node->lastChild)) {
-                    $node = clone $node;
-                    $node->removeChild($node->lastChild);
+                if ($node->lastChild !== null && $isSpan($node->lastChild)) {
+                    $clone = clone $node;
+                    $clone->removeChild($node->lastChild);
+                    $node = $clone;
                 }
 
-                $id = Preg::replace('{[^a-z0-9]}i', '-', strtolower(trim($node->nodeValue)));
+                $id = Preg::replace('{[^a-z0-9]}i', '-', strtolower(trim((string) $node->nodeValue)));
                 $id = Preg::replace('{-+}', '-', $id);
                 if ($count) {
                     $id .= '-'.$count;
@@ -123,18 +124,19 @@ class DocsController extends AbstractController
             return $id;
         };
 
-        $getDesc = function ($node) use ($isSpan) {
-            if ($isSpan($node->lastChild)) {
+        $getDesc = function (\DOMNode $node) use ($isSpan): ?string {
+            if ($node->lastChild !== null && $isSpan($node->lastChild)) {
                 return $node->lastChild->nodeValue;
             }
 
             return null;
         };
 
-        $getTitle = function ($node) use ($isSpan) {
-            if ($isSpan($node->lastChild)) {
-                $node = clone $node;
-                $node->removeChild($node->lastChild);
+        $getTitle = function (\DOMNode $node) use ($isSpan): ?string {
+            if ($node->lastChild !== null && $isSpan($node->lastChild)) {
+                $clone = clone $node;
+                $clone->removeChild($node->lastChild);
+                $node = $clone;
             }
 
             return $node->nodeValue;
