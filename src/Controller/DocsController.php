@@ -100,17 +100,18 @@ class DocsController extends AbstractController
         $toc = array();
         $ids = array();
 
-        $isSpan = function (\DOMNode $node) {
-            return XML_ELEMENT_NODE === $node->nodeType && $node instanceof \DOMElement && 'span' === $node->tagName;
+        $isSpan = function (?\DOMNode $node) {
+            return $node !== null && XML_ELEMENT_NODE === $node->nodeType && $node instanceof \DOMElement && 'span' === $node->tagName;
         };
 
         $genId = function (\DOMNode $node) use (&$ids, $isSpan): string {
             $count = 0;
             do {
-                if ($node->lastChild !== null && $isSpan($node->lastChild)) {
-                    $clone = clone $node;
-                    $clone->removeChild($node->lastChild);
-                    $node = $clone;
+                if ($isSpan($node->lastChild)) {
+                    $node = clone $node;
+                    if ($node->lastChild !== null) {
+                        $node->removeChild($node->lastChild);
+                    }
                 }
 
                 $id = Preg::replace('{[^a-z0-9]}i', '-', strtolower(trim((string) $node->nodeValue)));
@@ -133,10 +134,11 @@ class DocsController extends AbstractController
         };
 
         $getTitle = function (\DOMNode $node) use ($isSpan): ?string {
-            if ($node->lastChild !== null && $isSpan($node->lastChild)) {
-                $clone = clone $node;
-                $clone->removeChild($node->lastChild);
-                $node = $clone;
+            if ($isSpan($node->lastChild)) {
+                $node = clone $node;
+                if ($node->lastChild !== null) {
+                    $node->removeChild($node->lastChild);
+                }
             }
 
             return $node->nodeValue;
