@@ -263,6 +263,188 @@ h1 .latest {
   color: black;
 }
 
+/* ==|== sponsor page ======================================================= */
+
+.sponsor-page section {
+  margin-bottom: 40px;
+}
+
+.sponsor-page h2 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.sponsor-hero {
+  text-align: center;
+}
+
+.sponsor-hero h1 {
+  margin-bottom: 10px;
+}
+
+.sponsor-quote blockquote {
+  background: none;
+  border: none;
+  border-radius: 0;
+  margin: 0 auto;
+  max-width: 700px;
+  padding: 20px 0;
+}
+
+.sponsor-quote blockquote p {
+  font-style: italic;
+  font-size: 18px;
+  line-height: 160%;
+  margin: 0 0 15px;
+  color: #333;
+}
+
+.sponsor-quote-attribution {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #2d2d32;
+}
+
+.sponsor-quote-photo {
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sponsor-logos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.sponsor-logo-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 90px;
+}
+
+.sponsor-logo-item img {
+  width: 180px;
+  max-width: 100%;
+  height: 50px;
+  object-fit: contain;
+  object-position: center;
+  transition: opacity 0.2s;
+}
+
+.sponsor-logo-item a:hover img {
+  opacity: 0.7;
+}
+
+.sponsor-logo-item img[alt="Aikido"] {
+  height: 40px;
+}
+
+.sponsor-tiers-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.sponsor-tier-card {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 20px 15px;
+  background: #fff;
+  font-size: 14px;
+}
+
+.sponsor-tier-card h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2d2d32;
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.sponsor-tier-price {
+  font-size: 26px;
+  font-weight: 600;
+  color: #f28d1a;
+  margin-bottom: 12px;
+}
+
+.sponsor-tier-price span {
+  font-size: 14px;
+  font-weight: 400;
+  color: #777;
+}
+
+.sponsor-tier-card ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.sponsor-tier-card li {
+  margin-bottom: 4px;
+  line-height: 150%;
+}
+
+.sponsor-tiers-cta {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.sponsor-faq-item {
+  border-bottom: 1px solid #eee;
+  padding: 12px 0;
+}
+
+.sponsor-faq-item:first-of-type {
+  border-top: 1px solid #eee;
+}
+
+.sponsor-faq-item h3 {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0 0 5px;
+}
+
+.sponsor-faq-item p {
+  margin: 0;
+}
+
+.sponsor-contact {
+  background: #f9f9f9;
+  border-radius: 4px;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.sponsor-page .sponsor-btn {
+  display: inline-block;
+  background-color: #f28d1a;
+  border: 1px solid #d97c10;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 18px;
+  padding: 12px 28px;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.sponsor-page .sponsor-btn:hover,
+.sponsor-page .sponsor-btn:focus {
+  background-color: #d97c10;
+  border-color: #c06e0a;
+  color: #fff;
+}
+
+@media (max-width: 800px) {
+  .sponsor-logos-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sponsor-tiers-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ==|== non-semantic helper classes ======================================== */
 .ir {
   display: block;
