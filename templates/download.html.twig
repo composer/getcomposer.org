@@ -102,8 +102,24 @@ php -r "unlink('composer-setup.php');"</pre>
         you can use <code>--2.2</code>.</p>
 
     <h2 id="maintenance-policy">Maintenance policy</h2>
-    <p>Bug fixes are only guaranteed to be provided for the latest feature release.</p>
-    <p>Critical bug and security fixes are also provided for active LTS releases (currently <code>2.2</code>).</p>
+    <p>Bug fixes are only guaranteed to be provided for the latest feature release.
+        Long-term support (LTS) releases additionally receive security fixes for an
+        extended period. The <code>maintenance-until</code> dates below are a minimum
+        guarantee, not a hard cutoff.</p>
+    <table aria-label="Composer maintenance status by release line" role="table">
+        <tr role="row">
+            <th role="columnheader">Release line</th>
+            <th role="columnheader">Status</th>
+            <th role="columnheader">Maintained until (minimum)</th>
+        </tr>
+        {% for row in maintenancePolicy %}
+            <tr role="row">
+                <td role="cell"><code>{{ row.line }}</code>{% if row.lts %} <strong>(LTS)</strong>{% endif %}</td>
+                <td role="cell" title="{{ row.status.description }}">{{ row.status.label }}</td>
+                <td role="cell">{{ row.until|default('Next minor release') }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 
     <h2 id="manual-download">Manual Download</h2>
     <p>If you prefer to download the phar manually, here are the available versions:</p>

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Version\Versions;
 use Composer\Pcre\Preg;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -80,6 +81,7 @@ class HomeController extends AbstractController
             'page' => 'download',
             'versions' => $versions,
             'latestStable' => $latestStable,
+            'maintenancePolicy' => Versions::policyRows($this->getVersionData($projectDir)),
             'windows' => str_contains($req->headers->get('User-Agent', ''), 'Windows'),
         );
 
@@ -189,7 +191,7 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @return array{path: string, version: string, min-php: int}
+     * @return array{path: string, version: string, min-php: int, lts: bool, maintenance: string, maintenance-until: string|null}
      */
     private function getVersionInfo(string $projectDir, string $channel): array
     {
@@ -217,13 +219,13 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @return array<string, array<int, array{path: string, version: string, min-php: int}>>
+     * @return array<string, array<int, array{path: string, version: string, min-php: int, lts: bool, maintenance: string, maintenance-until: string|null}>>
      */
     private function getVersionData(string $projectDir): array
     {
         $versionData = file_get_contents($projectDir.'/web/versions');
         assert(is_string($versionData), new \RuntimeException("Version file not found in $projectDir/web"));
-        /** @var array<string, array<int, array{path: string, version: string, min-php: int}>> */
+        /** @var array<string, array<int, array{path: string, version: string, min-php: int, lts: bool, maintenance: string, maintenance-until: string|null}>> */
         return json_decode($versionData, true);
     }
 }
