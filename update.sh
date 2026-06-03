@@ -136,18 +136,12 @@ else
     lastStableV2Version=$(ls "$root/$target/download" | grep -E '^2\.([3-9]|[0-9]{2})\.[0-9]+$' | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -1 | awk '{print $4}')
     lastStableV2VersionPath="/download/$lastStableV2Version/composer.phar"
 fi
-{
-    # TODO add "eol":true to a version to mark eol releases and warn users
-    read -r -d '' versions << EOM
-{
-    "stable": [{"path": "/download/$lastStableVersion/composer.phar", "version": "$lastStableVersion", "min-php": 70205},{"path": "/download/$lastStableV22Version/composer.phar", "version": "$lastStableV22Version", "min-php": 50300}],
-    "preview": [{"path": "/download/$lastV2Version/composer.phar", "version": "$lastV2Version", "min-php": 70205},{"path": "/download/$lastStableV22Version/composer.phar", "version": "$lastStableV22Version", "min-php": 50300}],
-    "snapshot": [{"path": "/composer.phar", "version": "$lastSnapshot", "min-php": 70205},{"path": "/download/$lastStableV22Version/composer.phar", "version": "$lastStableV22Version", "min-php": 50300}],
-    "1": [{"path": "/download/$lastStableV1Version/composer.phar", "version": "$lastStableV1Version", "min-php": 50300}],
-    "2": [{"path": "$lastStableV2VersionPath", "version": "$lastStableV2Version", "min-php": 70205},{"path": "/download/$lastStableV22Version/composer.phar", "version": "$lastStableV22Version", "min-php": 50300}],
-    "2.2": [{"path": "/download/$lastStableV22Version/composer.phar", "version": "$lastStableV22Version", "min-php": 50300}]
-}
-EOM
-} || true
-echo "$versions" > "$root/$target/versions_new" && mv "$root/$target/versions_new" "$root/$target/versions"
+
+# web/versions is generated from a single source of truth in src/Version/Versions.php.
+# Each maintained LTS line is passed as its own *_lts argument (add more as needed).
+php "$root/bin/generate-versions.php" \
+    "stable=$lastStableVersion" "v1=$lastStableV1Version" "v2_2_lts=$lastStableV22Version" \
+    "preview=$lastV2Version" "v2=$lastStableV2Version" "v2Path=$lastStableV2VersionPath" \
+    "snapshot=$lastSnapshot" \
+    > "$root/$target/versions_new" && mv "$root/$target/versions_new" "$root/$target/versions"
 rm -f "$root/$target/stable"
