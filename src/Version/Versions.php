@@ -46,13 +46,13 @@ class Versions
      *
      * @param array{stable: string, v1: string, lts: list<string>, preview: string, v2: string, v2Path: string, snapshot: string} $resolved
      *
-     * @return array<array-key, list<array{path: string, version: string, min-php: int, lts: bool, maintenance: string, maintenance-until: string|null}>>
+     * @return array<array-key, list<array{path: string, version: string, min-php: int, lts: bool, maintenance: string, maintenance-until: string|null, eol?: true}>>
      */
     public static function generate(array $resolved): array
     {
-        /** @var list<array{path: string, version: string, min-php: int, lts: bool, maintenance: string, maintenance-until: string|null}> $ltsEntries */
+        /** @var list<array{path: string, version: string, min-php: int, lts: bool, maintenance: string, maintenance-until: string|null, eol?: true}> $ltsEntries */
         $ltsEntries = [];
-        /** @var array<string, list<array{path: string, version: string, min-php: int, lts: bool, maintenance: string, maintenance-until: string|null}>> $ltsChannels */
+        /** @var array<string, list<array{path: string, version: string, min-php: int, lts: bool, maintenance: string, maintenance-until: string|null, eol?: true}>> $ltsChannels */
         $ltsChannels = [];
         foreach ($resolved['lts'] as $version) {
             $line = self::lineKey($version);
@@ -106,7 +106,7 @@ class Versions
      * One row per distinct release line, newest first. Snapshot/dev entries are
      * skipped (their "version" is a commit hash, not a release line).
      *
-     * @param array<string, array<int, array{path: string, version: string, min-php: int, lts: bool, maintenance: string, maintenance-until: string|null}>> $versionData
+     * @param array<string, array<int, array{path: string, version: string, min-php: int, lts: bool, maintenance: string, maintenance-until: string|null, eol?: true}>> $versionData
      *
      * @return list<array{line: string, lts: bool, status: MaintenanceStatus, until: string|null}>
      */
@@ -134,7 +134,7 @@ class Versions
     }
 
     /**
-     * @return array{path: string, version: string, min-php: int, lts: bool, maintenance: string, maintenance-until: string|null}
+     * @return array{path: string, version: string, min-php: int, lts: bool, maintenance: string, maintenance-until: string|null, eol?: true}
      */
     private static function activeEntry(string $path, string $version): array
     {
@@ -142,11 +142,11 @@ class Versions
     }
 
     /**
-     * @return array{path: string, version: string, min-php: int, lts: bool, maintenance: string, maintenance-until: string|null}
+     * @return array{path: string, version: string, min-php: int, lts: bool, maintenance: string, maintenance-until: string|null, eol?: true}
      */
     private static function entry(string $path, string $version, int $minPhp, bool $lts, MaintenanceStatus $maintenance, ?string $until): array
     {
-        return [
+        $entry = [
             'path' => $path,
             'version' => $version,
             'min-php' => $minPhp,
@@ -154,6 +154,16 @@ class Versions
             'maintenance' => $maintenance->value,
             'maintenance-until' => $until,
         ];
+
+        // BC: Composer <= 2.10.1 does not read the `maintenance` field; its
+        // self-update detects EOL via isset($latest['eol']). Emit `eol: true`
+        // only for EOL lines so those clients keep warning. The key must be
+        // omitted otherwise — isset() treats any present key (even false) as set.
+        if ($maintenance === MaintenanceStatus::Eol) {
+            $entry['eol'] = true;
+        }
+
+        return $entry;
     }
 
     /**
