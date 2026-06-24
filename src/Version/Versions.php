@@ -87,7 +87,7 @@ class Versions
             self::MIN_PHP_5_3_0,
             false,
             MaintenanceStatus::Eol,
-            '2026-06-30',
+            '2026-05-30',
         );
 
         return [
