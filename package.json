@@ -8,6 +8,9 @@
     "devDependencies": {
         "esbuild": "^0.25"
     },
+    "engines": {
+        "npm": ">=11.10"
+    },
     "scripts": {
         "dev": "esbuild js/app.js --bundle --outdir=web/build --sourcemap --loader:.gif=file --target=chrome58,firefox57,safari11,edge16 --watch",
         "build": "esbuild js/app.js --bundle --outdir=web/build  --minify --loader:.gif=file --target=chrome58,firefox57,safari11,edge16",
