@@ -40,13 +40,9 @@ class HomeController extends AbstractController
     }
 
     #[Route("/sponsor/", name: "sponsor")]
-    public function sponsor(Request $req): Response
+    public function sponsor(): Response
     {
-        if ($req->query->get('preview') === 'a11b5a9f') {
-            return $this->render('sponsor.html.twig', ['page' => 'sponsor']);
-        }
-
-        return $this->render('sponsor-legacy.html.twig', ['page' => 'sponsor']);
+        return $this->render('sponsor.html.twig', ['page' => 'sponsor']);
     }
 
     #[Route("/download/", name: "download")]
