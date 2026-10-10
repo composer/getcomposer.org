@@ -781,7 +781,7 @@ class Installer
         $this->tmpFile = $installDir.DIRECTORY_SEPARATOR.basename($this->target, '.phar').'-temp.phar';
 
         $uriScheme = $this->disableTls ? 'http' : 'https';
-        $this->baseUrl = $uriScheme.'://getcomposer.org';
+        $this->baseUrl = getenv('COMPOSER_MIRROR') ?: $uriScheme.'://getcomposer.org';
     }
 
     /**
