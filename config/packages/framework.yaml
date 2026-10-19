@@ -3,7 +3,6 @@ framework:
     # Required in Symfony 5.4+ but actually unused as there is no remember me or signed URLs on this site
     secret: '%env(APP_SECRET)%'
     #csrf_protection: true
-    annotations: false
     http_method_override: false
     handle_all_throwables: true
 
