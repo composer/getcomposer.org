@@ -3,8 +3,7 @@ framework:
     # Required in Symfony 5.4+ but actually unused as there is no remember me or signed URLs on this site
     secret: '%env(APP_SECRET)%'
 
-    # Note that the session will be started ONLY if you read or write from it.
-    session: true
+    session: false
 
     #esi: true
     #fragments: true
