@@ -144,7 +144,7 @@ class HomeController extends AbstractController
     #[Route("/composer-2.phar.sha256sum", name: "download_sha256sum_2x_bc")]
     public function downloadSha256Sum(string $projectDir, string $_route): Response
     {
-        $channel = str_replace(array('download_sha256sum_', '_bc'), '', $_route);
+        $channel = str_replace(['download_sha256sum_', '_bc'], '', $_route);
         $path = $this->getVersionInfo($projectDir, $channel)['path'];
 
         return new BinaryFileResponse($projectDir.'/web'.$path.'.sha256sum', 200, [
