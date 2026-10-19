@@ -39,12 +39,12 @@ class ChangelogController extends AbstractController
         $changelog = str_replace('href="doc/', 'href="../doc/', $changelog);
         $changelog = str_replace('href="UPGRADE', 'href="../upgrade/UPGRADE', $changelog);
 
-        return $this->render('changelog.html.twig', array(
+        return $this->render('changelog.html.twig', [
             'changelog' => $changelog,
             'version' => $version,
             'date' => trim($match['date'], '- '),
             'page' => 'docs',
-        ));
+        ]);
     }
 
     #[Route("/upgrade/{file}", name: "upgrade")]
@@ -59,10 +59,10 @@ class ChangelogController extends AbstractController
         $upgrade = $parsedown->text($upgrade);
         $upgrade = str_replace('href="doc/', 'href="../doc/', $upgrade);
 
-        return $this->render('upgrade.html.twig', array(
+        return $this->render('upgrade.html.twig', [
             'upgrade' => $upgrade,
             'filename' => $file,
             'page' => 'docs',
-        ));
+        ]);
     }
 }

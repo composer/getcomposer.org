@@ -40,7 +40,6 @@ Check `composer.json` and `symfony.lock` before assuming a component is availabl
 - Native functions returning `false` on failure are checked explicitly (throw,
   or `assert(is_string(...))`), as PHPStan runs at level 8 with
   `checkExplicitMixed`.
-- Use short array syntax in new code, and match the style of the surrounding code.
 
 ## Testing and checks
 
