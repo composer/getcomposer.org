@@ -104,7 +104,22 @@ class DocsController extends AbstractController
             return $node !== null && XML_ELEMENT_NODE === $node->nodeType && $node instanceof \DOMElement && 'span' === $node->tagName;
         };
 
-        $genId = function (\DOMNode $node) use (&$ids, $isSpan): string {
+        // same slugs as GitHub so that in-doc links work on both
+        $genId = function (\DOMNode $node) use (&$ids): string {
+            $base = Preg::replace('{[^\p{L}\p{M}\p{N}\p{Pc}\- ]}u', '', strtolower(trim((string) $node->nodeValue)));
+            $base = str_replace(' ', '-', $base);
+            $id = $base;
+            for ($count = 1; isset($ids[$id]); $count++) {
+                $id = $base.'-'.$count;
+            }
+            $ids[$id] = true;
+
+            return $id;
+        };
+
+        // pre-GitHub-compatible slugs, kept as aliases so existing deep links still work
+        $legacyIds = array();
+        $genLegacyId = function (\DOMNode $node) use (&$legacyIds, $isSpan): string {
             $count = 0;
             do {
                 if ($isSpan($node->lastChild)) {
@@ -120,8 +135,8 @@ class DocsController extends AbstractController
                     $id .= '-'.$count;
                 }
                 $count++;
-            } while (isset($ids[$id]));
-            $ids[$id] = true;
+            } while (isset($legacyIds[$id]));
+            $legacyIds[$id] = true;
             return $id;
         };
 
@@ -146,10 +161,11 @@ class DocsController extends AbstractController
 
         // build TOC & deep links
         $firstTitle = null;
+        $aliases = [];
         $h1 = $h2 = $h3 = $h4 = 0;
-        $nodes = $xpath->query('//*[self::h1 or self::h2 or self::h3 or self::h4]');
+        $nodes = $xpath->query('//*[self::h1 or self::h2 or self::h3 or self::h4 or self::h5 or self::h6]');
         if (false === $nodes) {
-            throw new \RuntimeException('Failed finding any h1/h2/h3/h4 node');
+            throw new \RuntimeException('Failed finding any h1-h6 node');
         }
         foreach ($nodes as $node) {
             if (!$node instanceof \DOMElement) {
@@ -158,10 +174,12 @@ class DocsController extends AbstractController
 
             // set id and add anchor link
             $id = $genId($node);
+            $legacyId = in_array($node->nodeName, ['h5', 'h6'], true) ? null : $genLegacyId($node);
             $title = $getTitle($node);
             if ('03-cli.md' === $page && 'Options' === $title) {
                 continue;
             }
+            $aliases[] = [$node, $legacyId];
             $desc = $getDesc($node);
             $node->setAttribute('id', $id);
             $link = $dom->createElement('a', '#');
@@ -190,6 +208,14 @@ class DocsController extends AbstractController
                 case 'h4':
                     $toc[$h1][$h2][$h3][++$h4] = array('title' => $title, 'id' => $id, 'desc' => $desc);
                 break;
+            }
+        }
+
+        foreach ($aliases as [$node, $legacyId]) {
+            if ($legacyId !== null && !isset($ids[$legacyId]) && $node->parentNode !== null) {
+                $alias = $dom->createElement('a');
+                $alias->setAttribute('id', $legacyId);
+                $node->parentNode->insertBefore($alias, $node);
             }
         }
 
