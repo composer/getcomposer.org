@@ -5,7 +5,7 @@ namespace App\Controller;
 use Composer\Pcre\Preg;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ChangelogController extends AbstractController

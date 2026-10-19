@@ -1,0 +1,66 @@
+name: "PHPStan"
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  COMPOSER_FLAGS: "--ansi --no-interaction --no-progress --prefer-dist"
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: "PHPStan"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          coverage: "none"
+          extensions: "intl, zip"
+          ini-values: "memory_limit=-1"
+          php-version: "8.4"
+          tools: "composer:snapshot"
+
+      - name: "Determine composer cache directory"
+        id: "determine-composer-cache-directory"
+        run: "echo \"directory=$(composer config cache-dir)\" >> $GITHUB_OUTPUT"
+
+      - name: "Cache dependencies installed with composer"
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: "${{ steps.determine-composer-cache-directory.outputs.directory }}"
+          key: "php-8.4-locked-${{ hashFiles('**/composer.lock') }}"
+          restore-keys: "php-8.4-locked-"
+
+      - name: "Install dependencies from composer.lock"
+        run: 'composer install $COMPOSER_FLAGS'
+
+      - name: "Restore PHPStan result cache"
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: "var/phpstan"
+          key: "phpstan-result-cache-v1-${{ github.run_id }}"
+          restore-keys: |
+            phpstan-result-cache-v1-
+
+      - name: "Run PHPStan"
+        run: "composer phpstan -- -vv"
+
+      - name: "Save result cache"
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        if: ${{ !cancelled() }}
+        with:
+          path: "var/phpstan"
+          key: "phpstan-result-cache-v1-${{ github.run_id }}"
