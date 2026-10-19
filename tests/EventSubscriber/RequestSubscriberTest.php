@@ -32,6 +32,7 @@ class RequestSubscriberTest extends TestCase
     public static function provideRequestsNotRedirected(): iterable
     {
         yield 'dev env' => ['dev', Request::create('http://getcomposer.org/'), HttpKernelInterface::MAIN_REQUEST];
+        yield 'test env' => ['test', Request::create('http://getcomposer.org/'), HttpKernelInterface::MAIN_REQUEST];
         yield 'already https' => ['prod', Request::create('https://getcomposer.org/'), HttpKernelInterface::MAIN_REQUEST];
         yield 'unsafe method' => ['prod', Request::create('http://getcomposer.org/', 'POST'), HttpKernelInterface::MAIN_REQUEST];
         yield 'sub request' => ['prod', Request::create('http://getcomposer.org/'), HttpKernelInterface::SUB_REQUEST];

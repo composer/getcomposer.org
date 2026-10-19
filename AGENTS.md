@@ -13,7 +13,7 @@ Check `composer.json` and `symfony.lock` before assuming a component is availabl
   and their maintenance metadata. It generates `web/versions` (via
   `bin/generate-versions.php`, called from `update.sh`) and drives the download
   page's maintenance policy table.
-- `src/EventSubscriber/RequestSubscriber.php`: forces HTTPS and sets HSTS outside `dev`.
+- `src/EventSubscriber/RequestSubscriber.php`: sets HSTS, and forces HTTPS outside `dev` and `test`.
 - `templates/`: Twig templates, all extending `layout.html.twig`.
 - `js/`, `css/`: asset sources, bundled by esbuild into `web/build/`.
 - `web/` is the public dir (not `public/`).
@@ -46,10 +46,8 @@ Check `composer.json` and `symfony.lock` before assuming a component is availabl
 - `composer test` runs PHPUnit. It fails on any deprecation, notice or warning.
 - `composer phpstan` must pass. Fix the cause instead of adding ignores or growing
   `phpstan-baseline.neon`.
-- Controller tests extend `App\Tests\Controller\WebTestCase` and use
-  `createHttpsClient()`, since plain HTTP requests get redirected. In the test
-  env `$docDir` and `$projectDir` point to `tests/Fixtures/`, so add fixture
-  files there instead of depending on `vendor/` or real downloads.
+- In the test env `$docDir` and `$projectDir` point to `tests/Fixtures/`, so
+  add fixture files there instead of depending on `vendor/` or real downloads.
 - Changes to pages or endpoints come with a functional test that requests them.
 
 ## Assets
