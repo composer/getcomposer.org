@@ -1,0 +1,91 @@
+name: "Continuous Integration"
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  COMPOSER_FLAGS: "--ansi --no-interaction --no-progress --prefer-dist"
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: "CI"
+
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
+
+    strategy:
+      matrix:
+        include:
+          # 8.3 matches the platform config used in production
+          - php-version: "8.3"
+            dependencies: locked
+            experimental: false
+          - php-version: "8.4"
+            dependencies: locked
+            experimental: false
+          - php-version: "8.5"
+            dependencies: highest
+            experimental: true
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          coverage: "none"
+          extensions: "intl, zip"
+          ini-values: "memory_limit=-1, error_reporting=E_ALL, display_errors=On, display_startup_errors=On"
+          php-version: "${{ matrix.php-version }}"
+          tools: "composer:snapshot"
+
+      - name: "Determine composer cache directory"
+        id: "determine-composer-cache-directory"
+        run: "echo \"directory=$(composer config cache-dir)\" >> $GITHUB_OUTPUT"
+
+      - name: "Cache dependencies installed with composer"
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: "${{ steps.determine-composer-cache-directory.outputs.directory }}"
+          key: "php-${{ matrix.php-version }}-${{ matrix.dependencies }}-${{ hashFiles('**/composer.lock') }}"
+          restore-keys: "php-${{ matrix.php-version }}-${{ matrix.dependencies }}-"
+
+      - name: "Update dependencies from composer.json"
+        if: "matrix.dependencies == 'highest'"
+        run: 'composer config platform --unset && composer update $COMPOSER_FLAGS'
+
+      - name: "Install dependencies from composer.lock"
+        if: "matrix.dependencies == 'locked'"
+        run: 'composer install $COMPOSER_FLAGS'
+
+      - name: "Run tests"
+        run: "bin/phpunit"
+
+  validation:
+    name: "Composer validation"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          coverage: "none"
+          php-version: "8.3"
+          tools: "composer:snapshot"
+
+      - name: "Validate composer.json"
+        run: "composer validate --strict --no-check-publish"

@@ -1,10 +1,15 @@
 includes:
     - phpstan-baseline.neon
     - vendor/phpstan/phpstan-symfony/extension.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
 
 parameters:
     level: 8
     checkExplicitMixed: true
+    tmpDir: var/phpstan
 
     paths:
         - src/
+        - tests/
+        - bin/generate-versions.php

@@ -1,0 +1,95 @@
+{
+    "stable": [
+        {
+            "path": "/download/2.10.3/composer.phar",
+            "version": "2.10.3",
+            "min-php": 70205,
+            "lts": false,
+            "maintenance": "bugfix",
+            "maintenance-until": null
+        },
+        {
+            "path": "/download/2.2.30/composer.phar",
+            "version": "2.2.30",
+            "min-php": 50300,
+            "lts": true,
+            "maintenance": "critical-security",
+            "maintenance-until": "2026-12-31"
+        }
+    ],
+    "preview": [
+        {
+            "path": "/download/2.11.0-RC1/composer.phar",
+            "version": "2.11.0-RC1",
+            "min-php": 70205,
+            "lts": false,
+            "maintenance": "bugfix",
+            "maintenance-until": null
+        },
+        {
+            "path": "/download/2.2.30/composer.phar",
+            "version": "2.2.30",
+            "min-php": 50300,
+            "lts": true,
+            "maintenance": "critical-security",
+            "maintenance-until": "2026-12-31"
+        }
+    ],
+    "snapshot": [
+        {
+            "path": "/composer.phar",
+            "version": "0123456789abcdef0123456789abcdef01234567",
+            "min-php": 70205,
+            "lts": false,
+            "maintenance": "bugfix",
+            "maintenance-until": null
+        },
+        {
+            "path": "/download/2.2.30/composer.phar",
+            "version": "2.2.30",
+            "min-php": 50300,
+            "lts": true,
+            "maintenance": "critical-security",
+            "maintenance-until": "2026-12-31"
+        }
+    ],
+    "2.2": [
+        {
+            "path": "/download/2.2.30/composer.phar",
+            "version": "2.2.30",
+            "min-php": 50300,
+            "lts": true,
+            "maintenance": "critical-security",
+            "maintenance-until": "2026-12-31"
+        }
+    ],
+    "2": [
+        {
+            "path": "/download/2.10.3/composer.phar",
+            "version": "2.10.3",
+            "min-php": 70205,
+            "lts": false,
+            "maintenance": "bugfix",
+            "maintenance-until": null
+        },
+        {
+            "path": "/download/2.2.30/composer.phar",
+            "version": "2.2.30",
+            "min-php": 50300,
+            "lts": true,
+            "maintenance": "critical-security",
+            "maintenance-until": "2026-12-31"
+        }
+    ],
+    "1": [
+        {
+            "path": "/download/1.10.27/composer.phar",
+            "version": "1.10.27",
+            "min-php": 50300,
+            "lts": false,
+            "maintenance": "eol",
+            "maintenance-until": "2026-05-30",
+            "eol": true
+        }
+    ]
+}
