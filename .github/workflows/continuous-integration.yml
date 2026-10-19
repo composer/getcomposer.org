@@ -24,10 +24,7 @@ jobs:
     strategy:
       matrix:
         include:
-          # 8.3 matches the platform config used in production
-          - php-version: "8.3"
-            dependencies: locked
-            experimental: false
+          # 8.4 matches production and the platform config
           - php-version: "8.4"
             dependencies: locked
             experimental: false
@@ -84,7 +81,7 @@ jobs:
       - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
           coverage: "none"
-          php-version: "8.3"
+          php-version: "8.4"
           tools: "composer:snapshot"
 
       - name: "Validate composer.json"

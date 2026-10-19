@@ -30,7 +30,7 @@ jobs:
           coverage: "none"
           extensions: "intl, zip"
           ini-values: "memory_limit=-1"
-          php-version: "8.3"
+          php-version: "8.4"
           tools: "composer:snapshot"
 
       - name: "Determine composer cache directory"
@@ -41,8 +41,8 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: "${{ steps.determine-composer-cache-directory.outputs.directory }}"
-          key: "php-8.3-locked-${{ hashFiles('**/composer.lock') }}"
-          restore-keys: "php-8.3-locked-"
+          key: "php-8.4-locked-${{ hashFiles('**/composer.lock') }}"
+          restore-keys: "php-8.4-locked-"
 
       - name: "Install dependencies from composer.lock"
         run: 'composer install $COMPOSER_FLAGS'

@@ -2,7 +2,7 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "composer/composer": "^2.3",
@@ -38,7 +38,7 @@
         },
         "sort-packages": true,
         "platform": {
-            "php": "8.3.3"
+            "php": "8.4.26"
         },
         "allow-plugins": {
             "symfony/flex": true,
