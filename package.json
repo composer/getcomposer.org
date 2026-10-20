@@ -1,19 +1,23 @@
 {
     "name": "getcomposer",
     "dependencies": {
-        "@docsearch/js": "^3.9",
+        "@docsearch/css": "^5.1",
+        "@docsearch/js": "^5.1",
         "plausible-tracker": "^0.3.9",
         "prismjs": "^1.27.0"
     },
     "devDependencies": {
-        "esbuild": "^0.25"
+        "esbuild": "^0.28"
     },
     "engines": {
         "npm": ">=11.10"
     },
     "scripts": {
-        "dev": "esbuild js/app.js --bundle --outdir=web/build --sourcemap --loader:.gif=file --target=chrome58,firefox57,safari11,edge16 --watch",
-        "build": "esbuild js/app.js --bundle --outdir=web/build  --minify --loader:.gif=file --target=chrome58,firefox57,safari11,edge16",
-        "analyze": "esbuild js/app.js --bundle --outdir=web/build  --minify --loader:.gif=file --target=chrome58,firefox57,safari11,edge16 --analyze"
+        "dev": "esbuild js/app.js --bundle --outdir=web/build --sourcemap --loader:.gif=file --target=chrome87,firefox78,safari15,edge88 --watch",
+        "build": "esbuild js/app.js --bundle --outdir=web/build  --minify --loader:.gif=file --target=chrome87,firefox78,safari15,edge88",
+        "analyze": "esbuild js/app.js --bundle --outdir=web/build  --minify --loader:.gif=file --target=chrome87,firefox78,safari15,edge88 --analyze"
+    },
+    "allowScripts": {
+        "esbuild@0.28.2": true
     }
 }

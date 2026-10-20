@@ -1,4 +1,4 @@
-import docsearch from '@docsearch/js';
+import docsearch from '@docsearch/js/docsearch';
 import Plausible from 'plausible-tracker'
 import '@docsearch/css';
 import 'prismjs/themes/prism.css';
@@ -36,14 +36,17 @@ if (document.getElementById('docsearch')) {
     docsearch({
         container: '#docsearch',
         appId: 'DLYN25JSFJ',
-        indexName: 'getcomposer',
+        indices: ['getcomposer'],
         apiKey: '59b32c5fdb7d9198939d01eebcc4ecab',
         transformSearchClient: (searchClient) => {
           return {
             ...searchClient,
             search: (spec) => {
-                let f = spec.requests[0].query;
-                spec.requests[0].query = processQuery(spec.requests[0].query);
+                spec.requests.forEach((request) => {
+                    if (typeof request.query === 'string') {
+                        request.query = processQuery(request.query);
+                    }
+                });
 
                 return searchClient.search(spec);
             }
