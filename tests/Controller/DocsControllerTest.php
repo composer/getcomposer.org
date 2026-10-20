@@ -8,7 +8,7 @@ class DocsControllerTest extends WebTestCase
 {
     public function testIndex(): void
     {
-        $client = static::createHttpsClient();
+        $client = static::createClient();
         $crawler = $client->request('GET', '/doc/');
 
         self::assertResponseIsSuccessful();
@@ -24,7 +24,7 @@ class DocsControllerTest extends WebTestCase
 
     public function testViewPage(): void
     {
-        $client = static::createHttpsClient();
+        $client = static::createClient();
         $crawler = $client->request('GET', '/doc/01-basic-usage.md');
 
         self::assertResponseIsSuccessful();
@@ -47,7 +47,7 @@ class DocsControllerTest extends WebTestCase
 
     public function testIntroIsGettingStartedPage(): void
     {
-        $client = static::createHttpsClient();
+        $client = static::createClient();
         $client->request('GET', '/doc/00-intro.md');
 
         self::assertResponseIsSuccessful();
@@ -68,7 +68,7 @@ class DocsControllerTest extends WebTestCase
     #[DataProvider('provideMovedPages')]
     public function testMovedPagesRedirect(string $path, string $target): void
     {
-        static::createHttpsClient()->request('GET', $path);
+        static::createClient()->request('GET', $path);
 
         self::assertResponseStatusCodeSame(301);
         self::assertResponseRedirects($target);
@@ -76,7 +76,7 @@ class DocsControllerTest extends WebTestCase
 
     public function testMissingPage(): void
     {
-        static::createHttpsClient()->request('GET', '/doc/99-nope.md');
+        static::createClient()->request('GET', '/doc/99-nope.md');
 
         self::assertResponseStatusCodeSame(404);
     }

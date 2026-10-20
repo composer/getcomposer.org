@@ -10,7 +10,7 @@ class ChangelogControllerTest extends WebTestCase
 {
     public function testChangelogFromFile(): void
     {
-        $client = static::createHttpsClient();
+        $client = static::createClient();
         $this->mockGitHub(new MockResponse('', ['http_code' => 500]));
         $crawler = $client->request('GET', '/changelog/2.10.3');
 
@@ -25,7 +25,7 @@ class ChangelogControllerTest extends WebTestCase
 
     public function testChangelogFallsBackToGitHubRelease(): void
     {
-        $client = static::createHttpsClient();
+        $client = static::createClient();
         $http = $this->mockGitHub(new JsonMockResponse([
             'body' => "* Released from GitHub\n",
             'created_at' => '2026-01-15T10:00:00Z',
@@ -40,7 +40,7 @@ class ChangelogControllerTest extends WebTestCase
 
     public function testChangelogRedirectsToGitHubWhenRateLimited(): void
     {
-        $client = static::createHttpsClient();
+        $client = static::createClient();
         $this->mockGitHub(new MockResponse('', ['http_code' => 403, 'response_headers' => ['x-ratelimit-remaining' => '0']]));
         $client->request('GET', '/changelog/2.9.0');
 
@@ -49,7 +49,7 @@ class ChangelogControllerTest extends WebTestCase
 
     public function testChangelogNotFound(): void
     {
-        $client = static::createHttpsClient();
+        $client = static::createClient();
         $this->mockGitHub(new MockResponse('', ['http_code' => 404, 'response_headers' => ['x-ratelimit-remaining' => '42']]));
         $client->request('GET', '/changelog/0.0.1');
 
@@ -58,7 +58,7 @@ class ChangelogControllerTest extends WebTestCase
 
     public function testUpgrade(): void
     {
-        $client = static::createHttpsClient();
+        $client = static::createClient();
         $client->request('GET', '/upgrade/UPGRADE-2.0.md');
 
         self::assertResponseIsSuccessful();
@@ -67,7 +67,7 @@ class ChangelogControllerTest extends WebTestCase
 
     public function testUpgradeRejectsOtherFiles(): void
     {
-        $client = static::createHttpsClient();
+        $client = static::createClient();
         $client->request('GET', '/upgrade/CHANGELOG.md');
 
         self::assertResponseStatusCodeSame(404);

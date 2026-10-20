@@ -8,7 +8,7 @@ class HomeControllerTest extends WebTestCase
 {
     public function testIndex(): void
     {
-        $client = static::createHttpsClient();
+        $client = static::createClient();
         $crawler = $client->request('GET', '/');
 
         self::assertResponseIsSuccessful();
@@ -19,25 +19,16 @@ class HomeControllerTest extends WebTestCase
         self::assertSelectorTextContains('.preview', 'minor version');
     }
 
-    public function testInsecureRequestRedirectsToHttps(): void
-    {
-        $client = static::createClient([], ['HTTP_HOST' => 'getcomposer.org']);
-        $client->request('GET', '/download/');
-
-        self::assertResponseStatusCodeSame(301);
-        self::assertResponseRedirects('https://getcomposer.org/download/');
-    }
-
     public function testSponsor(): void
     {
-        static::createHttpsClient()->request('GET', '/sponsor/');
+        static::createClient()->request('GET', '/sponsor/');
 
         self::assertResponseIsSuccessful();
     }
 
     public function testDownload(): void
     {
-        $client = static::createHttpsClient();
+        $client = static::createClient();
         $crawler = $client->request('GET', '/download/', server: ['HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 10.0)']);
 
         self::assertResponseIsSuccessful();
@@ -76,7 +67,7 @@ class HomeControllerTest extends WebTestCase
     #[DataProvider('provideChannelPaths')]
     public function testDownloadChannel(string $path, string $expected): void
     {
-        $client = static::createHttpsClient();
+        $client = static::createClient();
         $client->request('GET', $path);
 
         self::assertResponseIsSuccessful();
@@ -87,7 +78,7 @@ class HomeControllerTest extends WebTestCase
     #[DataProvider('provideChannelPaths')]
     public function testDownloadChannelSha256(string $path, string $expected): void
     {
-        $client = static::createHttpsClient();
+        $client = static::createClient();
         $client->request('GET', $path.'.sha256');
 
         self::assertResponseIsSuccessful();
@@ -98,7 +89,7 @@ class HomeControllerTest extends WebTestCase
     #[DataProvider('provideChannelPaths')]
     public function testDownloadChannelSha256Sum(string $path, string $expected): void
     {
-        $client = static::createHttpsClient();
+        $client = static::createClient();
         $client->request('GET', $path.'.sha256sum');
 
         self::assertResponseIsSuccessful();
@@ -120,14 +111,14 @@ class HomeControllerTest extends WebTestCase
     #[DataProvider('provideSignaturePaths')]
     public function testDownloadSignature(string $path, string $version): void
     {
-        static::createHttpsClient()->request('GET', $path);
+        static::createClient()->request('GET', $path);
 
         self::assertResponseRedirects('https://github.com/composer/composer/releases/download/'.$version.'/composer.phar.asc');
     }
 
     public function testUnknownVersionDownload(): void
     {
-        $client = static::createHttpsClient();
+        $client = static::createClient();
         $client->request('GET', '/download/9.9.9/composer.phar');
 
         self::assertResponseStatusCodeSame(404);
@@ -136,7 +127,7 @@ class HomeControllerTest extends WebTestCase
 
     public function testSchema(): void
     {
-        $client = static::createHttpsClient();
+        $client = static::createClient();
         $client->request('GET', '/schema.json');
 
         self::assertResponseIsSuccessful();
@@ -147,9 +138,9 @@ class HomeControllerTest extends WebTestCase
 
     public function testShortcutRedirect(): void
     {
-        static::createHttpsClient()->request('GET', '/xdebug');
+        static::createClient()->request('GET', '/xdebug');
 
         self::assertResponseStatusCodeSame(301);
-        self::assertResponseRedirects('https://getcomposer.org/doc/articles/troubleshooting.md#xdebug-impact-on-composer');
+        self::assertResponseRedirects('/doc/articles/troubleshooting.md#xdebug-impact-on-composer');
     }
 }

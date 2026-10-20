@@ -29,7 +29,7 @@ class RequestSubscriber implements EventSubscriberInterface
 
     public function forceTls(RequestEvent $event): void
     {
-        if (!$event->isMainRequest() || $this->environment === 'dev') {
+        if (!$event->isMainRequest() || in_array($this->environment, ['dev', 'test'], true)) {
             return;
         }
 

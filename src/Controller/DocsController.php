@@ -22,13 +22,13 @@ class DocsController extends AbstractController
                 ->sortByName()
                 ->depth(0);
 
-            $filenames = array();
+            $filenames = [];
 
             foreach ($finder as $file) {
                 $filename = basename($file->getPathname(), '.md');
                 $url = $this->generateUrl(
                     'docs.view',
-                    array('page' => $prefix.$filename.'.md')
+                    ['page' => $prefix.$filename.'.md']
                 );
 
                 $metadata = null;
@@ -47,7 +47,7 @@ class DocsController extends AbstractController
                 } else {
                     $displayName = Preg::replace('{^\d{2} }', '', ucwords(str_replace('-', ' ', $filename)));
                 }
-                $filenames[$displayName] = array('link' => $url, 'metadata' => $metadata);
+                $filenames[$displayName] = ['link' => $url, 'metadata' => $metadata];
             }
 
             return $filenames;
@@ -57,12 +57,12 @@ class DocsController extends AbstractController
         $articles = $scan($docDir.'/articles', 'articles/');
         $faqs = $scan($docDir.'/faqs', 'faqs/');
 
-        return $this->render('doc.list.html.twig', array(
+        return $this->render('doc.list.html.twig', [
             'book' => $book,
             'articles' => $articles,
             'faqs' => $faqs,
             'page' => 'docs'
-        ));
+        ]);
     }
 
     #[Route("/doc/{page}", name: "docs.view", requirements: ["page" => "[a-z0-9/\'-]+\.md"])]
@@ -89,7 +89,7 @@ class DocsController extends AbstractController
         $contents = file_get_contents($filename);
         /** @var string $content */
         $content = $parsedown->text($contents);
-        $content = str_replace(array('class="language-jsonc', 'class="language-json', 'class="language-js'), 'class="language-javascript', $content);
+        $content = str_replace(['class="language-jsonc', 'class="language-json', 'class="language-js'], 'class="language-javascript', $content);
         $content = str_replace('class="language-sh', 'class="language-bash', $content);
         $content = str_replace('class="language-ini', 'class="language-clike', $content);
 
@@ -97,8 +97,8 @@ class DocsController extends AbstractController
         $dom->loadHtml('<?xml encoding="UTF-8">' . $content);
         $xpath = new \DOMXPath($dom);
 
-        $toc = array();
-        $ids = array();
+        $toc = [];
+        $ids = [];
 
         $isSpan = function (?\DOMNode $node) {
             return $node !== null && XML_ELEMENT_NODE === $node->nodeType && $node instanceof \DOMElement && 'span' === $node->tagName;
@@ -118,7 +118,7 @@ class DocsController extends AbstractController
         };
 
         // pre-GitHub-compatible slugs, kept as aliases so existing deep links still work
-        $legacyIds = array();
+        $legacyIds = [];
         $genLegacyId = function (\DOMNode $node) use (&$legacyIds, $isSpan): string {
             $count = 0;
             do {
@@ -194,19 +194,19 @@ class DocsController extends AbstractController
             // parse into a tree
             switch ($node->nodeName) {
                 case 'h1':
-                    $toc[++$h1] = array('title' => $title, 'id' => $id, 'desc' => $desc);
+                    $toc[++$h1] = ['title' => $title, 'id' => $id, 'desc' => $desc];
                 break;
 
                 case 'h2':
-                    $toc[$h1][++$h2] = array('title' => $title, 'id' => $id, 'desc' => $desc);
+                    $toc[$h1][++$h2] = ['title' => $title, 'id' => $id, 'desc' => $desc];
                 break;
 
                 case 'h3':
-                    $toc[$h1][$h2][++$h3] = array('title' => $title, 'id' => $id, 'desc' => $desc);
+                    $toc[$h1][$h2][++$h3] = ['title' => $title, 'id' => $id, 'desc' => $desc];
                 break;
 
                 case 'h4':
-                    $toc[$h1][$h2][$h3][++$h4] = array('title' => $title, 'id' => $id, 'desc' => $desc);
+                    $toc[$h1][$h2][$h3][++$h4] = ['title' => $title, 'id' => $id, 'desc' => $desc];
                 break;
             }
         }
@@ -229,12 +229,12 @@ class DocsController extends AbstractController
         // add class to footer nav
         $content = Preg::replace('{<p>(&larr;.+?|.+?&rarr;)</p>}', '<p class="prev-next">$1</p>', $content);
 
-        return $this->render('doc.show.html.twig', array(
+        return $this->render('doc.show.html.twig', [
             'doc' => $content,
             'file' => $page,
             'page' => $page == '00-intro.md' ? 'getting-started' : 'docs',
             'toc' => $toc,
             'title' => $firstTitle
-        ));
+        ]);
     }
 }

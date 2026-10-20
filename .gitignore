@@ -6,6 +6,7 @@
 /web/version
 /web/versions
 /web/build/*.map
+/config/reference.php
 /bin/
 
 ###> symfony/framework-bundle ###

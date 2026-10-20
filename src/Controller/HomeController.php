@@ -48,7 +48,7 @@ class HomeController extends AbstractController
     #[Route("/download/", name: "download")]
     public function download(string $projectDir, Request $req): Response
     {
-        $versions = array();
+        $versions = [];
         $paths = glob($projectDir.'/web/download/*', GLOB_ONLYDIR);
         if ($paths === false) {
             throw new \RuntimeException('Glob failed');
@@ -73,13 +73,13 @@ class HomeController extends AbstractController
             }
         }
 
-        $data = array(
+        $data = [
             'page' => 'download',
             'versions' => $versions,
             'latestStable' => $latestStable,
             'maintenancePolicy' => Versions::policyRows($this->getVersionData($projectDir)),
             'windows' => str_contains($req->headers->get('User-Agent', ''), 'Windows'),
-        );
+        ];
 
         return $this->render('download.html.twig', $data);
     }
@@ -96,7 +96,7 @@ class HomeController extends AbstractController
     #[Route("/composer-2.phar", name: "download_2x_bc")]
     public function downloadVersion(string $projectDir, string $_route): Response
     {
-        $channel = str_replace(array('download_', '_bc'), '', $_route);
+        $channel = str_replace(['download_', '_bc'], '', $_route);
         $path = $this->getVersionInfo($projectDir, $channel)['path'];
 
         return new BinaryFileResponse($projectDir.'/web'.$path, 200, [], false, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
@@ -114,7 +114,7 @@ class HomeController extends AbstractController
     #[Route("/composer-2.phar.sha256", name: "download_sha256_2x_bc")]
     public function downloadSha256(string $projectDir, string $_route): Response
     {
-        $channel = str_replace(array('download_sha256_', '_bc'), '', $_route);
+        $channel = str_replace(['download_sha256_', '_bc'], '', $_route);
 
         if ($channel === 'snapshot') {
             $file = $projectDir . '/web/composer.phar.sha256sum';
