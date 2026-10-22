@@ -1,3 +1,3 @@
 # Why can't Composer load repositories recursively?
 
-Text.
+Text, see the [schema](../04-schema.md#repositories).

@@ -14,6 +14,12 @@
 
 See the [config docs](06-config.md).
 
+More in the [README](https://example.org/README.md), the [setup guide][1] and [below](#details).
+
+Names match `^[a-z0-9]([_.-]?[a-z0-9]+)*$`.
+
+[1]: articles/handling-private-packages.md#setup
+
 ```json
 {"require": {}}
 ```

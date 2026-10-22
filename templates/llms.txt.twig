@@ -1,0 +1,19 @@
+# Composer
+
+> Composer is a dependency manager for PHP. You declare the libraries your project depends on in composer.json, and Composer installs and updates them for you. Packages are published on Packagist (https://packagist.org/).
+
+The links below point to the markdown source of each documentation page. All of it is also available as a single file at {{ url('llms_full_txt') }}
+{% for section, pages in sections %}
+
+## {{ section }}
+
+{% for title, data in pages %}
+- [{{ title }}]({{ url('docs.markdown', {page: data.page}) }}){% if data.metadata.tagline is defined %}: {{ data.metadata.tagline }}{% endif %}
+
+{% endfor %}
+{% endfor %}
+
+## Optional
+
+- [composer.json schema]({{ url('schema') }}): JSON schema for validating composer.json files
+- [Changelog](https://raw.githubusercontent.com/composer/composer/main/CHANGELOG.md): changes in each Composer release

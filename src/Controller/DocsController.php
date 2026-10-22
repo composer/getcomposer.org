@@ -8,60 +8,61 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+/**
+ * @phpstan-type Page array{page: string, link: string, metadata: array<string, string>|null}
+ */
 class DocsController extends AbstractController
 {
     #[Route("/doc/", name: "docs")]
     public function index(string $docDir): Response
     {
-        $scan = function ($dir, $prefix = '') {
-            $finder = new Finder();
-            $finder->files()
-                ->in($dir)
-                ->sortByName()
-                ->depth(0);
-
-            $filenames = [];
-
-            foreach ($finder as $file) {
-                $filename = basename($file->getPathname(), '.md');
-                $url = $this->generateUrl(
-                    'docs.view',
-                    ['page' => $prefix.$filename.'.md']
-                );
-
-                $metadata = null;
-                $contents = file_get_contents($file->getPathname());
-                assert(is_string($contents));
-                if (Preg::isMatchStrictGroups('{^<!--(.*)-->}s', $contents, $match)) {
-                    Preg::matchAllStrictGroups('{^ *(?P<keyword>\w+): *(?P<value>.*)}m', $match[1], $matches);
-                    $metadata = [];
-                    foreach ($matches['keyword'] as $key => $keyword) {
-                        $metadata[$keyword] = $matches['value'][$key];
-                    }
-                }
-
-                if (Preg::isMatch('{^(<!--.+?-->\n+)?# (.+?)\n}s', $contents, $match)) {
-                    $displayName = $match[2];
-                } else {
-                    $displayName = Preg::replace('{^\d{2} }', '', ucwords(str_replace('-', ' ', $filename)));
-                }
-                $filenames[$displayName] = ['link' => $url, 'metadata' => $metadata];
-            }
-
-            return $filenames;
-        };
-
-        $book = $scan($docDir);
-        $articles = $scan($docDir.'/articles', 'articles/');
-        $faqs = $scan($docDir.'/faqs', 'faqs/');
+        $sections = $this->listSections($docDir);
 
         return $this->render('doc.list.html.twig', [
-            'book' => $book,
-            'articles' => $articles,
-            'faqs' => $faqs,
+            'book' => $sections['Book'],
+            'articles' => $sections['Articles'],
+            'faqs' => $sections['FAQs'],
             'page' => 'docs'
+        ]);
+    }
+
+    #[Route("/llms.txt", name: "llms_txt")]
+    public function llmsTxt(string $docDir): Response
+    {
+        return $this->render('llms.txt.twig', [
+            'sections' => $this->listSections($docDir),
+        ], new Response('', 200, ['Content-Type' => 'text/plain; charset=UTF-8']));
+    }
+
+    #[Route("/llms-full.txt", name: "llms_full_txt")]
+    public function llmsFullTxt(string $docDir): Response
+    {
+        $pages = [];
+        foreach ($this->listSections($docDir) as $section) {
+            foreach ($section as $data) {
+                $url = $this->generateUrl('docs.view', ['page' => $data['page']], UrlGeneratorInterface::ABSOLUTE_URL);
+                $pages[] = 'Source: '.$url."\n\n".$this->getMarkdown($docDir, $data['page']);
+            }
+        }
+
+        return new Response(implode("\n\n---\n\n", $pages), 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
+    }
+
+    #[Route("/doc/{page}.md", name: "docs.markdown", requirements: ["page" => "[a-z0-9/\'-]+\.md"])]
+    public function viewMarkdown(string $page, string $docDir): Response
+    {
+        if (!file_exists($docDir.'/'.$page)) {
+            throw $this->createNotFoundException('Requested page was not found.');
+        }
+
+        $canonical = $this->generateUrl('docs.view', ['page' => $page], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return new Response($this->getMarkdown($docDir, $page), 200, [
+            'Content-Type' => 'text/markdown; charset=UTF-8',
+            'Link' => '<'.$canonical.'>; rel="canonical"',
         ]);
     }
 
@@ -236,5 +237,100 @@ class DocsController extends AbstractController
             'toc' => $toc,
             'title' => $firstTitle
         ]);
+    }
+
+    /**
+     * @return array{Book: array<string, Page>, Articles: array<string, Page>, FAQs: array<string, Page>}
+     */
+    private function listSections(string $docDir): array
+    {
+        return [
+            'Book' => $this->listPages($docDir),
+            'Articles' => $this->listPages($docDir.'/articles', 'articles/'),
+            'FAQs' => $this->listPages($docDir.'/faqs', 'faqs/'),
+        ];
+    }
+
+    /**
+     * @return array<string, Page> keyed by display name
+     */
+    private function listPages(string $dir, string $prefix = ''): array
+    {
+        $finder = new Finder();
+        $finder->files()
+            ->in($dir)
+            ->sortByName()
+            ->depth(0);
+
+        $pages = [];
+
+        foreach ($finder as $file) {
+            $filename = basename($file->getPathname(), '.md');
+            $page = $prefix.$filename.'.md';
+
+            $metadata = null;
+            $contents = file_get_contents($file->getPathname());
+            assert(is_string($contents));
+            if (Preg::isMatchStrictGroups('{^<!--(.*)-->}s', $contents, $match)) {
+                Preg::matchAllStrictGroups('{^ *(?P<keyword>\w+): *(?P<value>.*)}m', $match[1], $matches);
+                $metadata = [];
+                foreach ($matches['keyword'] as $key => $keyword) {
+                    $metadata[$keyword] = $matches['value'][$key];
+                }
+            }
+
+            if (Preg::isMatch('{^(<!--.+?-->\n+)?# (.+?)\n}s', $contents, $match)) {
+                $displayName = $match[2];
+            } else {
+                $displayName = Preg::replace('{^\d{2} }', '', ucwords(str_replace('-', ' ', $filename)));
+            }
+            $pages[$displayName] = [
+                'page' => $page,
+                'link' => $this->generateUrl('docs.view', ['page' => $page]),
+                'metadata' => $metadata,
+            ];
+        }
+
+        return $pages;
+    }
+
+    /**
+     * Returns the page source without its metadata comment, with doc links made absolute
+     * so they still resolve when served outside /doc/ or concatenated in llms-full.txt
+     */
+    private function getMarkdown(string $docDir, string $page): string
+    {
+        $contents = file_get_contents($docDir.'/'.$page);
+        assert(is_string($contents));
+        $contents = Preg::replace('{^<!--.*?-->\n+}s', '', $contents);
+
+        // inline [text](target) and reference [n]: target links, but no external ones
+        return Preg::replaceCallback('{(\]\(|^\[[^\]]+\]: )(?!\w+:)([a-z0-9/._\'-]+\.md)?(#[^)\s]*)?}m', function (array $match) use ($page): string {
+            $target = $match[2] ?? '';
+            $fragment = $match[3] ?? '';
+            if ($target === '' && $fragment === '') {
+                return (string) $match[0];
+            }
+
+            $resolved = $page;
+            if ($target !== '') {
+                $segments = [];
+                $dir = dirname($page);
+                foreach (explode('/', ($dir === '.' ? '' : $dir.'/').$target) as $segment) {
+                    if ($segment === '..') {
+                        array_pop($segments);
+                    } elseif ($segment !== '' && $segment !== '.') {
+                        $segments[] = $segment;
+                    }
+                }
+                $resolved = implode('/', $segments);
+            }
+
+            if (!Preg::isMatch('{^[a-z0-9/\'-]+\.md$}', $resolved)) {
+                return (string) $match[0];
+            }
+
+            return $match[1].$this->generateUrl('docs.view', ['page' => $resolved], UrlGeneratorInterface::ABSOLUTE_URL).$fragment;
+        }, $contents);
     }
 }
