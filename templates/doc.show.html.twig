@@ -4,6 +4,10 @@
 
 {% block title %}{% if title is not empty %}{{ title }} - {% endif %}{{ parent() }}{% endblock %}
 
+{% block head %}
+    <link rel="alternate" type="text/markdown" href="{{ path('docs.markdown', {page: file}) }}">
+{% endblock %}
+
 {% block content %}
     <div id="searchbar" class="clearfix">
         <div id="docsearch"></div>

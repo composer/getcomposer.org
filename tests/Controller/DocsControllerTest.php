@@ -20,6 +20,8 @@ class DocsControllerTest extends WebTestCase
         self::assertStringContainsString('Why can\'t Composer load repositories recursively?', $text);
         self::assertCount(1, $crawler->filter('a[href="/doc/articles/handling-private-packages.md"]'));
         self::assertCount(1, $crawler->filter('a[href="/doc/faqs/why-cant-composer-load-repositories-recursively.md"]'));
+        self::assertCount(1, $crawler->filter('a[href="/llms.txt"]'));
+        self::assertCount(1, $crawler->filter('a[href="/llms-full.txt"]'));
     }
 
     public function testViewPage(): void
@@ -79,5 +81,95 @@ class DocsControllerTest extends WebTestCase
         static::createClient()->request('GET', '/doc/99-nope.md');
 
         self::assertResponseStatusCodeSame(404);
+    }
+
+    public function testViewPageLinksToMarkdown(): void
+    {
+        static::createClient()->request('GET', '/doc/01-basic-usage.md');
+
+        self::assertSelectorExists('link[rel="alternate"][type="text/markdown"][href="/doc/01-basic-usage.md.md"]');
+    }
+
+    public function testMarkdown(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/doc/01-basic-usage.md.md');
+
+        self::assertResponseIsSuccessful();
+        self::assertResponseHeaderSame('Content-Type', 'text/markdown; charset=UTF-8');
+        self::assertResponseHeaderSame('Link', '<http://localhost/doc/01-basic-usage.md>; rel="canonical"');
+
+        $content = self::getContent($client);
+        // metadata comment is stripped and relative links are made absolute
+        self::assertStringStartsWith("# Basic usage\n", $content);
+        self::assertStringContainsString('[config docs](http://localhost/doc/06-config.md.md)', $content);
+        self::assertStringContainsString('[Libraries](http://localhost/doc/02-libraries.md.md)', $content);
+        self::assertStringContainsString('[README](https://example.org/README.md)', $content);
+        self::assertStringContainsString('[1]: http://localhost/doc/articles/handling-private-packages.md.md#setup', $content);
+        self::assertStringContainsString('[below](http://localhost/doc/01-basic-usage.md.md#details)', $content);
+        self::assertStringContainsString('`^[a-z0-9]([_.-]?[a-z0-9]+)*$`', $content);
+        self::assertStringContainsString('  [2]: http://localhost/doc/02-libraries.md.md#intro', $content);
+        self::assertStringContainsString('[notes](README.md.txt), [mdx](guide.mdx), [absolute](/doc/04-schema.md),', $content);
+        self::assertStringContainsString('[outside](../../04-schema.md) and `[inline](02-libraries.md)`.', $content);
+        self::assertStringContainsString("```text\n[fenced](02-libraries.md)\n[3]: 02-libraries.md\n```", $content);
+        self::assertResponseHeaderSame('Cache-Control', 'max-age=3600, public');
+    }
+
+    #[DataProvider('provideMovedPages')]
+    public function testMovedMarkdownPagesRedirect(string $path, string $target): void
+    {
+        static::createClient()->request('GET', str_replace('.md', '.md.md', $path));
+
+        self::assertResponseStatusCodeSame(301);
+        self::assertResponseRedirects(str_replace('.md', '.md.md', $target));
+    }
+
+    public function testMarkdownResolvesParentLinks(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/doc/faqs/why-cant-composer-load-repositories-recursively.md.md');
+
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('[schema](http://localhost/doc/04-schema.md.md#repositories)', self::getContent($client));
+    }
+
+    public function testMissingMarkdown(): void
+    {
+        static::createClient()->request('GET', '/doc/99-nope.md.md');
+
+        self::assertResponseStatusCodeSame(404);
+    }
+
+    public function testLlmsTxt(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/llms.txt');
+
+        self::assertResponseIsSuccessful();
+        self::assertResponseHeaderSame('Content-Type', 'text/plain; charset=UTF-8');
+
+        $content = self::getContent($client);
+        self::assertStringStartsWith("# Composer\n", $content);
+        self::assertStringContainsString("## Book\n\n- [Introduction](http://localhost/doc/00-intro.md.md)\n- [Basic usage](http://localhost/doc/01-basic-usage.md.md): Learn the basics\n", $content);
+        self::assertStringContainsString('- [Handling private packages](http://localhost/doc/articles/handling-private-packages.md.md)', $content);
+        self::assertStringContainsString('- [Why can\'t Composer load repositories recursively?](http://localhost/doc/faqs/why-cant-composer-load-repositories-recursively.md.md)', $content);
+        self::assertStringContainsString('http://localhost/llms-full.txt', $content);
+        self::assertResponseHeaderSame('Cache-Control', 'max-age=3600, public');
+    }
+
+    public function testLlmsFullTxt(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/llms-full.txt');
+
+        self::assertResponseIsSuccessful();
+        self::assertResponseHeaderSame('Content-Type', 'text/plain; charset=UTF-8');
+
+        $content = self::getContent($client);
+        self::assertStringStartsWith("Source: http://localhost/doc/00-intro.md\n\n# Introduction\n", $content);
+        self::assertStringContainsString("\n\n---\n\nSource: http://localhost/doc/01-basic-usage.md\n\n# Basic usage\n", $content);
+        self::assertStringContainsString('Source: http://localhost/doc/faqs/why-cant-composer-load-repositories-recursively.md', $content);
+        self::assertStringNotContainsString('tagline:', $content);
+        self::assertResponseHeaderSame('Cache-Control', 'max-age=3600, public');
     }
 }
