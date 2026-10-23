@@ -20,6 +20,8 @@ class DocsControllerTest extends WebTestCase
         self::assertStringContainsString('Why can\'t Composer load repositories recursively?', $text);
         self::assertCount(1, $crawler->filter('a[href="/doc/articles/handling-private-packages.md"]'));
         self::assertCount(1, $crawler->filter('a[href="/doc/faqs/why-cant-composer-load-repositories-recursively.md"]'));
+        self::assertCount(1, $crawler->filter('a[href="/llms.txt"]'));
+        self::assertCount(1, $crawler->filter('a[href="/llms-full.txt"]'));
     }
 
     public function testViewPage(): void
