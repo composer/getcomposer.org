@@ -295,8 +295,8 @@ class DocsController extends AbstractController
     }
 
     /**
-     * Returns the page source without its metadata comment, with doc links made absolute
-     * so they still resolve when served outside /doc/ or concatenated in llms-full.txt
+     * Returns the page source without its metadata comment, with doc links pointing to the absolute
+     * markdown URLs so they still resolve when served outside /doc/ or concatenated in llms-full.txt
      */
     private function getMarkdown(string $docDir, string $page): string
     {
@@ -330,7 +330,7 @@ class DocsController extends AbstractController
                 return (string) $match[0];
             }
 
-            return $match[1].$this->generateUrl('docs.view', ['page' => $resolved], UrlGeneratorInterface::ABSOLUTE_URL).$fragment;
+            return $match[1].$this->generateUrl('docs.markdown', ['page' => $resolved], UrlGeneratorInterface::ABSOLUTE_URL).$fragment;
         }, $contents);
     }
 }

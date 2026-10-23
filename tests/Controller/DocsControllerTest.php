@@ -100,11 +100,11 @@ class DocsControllerTest extends WebTestCase
         $content = self::getContent($client);
         // metadata comment is stripped and relative links are made absolute
         self::assertStringStartsWith("# Basic usage\n", $content);
-        self::assertStringContainsString('[config docs](http://localhost/doc/06-config.md)', $content);
-        self::assertStringContainsString('[Libraries](http://localhost/doc/02-libraries.md)', $content);
+        self::assertStringContainsString('[config docs](http://localhost/doc/06-config.md.md)', $content);
+        self::assertStringContainsString('[Libraries](http://localhost/doc/02-libraries.md.md)', $content);
         self::assertStringContainsString('[README](https://example.org/README.md)', $content);
-        self::assertStringContainsString('[1]: http://localhost/doc/articles/handling-private-packages.md#setup', $content);
-        self::assertStringContainsString('[below](http://localhost/doc/01-basic-usage.md#details)', $content);
+        self::assertStringContainsString('[1]: http://localhost/doc/articles/handling-private-packages.md.md#setup', $content);
+        self::assertStringContainsString('[below](http://localhost/doc/01-basic-usage.md.md#details)', $content);
         self::assertStringContainsString('`^[a-z0-9]([_.-]?[a-z0-9]+)*$`', $content);
     }
 
@@ -114,7 +114,7 @@ class DocsControllerTest extends WebTestCase
         $client->request('GET', '/doc/faqs/why-cant-composer-load-repositories-recursively.md.md');
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('[schema](http://localhost/doc/04-schema.md#repositories)', self::getContent($client));
+        self::assertStringContainsString('[schema](http://localhost/doc/04-schema.md.md#repositories)', self::getContent($client));
     }
 
     public function testMissingMarkdown(): void
