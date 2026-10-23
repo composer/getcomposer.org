@@ -57,7 +57,7 @@
 
 {% macro renderFile(filename, data) %}
     <li>
-        <a href="{{ data.link }}" title="Go to documentation section: {{ filename }}"
+        <a href="{{ path('docs.view', {page: data.page}) }}" title="Go to documentation section: {{ filename }}"
            aria-label="Link to documentation section: {{ filename }}">
             {{ filename }}
         </a>

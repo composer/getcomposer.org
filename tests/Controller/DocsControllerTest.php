@@ -108,6 +108,20 @@ class DocsControllerTest extends WebTestCase
         self::assertStringContainsString('[1]: http://localhost/doc/articles/handling-private-packages.md.md#setup', $content);
         self::assertStringContainsString('[below](http://localhost/doc/01-basic-usage.md.md#details)', $content);
         self::assertStringContainsString('`^[a-z0-9]([_.-]?[a-z0-9]+)*$`', $content);
+        self::assertStringContainsString('  [2]: http://localhost/doc/02-libraries.md.md#intro', $content);
+        self::assertStringContainsString('[notes](README.md.txt), [mdx](guide.mdx), [absolute](/doc/04-schema.md),', $content);
+        self::assertStringContainsString('[outside](../../04-schema.md) and `[inline](02-libraries.md)`.', $content);
+        self::assertStringContainsString("```text\n[fenced](02-libraries.md)\n[3]: 02-libraries.md\n```", $content);
+        self::assertResponseHeaderSame('Cache-Control', 'max-age=3600, public');
+    }
+
+    #[DataProvider('provideMovedPages')]
+    public function testMovedMarkdownPagesRedirect(string $path, string $target): void
+    {
+        static::createClient()->request('GET', str_replace('.md', '.md.md', $path));
+
+        self::assertResponseStatusCodeSame(301);
+        self::assertResponseRedirects(str_replace('.md', '.md.md', $target));
     }
 
     public function testMarkdownResolvesParentLinks(): void
@@ -140,6 +154,7 @@ class DocsControllerTest extends WebTestCase
         self::assertStringContainsString('- [Handling private packages](http://localhost/doc/articles/handling-private-packages.md.md)', $content);
         self::assertStringContainsString('- [Why can\'t Composer load repositories recursively?](http://localhost/doc/faqs/why-cant-composer-load-repositories-recursively.md.md)', $content);
         self::assertStringContainsString('http://localhost/llms-full.txt', $content);
+        self::assertResponseHeaderSame('Cache-Control', 'max-age=3600, public');
     }
 
     public function testLlmsFullTxt(): void
@@ -155,5 +170,6 @@ class DocsControllerTest extends WebTestCase
         self::assertStringContainsString("\n\n---\n\nSource: http://localhost/doc/01-basic-usage.md\n\n# Basic usage\n", $content);
         self::assertStringContainsString('Source: http://localhost/doc/faqs/why-cant-composer-load-repositories-recursively.md', $content);
         self::assertStringNotContainsString('tagline:', $content);
+        self::assertResponseHeaderSame('Cache-Control', 'max-age=3600, public');
     }
 }
