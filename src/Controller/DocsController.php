@@ -220,15 +220,27 @@ class DocsController extends AbstractController
             }
         }
 
+        // add class to footer nav, on the DOM as newer libxml no longer serializes arrows as &larr;/&rarr;
+        $paragraphs = $xpath->query('//p');
+        if (false === $paragraphs) {
+            throw new \RuntimeException('Failed querying p nodes');
+        }
+        foreach ($paragraphs as $p) {
+            if (!$p instanceof \DOMElement) {
+                continue;
+            }
+            $text = trim($p->textContent);
+            if (str_starts_with($text, '←') || str_ends_with($text, '→')) {
+                $p->setAttribute('class', 'prev-next');
+            }
+        }
+
         // save new content with IDs
         $content = $dom->saveHtml();
         if (false === $content) {
             throw new \RuntimeException('Failed saving HTML');
         }
         $content = Preg::replace('{.*<body>(.*)</body>.*}is', '$1', $content);
-
-        // add class to footer nav
-        $content = Preg::replace('{<p>(&larr;.+?|.+?&rarr;)</p>}', '<p class="prev-next">$1</p>', $content);
 
         return $this->render('doc.show.html.twig', [
             'doc' => $content,
